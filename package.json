@@ -1,0 +1,14 @@
+{
+  "name": "interactive-stateful-process",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
+  "repository": "git@github.com:wigy/react-interactive-stateful-process.git",
+  "author": "Tommi Ronkainen <tommi.ronkainen@gmail.com>",
+  "license": "GPL-2",
+  "dependencies": {
+  }
+}
