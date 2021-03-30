@@ -7,13 +7,18 @@
     "/dist"
   ],
   "scripts": {
-    "dev": "tsc -w"
+    "dev": "tsc -w",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "repository": "git@github.com:wigy/react-interactive-stateful-process.git",
   "author": "Tommi Ronkainen <tommi.ronkainen@gmail.com>",
   "license": "GPL-2",
   "dependencies": {},
   "devDependencies": {
+    "@types/jest": "^26.0.22",
+    "jest": "^26.6.3",
+    "ts-jest": "^26.5.4",
     "typescript": "^4.2.3"
   }
 }
