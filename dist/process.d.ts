@@ -1,5 +1,5 @@
 import { Origin } from "./origin";
-import { Step } from './step';
+import { Directions } from './directions';
 export declare type ProcessId = number;
 export declare type ProcessTitle = string;
 export declare type ProcessName = string;
@@ -21,7 +21,7 @@ export declare class ProcessHandler<VendorElementType, VendorState, VendorAction
     name: string;
     constructor(name: string);
     isComplete(state: VendorState): boolean;
-    startingPoint(type: ProcessType): Step<VendorElementType, VendorActionData>;
+    startingPoint(type: ProcessType): Directions<VendorElementType, VendorActionData>;
 }
 export declare type ProcessHandlerMap<VendorElementType, VendorState, VendorActionData> = {
     [key: string]: ProcessHandler<VendorElementType, VendorState, VendorActionData>;
@@ -29,5 +29,5 @@ export declare type ProcessHandlerMap<VendorElementType, VendorState, VendorActi
 export declare class ProcessingSystem<VendorElementType, VendorDataType, VendorState, VendorActionData> {
     handlers: ProcessHandlerMap<VendorElementType, VendorState, VendorActionData>;
     register(handler: ProcessHandler<VendorElementType, VendorState, VendorActionData>): void;
-    startingPoints(type: ProcessType): Step<VendorElementType, VendorActionData>[];
+    startingPoints(type: ProcessType): Directions<VendorElementType, VendorActionData>[];
 }

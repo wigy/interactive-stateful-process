@@ -11,7 +11,7 @@ export type StepNumber = number
 export type StepTitle = string
 export type StepDescription = string
 
-export interface Step<VendorElementType, VendorActionData> {
+export interface Directions<VendorElementType, VendorActionData> {
     title: StepTitle
     process: ProcessName
     type: ProcessType

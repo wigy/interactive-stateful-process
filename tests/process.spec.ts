@@ -1,5 +1,5 @@
 import { ProcessingSystem, ProcessHandler, ProcessType } from '../src/process';
-import { Step } from '../src/step';
+import { Directions } from '../src/directions';
 
 type ElementType = 'none'
 
@@ -19,7 +19,7 @@ const system = new ProcessingSystem<ElementType, DataType, State, ActionData>()
 
 class CoinHandler extends ProcessHandler<ElementType, State, ActionData> {
 
-  startingPoint(type: ProcessType): Step<ElementType, ActionData> {
+  startingPoint(type: ProcessType): Directions<ElementType, ActionData> {
     if (type === 'web') {
       return {
         title: 'Coin Add or Del',
@@ -51,6 +51,7 @@ test('process handling', () => {
         "count": 2
     }
   }
+
   // system.createProcess(fromUi)
 
 });

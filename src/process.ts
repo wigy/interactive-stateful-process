@@ -1,7 +1,7 @@
 import { ElementType } from "./element"
 import { InvalidArgument, NotImplemented } from "./error"
 import { Origin } from "./origin"
-import { Step } from './step';
+import { Directions } from './directions';
 
 export type ProcessId = number
 export type ProcessTitle = string
@@ -38,7 +38,7 @@ export class ProcessHandler<VendorElementType, VendorState, VendorActionData> {
         return false
     }
 
-    startingPoint(type: ProcessType): Step<VendorElementType, VendorActionData> {
+    startingPoint(type: ProcessType): Directions<VendorElementType, VendorActionData> {
         throw new NotImplemented(`A handler '${this.name}' does not implement startingPoint()`)
     }
 }
@@ -58,8 +58,8 @@ export class ProcessingSystem<VendorElementType, VendorDataType, VendorState, Ve
         this.handlers[handler.name] = handler
     }
 
-    startingPoints(type: ProcessType): Step<VendorElementType, VendorActionData>[] {
-        const points: Step<VendorElementType, VendorActionData>[] = []
+    startingPoints(type: ProcessType): Directions<VendorElementType, VendorActionData>[] {
+        const points: Directions<VendorElementType, VendorActionData>[] = []
         for (const [_, handler] of Object.entries(this.handlers)) {
             const point = handler.startingPoint(type)
             if (point) {
