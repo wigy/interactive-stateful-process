@@ -1,5 +1,5 @@
 import { ElementType } from "./element"
-import { InvalidArgument } from "./error"
+import { InvalidArgument, NotImplemented } from "./error"
 import { Origin } from "./origin"
 import { Step } from './step';
 
@@ -27,13 +27,19 @@ export class Process {
 
 export class ProcessHandler<VendorElementType, VendorState, VendorActionData> {
 
+    name: string
+
+    constructor(name: string) {
+        this.name = name
+    }
+
     isComplete(state: VendorState): boolean {
         // TODO: Implement.
         return false
     }
 
-    startingPoints(type: ProcessType): Step<VendorElementType, VendorActionData>[] {
-        return []
+    startingPoint(type: ProcessType): Step<VendorElementType, VendorActionData> {
+        throw new NotImplemented(`A handler '${this.name}' does not implement startingPoint()`)
     }
 }
 
@@ -45,17 +51,20 @@ export class ProcessingSystem<VendorElementType, VendorDataType, VendorState, Ve
 
     handlers: ProcessHandlerMap<VendorElementType, VendorState, VendorActionData> = {}
 
-    register(name: ProcessName, handler: ProcessHandler<VendorElementType, VendorState, VendorActionData>): void {
-        if (name in this.handlers) {
-            throw new InvalidArgument(`The handler for '${name}' is already defined.`)
+    register(handler: ProcessHandler<VendorElementType, VendorState, VendorActionData>): void {
+        if (handler.name in this.handlers) {
+            throw new InvalidArgument(`The handler '${handler}' is already defined.`)
         }
-        this.handlers[name] = handler
+        this.handlers[handler.name] = handler
     }
 
     startingPoints(type: ProcessType): Step<VendorElementType, VendorActionData>[] {
-        let points: Step<VendorElementType, VendorActionData>[] = []
+        const points: Step<VendorElementType, VendorActionData>[] = []
         for (const [_, handler] of Object.entries(this.handlers)) {
-            points = points.concat(handler.startingPoints(type));
+            const point = handler.startingPoint(type)
+            if (point) {
+                points.push(point);
+            }
         }
         return points;
     }

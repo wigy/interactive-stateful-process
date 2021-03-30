@@ -4,9 +4,9 @@ import { Step } from '../src/step';
 type ElementType = 'none'
 
 interface State {
-  count1: number
-  count5: number
-  count10: number
+  coin1: number
+  coin5: number
+  coin10: number
 }
 
 interface ActionData {
@@ -18,29 +18,39 @@ interface DataType {
 const system = new ProcessingSystem<ElementType, DataType, State, ActionData>()
 
 class CoinHandler extends ProcessHandler<ElementType, State, ActionData> {
-  startingPoints(type: ProcessType): Step<ElementType, ActionData>[] {
-    if (type === 'web') {
-      return [
-        {
-          title: 'Coin Add or Del',
-          type: 'web',
-          process: 'coins', // TODO: Hmm this is bad idea here. Add name for process handler itself?
-          step: 0,
-          description: 'Toss coins around.',
-          content: {
-            elements: [],
-            actions: []
-          }
-        }
-      ]
-    }
-    return []
-}
 
+  startingPoint(type: ProcessType): Step<ElementType, ActionData> {
+    if (type === 'web') {
+      return {
+        title: 'Coin Add or Del',
+        type: 'web',
+        process: this.name,
+        step: 0,
+        description: 'Toss coins around.',
+        content: {
+          elements: [],
+          actions: []
+        }
+      }
+    }
+
+    return null
+  }
 }
 
 test('process handling', () => {
-    system.register('coins', new CoinHandler())
-    console.log(system.startingPoints('web'));
-    expect(0).toBe(0);
-  });
+  system.register(new CoinHandler('coins'))
+  const start = system.startingPoints('web');
+  expect(start.length).toBe(1);
+
+  const fromUi = {
+    "process": "coins",
+    "action": "add",
+    "data": {
+        "target": "coin1",
+        "count": 2
+    }
+  }
+  // system.createProcess(fromUi)
+
+});

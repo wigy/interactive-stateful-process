@@ -1,29 +1,35 @@
-import { InvalidArgument } from "./error";
+import { InvalidArgument, NotImplemented } from "./error";
 export class Process {
 }
 export class ProcessHandler {
+    constructor(name) {
+        this.name = name;
+    }
     isComplete(state) {
         // TODO: Implement.
         return false;
     }
-    startingPoints(type) {
-        return [];
+    startingPoint(type) {
+        throw new NotImplemented(`A handler '${this.name}' does not implement startingPoint()`);
     }
 }
 export class ProcessingSystem {
     constructor() {
         this.handlers = {};
     }
-    register(name, handler) {
-        if (name in this.handlers) {
-            throw new InvalidArgument(`The handler for '${name}' is already defined.`);
+    register(handler) {
+        if (handler.name in this.handlers) {
+            throw new InvalidArgument(`The handler '${handler}' is already defined.`);
         }
-        this.handlers[name] = handler;
+        this.handlers[handler.name] = handler;
     }
     startingPoints(type) {
-        let points = [];
+        const points = [];
         for (const [_, handler] of Object.entries(this.handlers)) {
-            points = points.concat(handler.startingPoints(type));
+            const point = handler.startingPoint(type);
+            if (point) {
+                points.push(point);
+            }
         }
         return points;
     }

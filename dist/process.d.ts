@@ -18,14 +18,16 @@ export declare class Process {
     files: ProcessFile[];
 }
 export declare class ProcessHandler<VendorElementType, VendorState, VendorActionData> {
+    name: string;
+    constructor(name: string);
     isComplete(state: VendorState): boolean;
-    startingPoints(type: ProcessType): Step<VendorElementType, VendorActionData>[];
+    startingPoint(type: ProcessType): Step<VendorElementType, VendorActionData>;
 }
 export declare type ProcessHandlerMap<VendorElementType, VendorState, VendorActionData> = {
     [key: string]: ProcessHandler<VendorElementType, VendorState, VendorActionData>;
 };
 export declare class ProcessingSystem<VendorElementType, VendorDataType, VendorState, VendorActionData> {
     handlers: ProcessHandlerMap<VendorElementType, VendorState, VendorActionData>;
-    register(name: ProcessName, handler: ProcessHandler<VendorElementType, VendorState, VendorActionData>): void;
+    register(handler: ProcessHandler<VendorElementType, VendorState, VendorActionData>): void;
     startingPoints(type: ProcessType): Step<VendorElementType, VendorActionData>[];
 }
