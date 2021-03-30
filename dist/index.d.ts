@@ -1,5 +1,5 @@
 import { Origin } from './origin';
-export { Origin, OriginType, WebOrigin } from './origin';
+export * from './origin';
 export declare function getOrigin(): Origin;
 declare const _default: {
     getOrigin: typeof getOrigin;
