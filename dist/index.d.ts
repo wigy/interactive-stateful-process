@@ -1,7 +1,6 @@
-import { Origin } from './origin';
+export * from './action';
+export * from './element';
+export * from './input';
 export * from './origin';
-export declare function getOrigin(): Origin;
-declare const _default: {
-    getOrigin: typeof getOrigin;
-};
-export default _default;
+export * from './process';
+export * from './step';

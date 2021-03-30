@@ -1,7 +1,6 @@
+export * from './action';
+export * from './element';
+export * from './input';
 export * from './origin';
-export function getOrigin() {
-    return { type: 'web', referrer: 'http://localhost' };
-}
-export default {
-    getOrigin
-};
+export * from './process';
+export * from './step';
