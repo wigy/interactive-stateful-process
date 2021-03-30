@@ -19,7 +19,7 @@ const system = new ProcessingSystem<ElementType, DataType, State, ActionData>()
 
 class CoinHandler extends ProcessHandler<ElementType, State, ActionData> {
 
-  startingPoint(type: ProcessType): Directions<ElementType, ActionData> {
+  startingPoint(type: ProcessType): Directions<ElementType, ActionData> | null {
     if (type === 'web') {
       return {
         title: 'Coin Add or Del',

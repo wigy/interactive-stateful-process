@@ -38,7 +38,7 @@ export class ProcessHandler<VendorElementType, VendorState, VendorActionData> {
         return false
     }
 
-    startingPoint(type: ProcessType): Directions<VendorElementType, VendorActionData> {
+    startingPoint(type: ProcessType): Directions<VendorElementType, VendorActionData> | null {
         throw new NotImplemented(`A handler '${this.name}' does not implement startingPoint()`)
     }
 }
