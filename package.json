@@ -14,7 +14,11 @@
   "repository": "git@github.com:wigy/react-interactive-stateful-process.git",
   "author": "Tommi Ronkainen <tommi.ronkainen@gmail.com>",
   "license": "GPL-2",
-  "dependencies": {},
+  "dependencies": {
+    "@types/knex": "^0.16.1",
+    "knex": "^0.95.4",
+    "pg": "^8.5.1"
+  },
   "devDependencies": {
     "@types/jest": "^26.0.22",
     "jest": "^26.6.3",

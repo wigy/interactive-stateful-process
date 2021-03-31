@@ -1,5 +1,7 @@
 import { ProcessingSystem, ProcessHandler, ProcessType } from '../src/process';
 import { Directions } from '../src/directions';
+import Knex from 'knex'
+import fs from 'fs'
 
 type ElementType = 'none'
 
@@ -10,12 +12,11 @@ interface State {
 }
 
 interface ActionData {
+  target: 'coin1' | 'coin5' | 'coin10'
+  count: number
 }
 
-interface DataType {
-}
-
-const system = new ProcessingSystem<ElementType, DataType, State, ActionData>()
+const system = new ProcessingSystem<ElementType, State, ActionData>()
 
 class CoinHandler extends ProcessHandler<ElementType, State, ActionData> {
 
@@ -38,20 +39,37 @@ class CoinHandler extends ProcessHandler<ElementType, State, ActionData> {
   }
 }
 
-test('process handling', () => {
+test('process handling', async () => {
+
+  // Set up test database.
+  const dbPath = `${__dirname}/../process-test.sqlite`
+  if (fs.existsSync(dbPath)) {
+    fs.unlinkSync(dbPath)
+  }
+
+  const db = Knex('postgres://user:pass@localhost/test');
+  await db.migrate.latest()
+  system.useKnex(db);
+
+  // Set up the system.
   system.register(new CoinHandler('coins'))
+
+  // Start the process.
   const start = system.startingPoints('web');
   expect(start.length).toBe(1);
 
-  const fromUi = {
+  const id = system.createProcess('web', {
     "process": "coins",
-    "action": "add",
+    "action": "init",
     "data": {
         "target": "coin1",
-        "count": 2
+        "count": 0
     }
-  }
+  }, {
+      type: "web",
+      referrer: 'http://localhost'
+  })
+  console.log('ID', id);
 
-  // system.createProcess(fromUi)
 
 });

@@ -1,6 +1,7 @@
 import { Origin } from "./origin";
 import { Directions } from './directions';
 import { Action } from "./action";
+import { TimeStamp } from "./common";
 export declare type ProcessId = number;
 export declare type ProcessTitle = string;
 export declare type ProcessName = string;
@@ -10,13 +11,23 @@ export interface ProcessFile {
     encoding: string;
     data: string;
 }
-export declare class Process {
-    id: ProcessId;
-    currentState: number;
+export declare class ProcessStep<VendorElementType, VendorState, VendorActionData> {
+    directions: Directions<VendorElementType, VendorActionData>;
+    action: Action<VendorActionData>;
+    started: TimeStamp;
+    state: VendorState;
+    finished: TimeStamp;
+}
+export declare class Process<VendorElementType, VendorState, VendorActionData> {
+    id: ProcessId | null;
+    name: ProcessName;
     complete: boolean;
-    successful: boolean;
+    successful: boolean | undefined;
     origin: Origin;
     files: ProcessFile[];
+    steps: ProcessStep<VendorElementType, VendorState, VendorActionData>[];
+    currentStep: number | undefined;
+    constructor(name: ProcessName, origin: Origin);
 }
 export declare class ProcessHandler<VendorElementType, VendorState, VendorActionData> {
     name: string;
@@ -27,9 +38,12 @@ export declare class ProcessHandler<VendorElementType, VendorState, VendorAction
 export declare type ProcessHandlerMap<VendorElementType, VendorState, VendorActionData> = {
     [key: string]: ProcessHandler<VendorElementType, VendorState, VendorActionData>;
 };
-export declare class ProcessingSystem<VendorElementType, VendorDataType, VendorState, VendorActionData> {
+export declare class ProcessingSystem<VendorElementType, VendorState, VendorActionData> {
+    db: any;
     handlers: ProcessHandlerMap<VendorElementType, VendorState, VendorActionData>;
     register(handler: ProcessHandler<VendorElementType, VendorState, VendorActionData>): void;
     startingPoints(type: ProcessType): Directions<VendorElementType, VendorActionData>[];
-    createProcess(action: Action<VendorActionData>): ProcessId;
+    getHandler(name: ProcessName): ProcessHandler<VendorElementType, VendorState, VendorActionData>;
+    createProcess(type: ProcessType, action: Action<VendorActionData>, origin: Origin): ProcessId;
+    useKnex(config: any): Promise<void>;
 }

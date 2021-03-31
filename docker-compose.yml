@@ -1,0 +1,12 @@
+version: '3.5'
+
+services:
+  isp-test-db:
+    image: postgres:13
+    restart: always
+    ports:
+        - 5432:5432
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: test

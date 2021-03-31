@@ -33,4 +33,7 @@ export class ProcessingSystem {
         }
         return points;
     }
+    createProcess(action) {
+        return 1;
+    }
 }

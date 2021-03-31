@@ -1,4 +1,5 @@
 export * from './action'
+export * from './common'
 export * from './element'
 export * from './error'
 export * from './input'
