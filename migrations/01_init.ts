@@ -31,14 +31,16 @@ export async function up (knex) {
 
         table.json('directions')
         table.json('action')
-        table.datetime('started')
+        table.datetime('started').defaultTo(knex.fn.now())
         table.json('state')
-        table.datetime('finished')
+        table.datetime('finished').default(null)
 
         table.index(['processId']);
     });
 }
 
 export async function down (knex) {
-    knex.schema.dropTable('processes');
+    await knex.schema.dropTable('processes');
+    await knex.schema.dropTable('processe_files');
+    await knex.schema.dropTable('processe_steps');
 }

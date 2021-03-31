@@ -69,8 +69,12 @@ export class ProcessHandler<VendorElementType, VendorState, VendorActionData> {
         return false
     }
 
-    startingPoint(type: ProcessType): Directions<VendorElementType, VendorActionData> | null {
+    startingDirections(type: ProcessType): Directions<VendorElementType, VendorActionData> | null {
         throw new NotImplemented(`A handler '${this.name}' does not implement startingPoint()`)
+    }
+
+    startingState(type: ProcessType): VendorState | null {
+        throw new NotImplemented(`A handler '${this.name}' does not implement startingState()`)
     }
 }
 
@@ -90,10 +94,10 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
         this.handlers[handler.name] = handler
     }
 
-    startingPoints(type: ProcessType): Directions<VendorElementType, VendorActionData>[] {
+    startingDirections(type: ProcessType): Directions<VendorElementType, VendorActionData>[] {
         const points: Directions<VendorElementType, VendorActionData>[] = []
         for (const [_, handler] of Object.entries(this.handlers)) {
-            const point = handler.startingPoint(type)
+            const point = handler.startingDirections(type)
             if (point) {
                 points.push(point);
             }
@@ -108,7 +112,12 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
         return this.handlers[name]
     }
 
-    async createProcess(type: ProcessType,  action: Action<VendorActionData>, origin: Origin): Promise<ProcessId> {
+    async createProcess(
+        type: ProcessType,
+        action: Action<VendorActionData>,
+        origin: Origin)
+        : Promise<Process<VendorElementType, VendorState, VendorActionData> >
+    {
         const handler = this.getHandler(action.process)
 
         // Set up the process.
@@ -117,12 +126,16 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
         const processId: ProcessId = (await this.getDb()('processes').insert(process.dbData).returning('id'))[0]
 
         // Get the initial state.
-        const init = handler.startingPoint(type)
+        const init = handler.startingDirections(type)
         if (!init) {
             throw new BadState(`Trying to find starting point from handler ${action.process} for ${type} and got null.`)
         }
-        console.log(init.dbData);
-        return processId
+        const state = handler.startingState(type)
+        const step = { processId, state, action: action.dbData, directions: init.dbData }
+        await this.getDb()('process_steps').insert(step)
+        await this.getDb()('processes').update({ currentStep: 0 }).where({ id: processId })
+
+        return process
     }
 
     async useKnex(knex) {

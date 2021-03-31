@@ -1,7 +1,10 @@
 import { ProcessingSystem, ProcessHandler, ProcessType } from '../src/process';
 import { Directions } from '../src/directions';
+import { Action } from '../src';
 import Knex from 'knex'
 import fs from 'fs'
+
+// Action
 
 type ElementType = 'none'
 
@@ -20,7 +23,7 @@ const system = new ProcessingSystem<ElementType, State, ActionData>()
 
 class CoinHandler extends ProcessHandler<ElementType, State, ActionData> {
 
-  startingPoint(type: ProcessType): Directions<ElementType, ActionData> | null {
+  startingDirections(type: ProcessType): Directions<ElementType, ActionData> | null {
     // Hmm. Removing this comment causes jest to crash.
     if (type === 'web') {
       return new Directions<ElementType, ActionData>({
@@ -36,6 +39,17 @@ class CoinHandler extends ProcessHandler<ElementType, State, ActionData> {
       })
     }
 
+    return null
+  }
+
+  startingState(type: ProcessType): State | null {
+    if (type === 'web') {
+      return {
+        coin1: 0,
+        coin5: 0,
+        coin10: 0,
+      }
+    }
     return null
   }
 }
@@ -56,17 +70,18 @@ test('process handling', async () => {
   system.register(new CoinHandler('coins'))
 
   // Start the process.
-  const start = system.startingPoints('web');
+  const start = system.startingDirections('web');
   expect(start.length).toBe(1);
 
-  const id = await system.createProcess('web', {
+  const action = new Action<ActionData>({
     "process": "coins",
     "action": "init",
     "data": {
         "target": "coin1",
         "count": 0
     }
-  }, {
+  })
+  const id = await system.createProcess('web', action, {
       type: "web",
       referrer: 'http://localhost'
   })
