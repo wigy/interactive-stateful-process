@@ -1,5 +1,5 @@
 import { ElementType } from "./element"
-import { InvalidArgument, NotImplemented } from "./error"
+import { BadState, InvalidArgument, NotImplemented } from "./error"
 import { Origin } from "./origin"
 import { Directions } from './directions';
 import { Action } from "./action";
@@ -43,6 +43,16 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
         this.files = []
         this.steps = []
         this.currentStep = undefined
+    }
+
+    get dbData(): object {
+        return {
+            name: this.name,
+            complete: this.complete,
+            successful: this.successful,
+            origin: this.origin,
+            currentStep: this.currentStep,
+        }
     }
 }
 
@@ -98,17 +108,31 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
         return this.handlers[name]
     }
 
-    createProcess(type: ProcessType,  action: Action<VendorActionData>, origin: Origin): ProcessId {
+    async createProcess(type: ProcessType,  action: Action<VendorActionData>, origin: Origin): Promise<ProcessId> {
         const handler = this.getHandler(action.process)
-        const id: ProcessId = 1
 
+        // Set up the process.
         const process = new Process<VendorElementType, VendorState, VendorActionData>(action.process, origin)
+        const db = this.getDb()
+        const processId: ProcessId = (await this.getDb()('processes').insert(process.dbData).returning('id'))[0]
 
-        // TODO: Save to database.
-        return id
+        // Get the initial state.
+        const init = handler.startingPoint(type)
+        if (!init) {
+            throw new BadState(`Trying to find starting point from handler ${action.process} for ${type} and got null.`)
+        }
+        console.log(init.dbData);
+        return processId
     }
 
     async useKnex(knex) {
         this.db = knex
+    }
+
+    getDb(): any {
+        if (this.db) {
+            return this.db
+        }
+        throw new BadState(`Database is not yet set.`)
     }
 }

@@ -21,8 +21,9 @@ const system = new ProcessingSystem<ElementType, State, ActionData>()
 class CoinHandler extends ProcessHandler<ElementType, State, ActionData> {
 
   startingPoint(type: ProcessType): Directions<ElementType, ActionData> | null {
+    // Hmm. Removing this comment causes jest to crash.
     if (type === 'web') {
-      return {
+      return new Directions<ElementType, ActionData>({
         title: 'Coin Add or Del',
         type: 'web',
         process: this.name,
@@ -32,7 +33,7 @@ class CoinHandler extends ProcessHandler<ElementType, State, ActionData> {
           elements: [],
           actions: []
         }
-      }
+      })
     }
 
     return null
@@ -58,7 +59,7 @@ test('process handling', async () => {
   const start = system.startingPoints('web');
   expect(start.length).toBe(1);
 
-  const id = system.createProcess('web', {
+  const id = await system.createProcess('web', {
     "process": "coins",
     "action": "init",
     "data": {

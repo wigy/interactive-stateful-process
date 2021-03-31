@@ -15,7 +15,7 @@ export function up(knex) {
             table.boolean('complete').notNullable().default(false);
             table.boolean('successful').default(null);
             table.json('origin');
-            table.integer('currentStep').notNullable().default(0);
+            table.integer('currentStep').default(null);
             table.index(['name']);
         });
         yield knex.schema.createTable('process_files', function (table) {

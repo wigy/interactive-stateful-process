@@ -7,7 +7,7 @@ export async function up (knex) {
         table.boolean('complete').notNullable().default(false);
         table.boolean('successful').default(null);
         table.json('origin');
-        table.integer('currentStep').notNullable().default(0);
+        table.integer('currentStep').default(null);
 
         table.index(['name']);
     });
@@ -25,13 +25,16 @@ export async function up (knex) {
 
     await knex.schema.createTable('process_steps', function (table) {
         table.increments('id');
+
         table.integer('processId').notNullable();
         table.foreign('processId').references('processes.id');
+
         table.json('directions')
         table.json('action')
         table.datetime('started')
         table.json('state')
         table.datetime('finished')
+
         table.index(['processId']);
     });
 }

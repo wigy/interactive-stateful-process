@@ -28,6 +28,7 @@ export declare class Process<VendorElementType, VendorState, VendorActionData> {
     steps: ProcessStep<VendorElementType, VendorState, VendorActionData>[];
     currentStep: number | undefined;
     constructor(name: ProcessName, origin: Origin);
+    get dbData(): object;
 }
 export declare class ProcessHandler<VendorElementType, VendorState, VendorActionData> {
     name: string;
@@ -44,6 +45,7 @@ export declare class ProcessingSystem<VendorElementType, VendorState, VendorActi
     register(handler: ProcessHandler<VendorElementType, VendorState, VendorActionData>): void;
     startingPoints(type: ProcessType): Directions<VendorElementType, VendorActionData>[];
     getHandler(name: ProcessName): ProcessHandler<VendorElementType, VendorState, VendorActionData>;
-    createProcess(type: ProcessType, action: Action<VendorActionData>, origin: Origin): ProcessId;
-    useKnex(config: any): Promise<void>;
+    createProcess(type: ProcessType, action: Action<VendorActionData>, origin: Origin): Promise<ProcessId>;
+    useKnex(knex: any): Promise<void>;
+    getDb(): any;
 }

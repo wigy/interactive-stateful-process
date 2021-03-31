@@ -7,8 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { InvalidArgument, NotImplemented } from "./error";
-import Knex from 'knex';
+import { BadState, InvalidArgument, NotImplemented } from "./error";
 export class ProcessStep {
 }
 export class Process {
@@ -21,6 +20,15 @@ export class Process {
         this.files = [];
         this.steps = [];
         this.currentStep = undefined;
+    }
+    get dbData() {
+        return {
+            name: this.name,
+            complete: this.complete,
+            successful: this.successful,
+            origin: this.origin,
+            currentStep: this.currentStep,
+        };
     }
 }
 export class ProcessHandler {
@@ -63,15 +71,30 @@ export class ProcessingSystem {
         return this.handlers[name];
     }
     createProcess(type, action, origin) {
-        const handler = this.getHandler(action.process);
-        const id = 1;
-        const process = new Process(action.process, origin);
-        // TODO: Save to database.
-        return id;
-    }
-    useKnex(config) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.db = Knex(config);
+            const handler = this.getHandler(action.process);
+            // Set up the process.
+            const process = new Process(action.process, origin);
+            const db = this.getDb();
+            const processId = (yield this.getDb()('processes').insert(process.dbData).returning('id'))[0];
+            // Get the initial state.
+            const init = handler.startingPoint(type);
+            if (!init) {
+                throw new BadState(`Trying to find starting point from handler ${action.process} for ${type} and got null.`);
+            }
+            console.log(init.dbData);
+            return processId;
         });
+    }
+    useKnex(knex) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.db = knex;
+        });
+    }
+    getDb() {
+        if (this.db) {
+            return this.db;
+        }
+        throw new BadState(`Database is not yet set.`);
     }
 }

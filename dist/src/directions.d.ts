@@ -8,11 +8,20 @@ export interface StepContent<VendorElementType, VendorActionData> {
 export declare type StepNumber = number;
 export declare type StepTitle = string;
 export declare type StepDescription = string;
-export interface Directions<VendorElementType, VendorActionData> {
+export declare class Directions<VendorElementType, VendorActionData> {
     title: StepTitle;
     process: ProcessName;
     type: ProcessType;
     step: StepNumber;
     description: StepDescription;
     content: StepContent<VendorElementType, VendorActionData>;
+    constructor(obj: {
+        title: StepTitle;
+        process: ProcessName;
+        type: ProcessType;
+        step: StepNumber;
+        description: StepDescription;
+        content: StepContent<VendorElementType, VendorActionData>;
+    });
+    get dbData(): object;
 }
