@@ -1,9 +1,13 @@
 
-export type OriginType = 'web'
+export type OriginType = '[unknonwn]' | 'web'
 
-export interface WebOrigin {
-    type: OriginType;
-    referrer: string;
+export interface UnknownOrigin {
+    type: '[unknown]'
 };
 
-export type Origin = WebOrigin;
+export interface WebOrigin {
+    type: 'web'
+    referrer: string
+};
+
+export type Origin = UnknownOrigin | WebOrigin

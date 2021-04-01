@@ -42,15 +42,12 @@ class CoinHandler extends ProcessHandler<ElementType, State, ActionData> {
     return null
   }
 
-  startingState(type: ProcessType): State | null {
-    if (type === 'web') {
-      return {
-        coin1: 0,
-        coin5: 0,
-        coin10: 0,
-      }
+  startingState(type: ProcessType): State {
+    return {
+      coin1: 0,
+      coin5: 0,
+      coin10: 0,
     }
-    return null
   }
 }
 
@@ -73,19 +70,20 @@ test('process handling', async () => {
   const start = system.startingDirections('web');
   expect(start.length).toBe(1);
 
+  const process = await system.createProcess('web', 'coins', {
+      type: "web",
+      referrer: 'http://localhost'
+  })
+
+  // Add a coin.
   const action = new Action<ActionData>({
     "process": "coins",
     "action": "init",
     "data": {
         "target": "coin1",
-        "count": 0
+        "count": +1
     }
   })
-  const id = await system.createProcess('web', action, {
-      type: "web",
-      referrer: 'http://localhost'
-  })
-  console.log('ID', id);
-
+  await system.handleAction(process.id, action)
 
 });

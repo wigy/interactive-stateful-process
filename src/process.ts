@@ -1,9 +1,9 @@
 import { ElementType } from "./element"
-import { BadState, InvalidArgument, NotImplemented } from "./error"
+import { BadState, InvalidArgument, NotFound, NotImplemented } from "./error"
 import { Origin } from "./origin"
-import { Directions } from './directions';
-import { Action } from "./action";
-import { TimeStamp } from "./common";
+import { Directions } from './directions'
+import { Action } from "./action"
+import { Database, TimeStamp } from "./common"
 
 export type ProcessId = number
 export type ProcessTitle = string
@@ -19,6 +19,7 @@ export interface ProcessFile {
 export class ProcessStep<VendorElementType, VendorState, VendorActionData> {
     directions: Directions<VendorElementType, VendorActionData>
     action: Action<VendorActionData>
+    number: number
     started: TimeStamp
     state: VendorState
     finished: TimeStamp
@@ -34,12 +35,12 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
     steps: ProcessStep<VendorElementType, VendorState, VendorActionData>[]
     currentStep: number | undefined
 
-    constructor(name: ProcessName, origin: Origin) {
+    constructor(name: ProcessName | null = null, origin: Origin | null = null) {
         this.id = null
-        this.name = name
+        this.name = name === null ? '[unknown]' : name,
         this.complete = false
         this.successful = undefined
-        this.origin = origin
+        this.origin = origin === null ? { type: '[unknown]' } : origin,
         this.files = []
         this.steps = []
         this.currentStep = undefined
@@ -53,6 +54,23 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
             origin: this.origin,
             currentStep: this.currentStep,
         }
+    }
+
+    async load(db: Database, id: ProcessId): Promise<Process<VendorElementType, VendorState, VendorActionData> > {
+
+        const data = await db('processes').where({ id }).first()
+        if (!data) {
+            throw new NotFound(`Cannot find process with ID = ${id}.`)
+        }
+        this.name = data.name
+        this.complete = data.complete
+        this.successful = data.successful
+        this.origin = data.origin
+        this.currentStep = data.currentStep
+        this.files = []
+        this.steps = []
+
+        return this
     }
 }
 
@@ -73,7 +91,7 @@ export class ProcessHandler<VendorElementType, VendorState, VendorActionData> {
         throw new NotImplemented(`A handler '${this.name}' does not implement startingPoint()`)
     }
 
-    startingState(type: ProcessType): VendorState | null {
+    startingState(type: ProcessType): VendorState {
         throw new NotImplemented(`A handler '${this.name}' does not implement startingState()`)
     }
 }
@@ -84,7 +102,7 @@ export type ProcessHandlerMap<VendorElementType, VendorState, VendorActionData> 
 
 export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> {
 
-    db: any = null
+    db: Database = null
     handlers: ProcessHandlerMap<VendorElementType, VendorState, VendorActionData> = {}
 
     register(handler: ProcessHandler<VendorElementType, VendorState, VendorActionData>): void {
@@ -99,10 +117,10 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
         for (const [_, handler] of Object.entries(this.handlers)) {
             const point = handler.startingDirections(type)
             if (point) {
-                points.push(point);
+                points.push(point)
             }
         }
-        return points;
+        return points
     }
 
     getHandler(name: ProcessName): ProcessHandler<VendorElementType, VendorState, VendorActionData> {
@@ -112,40 +130,60 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
         return this.handlers[name]
     }
 
+    async useKnex(knex: Database) {
+        this.db = knex
+    }
+
+    getDb(): Database {
+        if (this.db) {
+            return this.db
+        }
+        throw new BadState(`Database is not yet set.`)
+    }
+
     async createProcess(
         type: ProcessType,
-        action: Action<VendorActionData>,
+        name: ProcessName,
         origin: Origin)
         : Promise<Process<VendorElementType, VendorState, VendorActionData> >
     {
-        const handler = this.getHandler(action.process)
+        const handler = this.getHandler(name)
 
         // Set up the process.
-        const process = new Process<VendorElementType, VendorState, VendorActionData>(action.process, origin)
+        const process = new Process<VendorElementType, VendorState, VendorActionData>(name, origin)
         const db = this.getDb()
         const processId: ProcessId = (await this.getDb()('processes').insert(process.dbData).returning('id'))[0]
+        process.id = processId
 
         // Get the initial state.
         const init = handler.startingDirections(type)
         if (!init) {
-            throw new BadState(`Trying to find starting point from handler ${action.process} for ${type} and got null.`)
+            throw new BadState(`Trying to find starting directions from handler '${name}' for '${type}' and got null.`)
         }
         const state = handler.startingState(type)
-        const step = { processId, state, action: action.dbData, directions: init.dbData }
+        const step = { processId, state, action: null, number: 0, directions: init.dbData }
         await this.getDb()('process_steps').insert(step)
         await this.getDb()('processes').update({ currentStep: 0 }).where({ id: processId })
 
         return process
     }
 
-    async useKnex(knex) {
-        this.db = knex
+    async loadProcess(processId: ProcessId): Promise<Process<VendorElementType, VendorState, VendorActionData> > {
+        const process = await (new Process<VendorElementType, VendorState, VendorActionData>()).load(this.getDb(), processId)
+        console.log(process);
+        return process
     }
 
-    getDb(): any {
-        if (this.db) {
-            return this.db
+    async handleAction(processId: ProcessId | null, action: Action<VendorActionData>): Promise<Directions<VendorElementType, VendorActionData> | boolean> {
+        if (!processId) {
+            throw new InvalidArgument(`Process ID not given when trying to handle action ${JSON.stringify(action.dbData)}.`)
         }
-        throw new BadState(`Database is not yet set.`)
+        // Load data needed.
+        const process = await this.loadProcess(processId)
+        //process.loadLastStep()
+
+        const handler = this.getHandler(action.process)
+
+        return false
     }
 }

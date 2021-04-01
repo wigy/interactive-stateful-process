@@ -29,13 +29,14 @@ export async function up (knex) {
         table.integer('processId').notNullable();
         table.foreign('processId').references('processes.id');
 
+        table.integer('number').notNullable();
         table.json('directions')
-        table.json('action')
+        table.json('action').default(null)
         table.datetime('started').defaultTo(knex.fn.now())
-        table.json('state')
+        table.json('state').notNullable()
         table.datetime('finished').default(null)
 
-        table.index(['processId']);
+        table.index(['processId', 'number']);
     });
 }
 
