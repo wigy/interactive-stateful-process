@@ -23,6 +23,22 @@ export class ProcessStep<VendorElementType, VendorState, VendorActionData> {
     started: TimeStamp
     state: VendorState
     finished: TimeStamp
+
+    constructor(obj: {
+        directions: Directions<VendorElementType, VendorActionData>
+        action: Action<VendorActionData>
+        number: number
+        started: TimeStamp
+        state: VendorState
+        finished: TimeStamp
+    }) {
+        this.directions = obj.directions
+        this.action = obj.action
+        this.number = obj.number
+        this.started = obj.started
+        this.state = obj.state
+        this.finished = obj.finished
+    }
 }
 
 export class Process<VendorElementType, VendorState, VendorActionData> {
@@ -62,6 +78,7 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
         if (!data) {
             throw new NotFound(`Cannot find process with ID = ${id}.`)
         }
+        this.id = id
         this.name = data.name
         this.complete = data.complete
         this.successful = data.successful
@@ -71,6 +88,21 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
         this.steps = []
 
         return this
+    }
+
+    async loadCurrentStep(db: Database): Promise<ProcessStep<VendorElementType, VendorState, VendorActionData> > {
+        if (!this.id) {
+            throw new BadState(`Cannot load steps, if process have no ID ${JSON.stringify(this.dbData)}.`)
+        }
+        if (this.currentStep === undefined) {
+            throw new BadState(`Cannot load any steps, since process have no current step ${JSON.stringify(this.dbData)}.`)
+        }
+        const data = await db('process_steps').where({ id: this.id, number: this.currentStep }).first()
+        if (!data) {
+            throw new BadState(`Cannot find step ${this.currentStep} for process ${JSON.stringify(this.dbData)}.`)
+        }
+        this.steps[this.currentStep] = new ProcessStep<VendorElementType, VendorState, VendorActionData>(data);
+        return this.steps[this.currentStep]
     }
 }
 
@@ -170,7 +202,6 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
 
     async loadProcess(processId: ProcessId): Promise<Process<VendorElementType, VendorState, VendorActionData> > {
         const process = await (new Process<VendorElementType, VendorState, VendorActionData>()).load(this.getDb(), processId)
-        console.log(process);
         return process
     }
 
@@ -180,8 +211,8 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
         }
         // Load data needed.
         const process = await this.loadProcess(processId)
-        //process.loadLastStep()
-
+        const step = await process.loadCurrentStep(this.getDb())
+        console.log(step);
         const handler = this.getHandler(action.process)
 
         return false
