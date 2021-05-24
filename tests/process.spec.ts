@@ -2,7 +2,8 @@ import { ProcessingSystem, ProcessHandler, ProcessType } from '../src/process';
 import { Directions } from '../src/directions';
 import { Action } from '../src';
 import Knex from 'knex'
-import fs from 'fs'
+
+const DATABASE_URL = process.env.DATABASE_URL || 'postgres://user:pass@localhost/test'
 
 // Action
 
@@ -54,12 +55,7 @@ class CoinHandler extends ProcessHandler<ElementType, State, ActionData> {
 test('process handling', async () => {
 
   // Set up test database.
-  const dbPath = `${__dirname}/../process-test.sqlite`
-  if (fs.existsSync(dbPath)) {
-    fs.unlinkSync(dbPath)
-  }
-
-  const db = Knex('postgres://user:pass@localhost/test');
+  const db = Knex(DATABASE_URL);
   await db.migrate.latest()
   system.useKnex(db);
 
@@ -86,4 +82,5 @@ test('process handling', async () => {
   })
   await system.handleAction(process.id, action)
 
+  await db.migrate.rollback()
 });

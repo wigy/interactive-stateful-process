@@ -41,7 +41,7 @@ export async function up (knex) {
 }
 
 export async function down (knex) {
+    await knex.schema.dropTable('process_files');
+    await knex.schema.dropTable('process_steps');
     await knex.schema.dropTable('processes');
-    await knex.schema.dropTable('processe_files');
-    await knex.schema.dropTable('processe_steps');
 }
