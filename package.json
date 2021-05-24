@@ -9,7 +9,9 @@
   "scripts": {
     "dev": "tsc -w",
     "test": "jest",
-    "test:watch": "jest --watch --detectOpenHandles"
+    "lint": "echo \"\\033[0;31mNo linting system for interactive stateful process yet.\\033[0m\"",
+    "test:watch": "jest --watch --detectOpenHandles",
+    "test:ci": "yarn run lint && yarn test"
   },
   "repository": "git@github.com:wigy/react-interactive-stateful-process.git",
   "author": "Tommi Ronkainen <tommi.ronkainen@gmail.com>",
