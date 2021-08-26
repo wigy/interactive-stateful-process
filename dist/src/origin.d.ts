@@ -1,6 +1,9 @@
-export declare type OriginType = 'web';
+export declare type OriginType = '[unknonwn]' | 'web';
+export interface UnknownOrigin {
+    type: '[unknown]';
+}
 export interface WebOrigin {
-    type: OriginType;
+    type: 'web';
     referrer: string;
 }
-export declare type Origin = WebOrigin;
+export declare type Origin = UnknownOrigin | WebOrigin;

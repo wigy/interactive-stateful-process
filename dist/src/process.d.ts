@@ -1,7 +1,7 @@
 import { Origin } from "./origin";
 import { Directions } from './directions';
 import { Action } from "./action";
-import { TimeStamp } from "./common";
+import { Database, TimeStamp } from "./common";
 export declare type ProcessId = number;
 export declare type ProcessTitle = string;
 export declare type ProcessName = string;
@@ -14,9 +14,18 @@ export interface ProcessFile {
 export declare class ProcessStep<VendorElementType, VendorState, VendorActionData> {
     directions: Directions<VendorElementType, VendorActionData>;
     action: Action<VendorActionData>;
+    number: number;
     started: TimeStamp;
     state: VendorState;
     finished: TimeStamp;
+    constructor(obj: {
+        directions: Directions<VendorElementType, VendorActionData>;
+        action: Action<VendorActionData>;
+        number: number;
+        started: TimeStamp;
+        state: VendorState;
+        finished: TimeStamp;
+    });
 }
 export declare class Process<VendorElementType, VendorState, VendorActionData> {
     id: ProcessId | null;
@@ -27,25 +36,30 @@ export declare class Process<VendorElementType, VendorState, VendorActionData> {
     files: ProcessFile[];
     steps: ProcessStep<VendorElementType, VendorState, VendorActionData>[];
     currentStep: number | undefined;
-    constructor(name: ProcessName, origin: Origin);
+    constructor(name?: ProcessName | null, origin?: Origin | null);
     get dbData(): object;
+    load(db: Database, id: ProcessId): Promise<Process<VendorElementType, VendorState, VendorActionData>>;
+    loadCurrentStep(db: Database): Promise<ProcessStep<VendorElementType, VendorState, VendorActionData>>;
 }
 export declare class ProcessHandler<VendorElementType, VendorState, VendorActionData> {
     name: string;
     constructor(name: string);
     isComplete(state: VendorState): boolean;
-    startingPoint(type: ProcessType): Directions<VendorElementType, VendorActionData> | null;
+    startingDirections(type: ProcessType): Directions<VendorElementType, VendorActionData> | null;
+    startingState(type: ProcessType): VendorState;
 }
 export declare type ProcessHandlerMap<VendorElementType, VendorState, VendorActionData> = {
     [key: string]: ProcessHandler<VendorElementType, VendorState, VendorActionData>;
 };
 export declare class ProcessingSystem<VendorElementType, VendorState, VendorActionData> {
-    db: any;
+    db: Database;
     handlers: ProcessHandlerMap<VendorElementType, VendorState, VendorActionData>;
     register(handler: ProcessHandler<VendorElementType, VendorState, VendorActionData>): void;
-    startingPoints(type: ProcessType): Directions<VendorElementType, VendorActionData>[];
+    startingDirections(type: ProcessType): Directions<VendorElementType, VendorActionData>[];
     getHandler(name: ProcessName): ProcessHandler<VendorElementType, VendorState, VendorActionData>;
-    createProcess(type: ProcessType, action: Action<VendorActionData>, origin: Origin): Promise<ProcessId>;
-    useKnex(knex: any): Promise<void>;
-    getDb(): any;
+    useKnex(knex: Database): Promise<void>;
+    getDb(): Database;
+    createProcess(type: ProcessType, name: ProcessName, origin: Origin): Promise<Process<VendorElementType, VendorState, VendorActionData>>;
+    loadProcess(processId: ProcessId): Promise<Process<VendorElementType, VendorState, VendorActionData>>;
+    handleAction(processId: ProcessId | null, action: Action<VendorActionData>): Promise<Directions<VendorElementType, VendorActionData> | boolean>;
 }

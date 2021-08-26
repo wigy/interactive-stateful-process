@@ -9,11 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { ProcessingSystem, ProcessHandler } from '../src/process';
 import { Directions } from '../src/directions';
+import { Action } from '../src';
 import Knex from 'knex';
-import fs from 'fs';
+const DATABASE_URL = process.env.DATABASE_URL || 'postgres://user:pass@localhost/test';
 const system = new ProcessingSystem();
 class CoinHandler extends ProcessHandler {
-    startingPoint(type) {
+    startingDirections(type) {
+        // Hmm. Removing this comment causes jest to crash.
         if (type === 'web') {
             return new Directions({
                 title: 'Coin Add or Del',
@@ -29,31 +31,37 @@ class CoinHandler extends ProcessHandler {
         }
         return null;
     }
+    startingState(type) {
+        return {
+            coin1: 0,
+            coin5: 0,
+            coin10: 0,
+        };
+    }
 }
 test('process handling', () => __awaiter(void 0, void 0, void 0, function* () {
     // Set up test database.
-    const dbPath = `${__dirname}/../process-test.sqlite`;
-    if (fs.existsSync(dbPath)) {
-        fs.unlinkSync(dbPath);
-    }
-    const db = Knex('postgres://user:pass@localhost/test');
+    const db = Knex(DATABASE_URL);
     yield db.migrate.latest();
     system.useKnex(db);
     // Set up the system.
     system.register(new CoinHandler('coins'));
     // Start the process.
-    const start = system.startingPoints('web');
+    const start = system.startingDirections('web');
     expect(start.length).toBe(1);
-    const id = yield system.createProcess('web', {
+    const process = yield system.createProcess('web', 'coins', {
+        type: "web",
+        referrer: 'http://localhost'
+    });
+    // Add a coin.
+    const action = new Action({
         "process": "coins",
         "action": "init",
         "data": {
             "target": "coin1",
-            "count": 0
+            "count": +1
         }
-    }, {
-        type: "web",
-        referrer: 'http://localhost'
     });
-    console.log('ID', id);
+    yield system.handleAction(process.id, action);
+    yield db.migrate.rollback();
 }));

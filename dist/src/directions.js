@@ -8,6 +8,13 @@ export class Directions {
         this.content = obj.content;
     }
     get dbData() {
-        return {};
+        return {
+            title: this.title,
+            process: this.process,
+            type: this.type,
+            step: this.step,
+            description: this.description,
+            content: this.content,
+        };
     }
 }

@@ -6,3 +6,5 @@ export class BadState extends ProcessingError {
 }
 export class NotImplemented extends ProcessingError {
 }
+export class NotFound extends ProcessingError {
+}

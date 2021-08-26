@@ -31,17 +31,20 @@ export function up(knex) {
             table.increments('id');
             table.integer('processId').notNullable();
             table.foreign('processId').references('processes.id');
+            table.integer('number').notNullable();
             table.json('directions');
-            table.json('action');
-            table.datetime('started');
-            table.json('state');
-            table.datetime('finished');
-            table.index(['processId']);
+            table.json('action').default(null);
+            table.datetime('started').defaultTo(knex.fn.now());
+            table.json('state').notNullable();
+            table.datetime('finished').default(null);
+            table.index(['processId', 'number']);
         });
     });
 }
 export function down(knex) {
     return __awaiter(this, void 0, void 0, function* () {
-        knex.schema.dropTable('processes');
+        yield knex.schema.dropTable('process_files');
+        yield knex.schema.dropTable('process_steps');
+        yield knex.schema.dropTable('processes');
     });
 }
