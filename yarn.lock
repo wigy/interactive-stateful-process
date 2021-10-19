@@ -4272,6 +4272,11 @@ ts-map@^1.0.3:
   resolved "https://registry.yarnpkg.com/ts-map/-/ts-map-1.0.3.tgz#1c4d218dec813d2103b7e04e4bcf348e1471c1ff"
   integrity sha512-vDWbsl26LIcPGmDpoVzjEP6+hvHZkBkLW7JpvwbCv/5IYPJlsbzCVXY3wsCeAxAUeTclNOUZxnLdGh3VBD/J6w==
 
+ts-opaque@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/ts-opaque/-/ts-opaque-3.0.1.tgz#4c8d72655d5e63a54d0d4fc192d219229a79f7dd"
+  integrity sha512-FKVp0wGGBH/+f8aFrLRl5J+K7VBJLUvLtQOLElae/UDHGQ/40oL/wNLKj/phyzWULw9TS9hiMQX10SutJyN0jA==
+
 tsconfig-paths@^3.11.0:
   version "3.11.0"
   resolved "https://registry.yarnpkg.com/tsconfig-paths/-/tsconfig-paths-3.11.0.tgz#954c1fe973da6339c78e06b03ce2e48810b65f36"

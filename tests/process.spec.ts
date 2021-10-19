@@ -5,27 +5,29 @@ import Knex from 'knex'
 
 const DATABASE_URL = process.env.DATABASE_URL || 'postgres://user:pass@localhost/test'
 
-// Action
-
+// We don't use elements.
 type ElementType = 'none'
 
+// Counters for 3 types of coins.
 interface State {
   coin1: number
   coin5: number
   coin10: number
 }
 
+// Actions for changing amounts of one of the cointypes.
 interface ActionData {
   target: 'coin1' | 'coin5' | 'coin10'
   count: number
 }
 
+// Processing system itself.
 const system = new ProcessingSystem<ElementType, State, ActionData>()
 
+// Handler for the process.
 class CoinHandler extends ProcessHandler<ElementType, State, ActionData> {
 
   startingDirections(type: ProcessType): Directions<ElementType, ActionData> | null {
-    // Hmm. Removing this comment causes jest to crash.
     if (type === 'web') {
       return new Directions<ElementType, ActionData>({
         title: 'Coin Add or Del',

@@ -1,4 +1,3 @@
-import { ElementType } from "./element"
 import { BadState, InvalidArgument, NotFound, NotImplemented } from "./error"
 import { Origin } from "./origin"
 import { Directions } from './directions'
@@ -9,10 +8,11 @@ export type ProcessId = number
 export type ProcessTitle = string
 export type ProcessName = string
 export type ProcessType = 'web' | 'database' | 'calculation'
+export type FileEncoding = 'base64'
 
 export interface ProcessFile {
   name: string
-  encoding: string
+  encoding: FileEncoding
   data: string
 }
 
