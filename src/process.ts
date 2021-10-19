@@ -3,6 +3,7 @@ import { Origin } from "./origin"
 import { Directions } from './directions'
 import { Action } from "./action"
 import { Database, TimeStamp } from "./common"
+import { DatabaseError } from "."
 
 export type ProcessId = number
 export type ProcessTitle = string
@@ -50,6 +51,9 @@ export interface ProcessInfo {
   currentStep: number | undefined
 }
 
+/**
+ * A complete description of the process state and steps taken.
+ */
 export class Process<VendorElementType, VendorState, VendorActionData> {
   id: ProcessId | null
   name: ProcessName
@@ -80,6 +84,21 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
       currentStep: this.currentStep,
     }
   }
+
+  /**
+   * Save the process info to the database.
+   */
+  async save(db: Database): Promise<ProcessId> {
+    if (this.id) {
+      await db('processes').update(this.toJSON()).where({ id: this.id })
+      return this.id
+    } else {
+      this.id = (await db('processes').insert(this.toJSON()).returning('id'))[0]
+      if (this.id) return this.id
+      throw new DatabaseError(`Saving process ${JSON.stringify(this.toJSON)} failed.`)
+    }
+  }
+
 
   async load(db: Database, id: ProcessId): Promise<Process<VendorElementType, VendorState, VendorActionData>> {
 
@@ -188,8 +207,7 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
   async createProcess(type: ProcessType, name: ProcessName, file: ProcessFile): Promise<Process<VendorElementType, VendorState, VendorActionData>> {
     // Set up the process.
     const process = new Process<VendorElementType, VendorState, VendorActionData>(name, file)
-    const processId: ProcessId = (await this.db('processes').insert(process.toJSON()).returning('id'))[0]
-    process.id = processId
+    process.save(this.db)
 
     return process
   }
