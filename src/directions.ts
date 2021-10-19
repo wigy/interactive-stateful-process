@@ -37,7 +37,7 @@ export class Directions<VendorElementType, VendorActionData> {
     this.content = obj.content
   }
 
-  get dbData(): DirectionsData<VendorElementType, VendorActionData> {
+  toJSON(): DirectionsData<VendorElementType, VendorActionData> {
     return {
       title: this.title,
       process: this.process,

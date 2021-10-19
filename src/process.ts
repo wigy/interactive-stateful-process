@@ -72,7 +72,7 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
     this.currentStep = undefined
   }
 
-  get dbData(): ProcessInfo {
+  toJSON(): ProcessInfo {
     return {
       name: this.name,
       complete: this.complete,
@@ -102,14 +102,14 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
 
   async loadCurrentStep(db: Database): Promise<ProcessStep<VendorElementType, VendorState, VendorActionData>> {
     if (!this.id) {
-      throw new BadState(`Cannot load steps, if process have no ID ${JSON.stringify(this.dbData)}.`)
+      throw new BadState(`Cannot load steps, if process have no ID ${JSON.stringify(this.toJSON())}.`)
     }
     if (this.currentStep === undefined) {
-      throw new BadState(`Cannot load any steps, since process have no current step ${JSON.stringify(this.dbData)}.`)
+      throw new BadState(`Cannot load any steps, since process have no current step ${JSON.stringify(this.toJSON())}.`)
     }
     const data = await db('process_steps').where({ id: this.id, number: this.currentStep }).first()
     if (!data) {
-      throw new BadState(`Cannot find step ${this.currentStep} for process ${JSON.stringify(this.dbData)}.`)
+      throw new BadState(`Cannot find step ${this.currentStep} for process ${JSON.stringify(this.toJSON())}.`)
     }
     this.steps[this.currentStep] = new ProcessStep<VendorElementType, VendorState, VendorActionData>(data)
     return this.steps[this.currentStep]
@@ -194,7 +194,7 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
     // Set up the process.
     const process = new Process<VendorElementType, VendorState, VendorActionData>(name, origin)
     // const db = this.getDb()
-    const processId: ProcessId = (await this.getDb()('processes').insert(process.dbData).returning('id'))[0]
+    const processId: ProcessId = (await this.getDb()('processes').insert(process.toJSON()).returning('id'))[0]
     process.id = processId
 
     // Get the initial state.
@@ -203,7 +203,7 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
       throw new BadState(`Trying to find starting directions from handler '${name}' for '${type}' and got null.`)
     }
     const state = handler.startingState(type)
-    const step = { processId, state, action: null, number: 0, directions: init.dbData }
+    const step = { processId, state, action: null, number: 0, directions: init.toJSON() }
     await this.getDb()('process_steps').insert(step)
     await this.getDb()('processes').update({ currentStep: 0 }).where({ id: processId })
 
@@ -217,7 +217,7 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
 
   async handleAction(processId: ProcessId | null, action: Action<VendorActionData>): Promise<Directions<VendorElementType, VendorActionData> | boolean> {
     if (!processId) {
-      throw new InvalidArgument(`Process ID not given when trying to handle action ${JSON.stringify(action.dbData)}.`)
+      throw new InvalidArgument(`Process ID not given when trying to handle action ${JSON.stringify(action.toJSON())}.`)
     }
     // Load data needed.
     const process = await this.loadProcess(processId)

@@ -26,8 +26,7 @@ export class Action<VendorActionData> {
     this.data = obj.data
   }
 
-  // TODO: toJSON()?
-  get dbData(): ActionData<VendorActionData> {
+  toJSON(): ActionData<VendorActionData> {
     return {
       process: this.process,
       action: this.action,
