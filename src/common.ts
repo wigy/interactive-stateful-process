@@ -1,2 +1,4 @@
+import { Knex } from "knex"
+
 export type TimeStamp = number
-export type Database = any // TODO: How to specify properly database instance?
+export type Database = Knex

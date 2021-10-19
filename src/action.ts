@@ -9,22 +9,25 @@ export interface ActionTemplate<VendorActionData> {
     data: VendorActionData
 }
 
+export interface ActionData<VendorActionData> {
+    process: ProcessName
+    action: ActionName
+    data: VendorActionData
+}
+
 export class Action<VendorActionData> {
     process: ProcessName
     action: ActionName
     data: VendorActionData
 
-    constructor(obj: {
-        process: ProcessName
-        action: ActionName
-        data: VendorActionData
-    }) {
+    constructor(obj: ActionData<VendorActionData>) {
         this.process = obj.process
         this.action = obj.action
         this.data = obj.data
     }
 
-    get dbData(): object {
+    // TODO: toJSON()?
+    get dbData(): ActionData<VendorActionData> {
         return {
             process: this.process,
             action: this.action,

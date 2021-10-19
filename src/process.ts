@@ -16,6 +16,15 @@ export interface ProcessFile {
     data: string
 }
 
+export interface ProcessStepData<VendorElementType, VendorState, VendorActionData> {
+    directions: Directions<VendorElementType, VendorActionData>
+    action: Action<VendorActionData>
+    number: number
+    started: TimeStamp
+    state: VendorState
+    finished: TimeStamp
+}
+
 export class ProcessStep<VendorElementType, VendorState, VendorActionData> {
     directions: Directions<VendorElementType, VendorActionData>
     action: Action<VendorActionData>
@@ -24,14 +33,7 @@ export class ProcessStep<VendorElementType, VendorState, VendorActionData> {
     state: VendorState
     finished: TimeStamp
 
-    constructor(obj: {
-        directions: Directions<VendorElementType, VendorActionData>
-        action: Action<VendorActionData>
-        number: number
-        started: TimeStamp
-        state: VendorState
-        finished: TimeStamp
-    }) {
+    constructor(obj: ProcessStepData<VendorElementType, VendorState, VendorActionData>) {
         this.directions = obj.directions
         this.action = obj.action
         this.number = obj.number
@@ -41,15 +43,23 @@ export class ProcessStep<VendorElementType, VendorState, VendorActionData> {
     }
 }
 
+export interface ProcessInfo {
+  name: ProcessName
+  complete: boolean
+  successful: boolean | undefined
+  origin: Origin
+  currentStep: number | undefined
+}
+
 export class Process<VendorElementType, VendorState, VendorActionData> {
     id: ProcessId | null
     name: ProcessName
     complete: boolean
     successful: boolean | undefined
     origin: Origin
+    currentStep: number | undefined
     files: ProcessFile[]
     steps: ProcessStep<VendorElementType, VendorState, VendorActionData>[]
-    currentStep: number | undefined
 
     constructor(name: ProcessName | null = null, origin: Origin | null = null) {
         this.id = null
@@ -62,7 +72,7 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
         this.currentStep = undefined
     }
 
-    get dbData(): object {
+    get dbData(): ProcessInfo {
         return {
             name: this.name,
             complete: this.complete,
@@ -134,7 +144,7 @@ export type ProcessHandlerMap<VendorElementType, VendorState, VendorActionData> 
 
 export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> {
 
-    db: Database = null
+    db: Database | null = null
     handlers: ProcessHandlerMap<VendorElementType, VendorState, VendorActionData> = {}
 
     register(handler: ProcessHandler<VendorElementType, VendorState, VendorActionData>): void {
@@ -162,10 +172,11 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
         return this.handlers[name]
     }
 
-    async useKnex(knex: Database) {
+    async useKnex(knex: Database): Promise<void> {
         this.db = knex
     }
 
+    // TODO: Replace with checkDb function?
     getDb(): Database {
         if (this.db) {
             return this.db
@@ -183,7 +194,7 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
 
         // Set up the process.
         const process = new Process<VendorElementType, VendorState, VendorActionData>(name, origin)
-        const db = this.getDb()
+        // const db = this.getDb()
         const processId: ProcessId = (await this.getDb()('processes').insert(process.dbData).returning('id'))[0]
         process.id = processId
 

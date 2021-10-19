@@ -11,6 +11,15 @@ export type StepNumber = number
 export type StepTitle = string
 export type StepDescription = string
 
+export interface DirectionsData<VendorElementType, VendorActionData> {
+    title: StepTitle
+    process: ProcessName
+    type: ProcessType
+    step: StepNumber
+    description: StepDescription
+    content: StepContent<VendorElementType, VendorActionData>
+}
+
 export class Directions<VendorElementType, VendorActionData> {
     title: StepTitle
     process: ProcessName
@@ -19,14 +28,7 @@ export class Directions<VendorElementType, VendorActionData> {
     description: StepDescription
     content: StepContent<VendorElementType, VendorActionData>
 
-    constructor(obj: {
-        title: StepTitle,
-        process: ProcessName,
-        type: ProcessType,
-        step: StepNumber,
-        description: StepDescription,
-        content: StepContent<VendorElementType, VendorActionData>
-    }) {
+    constructor(obj: DirectionsData<VendorElementType, VendorActionData>) {
         this.title = obj.title
         this.process = obj.process
         this.type = obj.type
@@ -35,7 +37,7 @@ export class Directions<VendorElementType, VendorActionData> {
         this.content = obj.content
     }
 
-    get dbData(): object {
+    get dbData(): DirectionsData<VendorElementType, VendorActionData> {
         return {
             title: this.title,
             process: this.process,

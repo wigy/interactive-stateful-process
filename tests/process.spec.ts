@@ -44,11 +44,14 @@ class CoinHandler extends ProcessHandler<ElementType, State, ActionData> {
   }
 
   startingState(type: ProcessType): State {
-    return {
-      coin1: 0,
-      coin5: 0,
-      coin10: 0,
+    if (type === 'web') {
+      return {
+        coin1: 0,
+        coin5: 0,
+        coin10: 0,
+      }
     }
+    throw new Error('Not supported type.')
   }
 }
 
