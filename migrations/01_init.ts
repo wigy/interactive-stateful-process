@@ -4,7 +4,6 @@ export async function up (knex): Promise<void> {
         table.string('name', 32).notNullable()
         table.boolean('complete').notNullable().default(false)
         table.boolean('successful').default(null)
-        table.json('origin')
         table.integer('currentStep').default(null)
 
         table.index(['name'])

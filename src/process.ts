@@ -8,7 +8,7 @@ export type ProcessId = number
 export type ProcessTitle = string
 export type ProcessName = string
 export type ProcessType = 'web' | 'database' | 'calculation'
-export type FileEncoding = 'base64'
+export type FileEncoding = 'ascii' | 'base64'
 
 export interface ProcessFile {
   name: string
@@ -47,7 +47,6 @@ export interface ProcessInfo {
   name: ProcessName
   complete: boolean
   successful: boolean | undefined
-  origin: Origin
   currentStep: number | undefined
 }
 
@@ -56,18 +55,19 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
   name: ProcessName
   complete: boolean
   successful: boolean | undefined
-  origin: Origin
   currentStep: number | undefined
   files: ProcessFile[]
   steps: ProcessStep<VendorElementType, VendorState, VendorActionData>[]
 
-  constructor(name: ProcessName | null = null, origin: Origin | null = null) {
+  constructor(name: ProcessName | null, file: ProcessFile | null) {
     this.id = null
-    this.name = name === null ? '[unknown]' : name,
-      this.complete = false
+    this.name = name || '[no name]'
+    this.complete = false
     this.successful = undefined
-    this.origin = origin === null ? { type: '[unknown]' } : origin,
-      this.files = []
+    this.files = []
+    if (file) {
+      this.files.push(file)
+    }
     this.steps = []
     this.currentStep = undefined
   }
@@ -77,7 +77,6 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
       name: this.name,
       complete: this.complete,
       successful: this.successful,
-      origin: this.origin,
       currentStep: this.currentStep,
     }
   }
@@ -92,7 +91,6 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
     this.name = data.name
     this.complete = data.complete
     this.successful = data.successful
-    this.origin = data.origin
     this.currentStep = data.currentStep
     this.files = []
     this.steps = []
@@ -187,17 +185,19 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
     return this.handlers[name]
   }
 
-  async createProcess(
-    type: ProcessType,
-    name: ProcessName,
-    origin: Origin)
-    : Promise<Process<VendorElementType, VendorState, VendorActionData>> {
-    const handler = this.getHandler(name)
-
+  async createProcess(type: ProcessType, name: ProcessName, file: ProcessFile): Promise<Process<VendorElementType, VendorState, VendorActionData>> {
     // Set up the process.
-    const process = new Process<VendorElementType, VendorState, VendorActionData>(name, origin)
+    const process = new Process<VendorElementType, VendorState, VendorActionData>(name, file)
     const processId: ProcessId = (await this.db('processes').insert(process.toJSON()).returning('id'))[0]
     process.id = processId
+
+    return process
+  }
+
+  OldcreateProcess(type: ProcessType, name: ProcessName, origin: Origin): void {
+/*
+     const handler = this.getHandler(name)
+
 
     // Get the initial state.
     const init = handler.startingDirections(type)
@@ -210,13 +210,17 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
     await this.db('processes').update({ currentStep: 0 }).where({ id: processId })
 
     return process
+    */
   }
 
+  /*
   async loadProcess(processId: ProcessId): Promise<Process<VendorElementType, VendorState, VendorActionData>> {
     const process = await (new Process<VendorElementType, VendorState, VendorActionData>()).load(this.db, processId)
     return process
   }
+  */
 
+  /*
   async handleAction(processId: ProcessId | null, action: Action<VendorActionData>): Promise<Directions<VendorElementType, VendorActionData> | boolean> {
     if (!processId) {
       throw new InvalidArgument(`Process ID not given when trying to handle action ${JSON.stringify(action.toJSON())}.`)
@@ -229,4 +233,5 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
 
     return false
   }
+  */
 }

@@ -1,4 +1,4 @@
-
+// TODO: Get rid of this.
 export type OriginType = '[unknonwn]' | 'web'
 
 export interface UnknownOrigin {
