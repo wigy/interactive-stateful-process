@@ -70,8 +70,8 @@ test('process handling', async () => {
   expect(start.length).toBe(1)
 
   const process = await system.createProcess('web', 'coins', {
-      type: "web",
-      referrer: 'http://localhost'
+    type: "web",
+    referrer: 'http://localhost'
   })
 
   // Add a coin.
@@ -79,8 +79,8 @@ test('process handling', async () => {
     "process": "coins",
     "action": "init",
     "data": {
-        "target": "coin1",
-        "count": +1
+      "target": "coin1",
+      "count": +1
     }
   })
   await system.handleAction(process.id, action)
