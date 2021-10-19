@@ -1,0 +1,22 @@
+{
+  "extends": ["plugin:react/recommended", "plugin:@typescript-eslint/recommended"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "env": {
+    "node": true,
+    "mocha": true,
+    "jest": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module",
+    "es6": true
+  },
+  "rules": {
+    "space-before-function-paren": "off",
+    "padded-blocks": "off",
+    "semi": [2, "never"]
+  }
+}
