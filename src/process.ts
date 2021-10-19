@@ -144,8 +144,12 @@ export type ProcessHandlerMap<VendorElementType, VendorState, VendorActionData> 
 
 export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> {
 
-  db: Database | null = null
+  db: Database
   handlers: ProcessHandlerMap<VendorElementType, VendorState, VendorActionData> = {}
+
+  constructor(db: Database) {
+    this.db = db
+  }
 
   register(handler: ProcessHandler<VendorElementType, VendorState, VendorActionData>): void {
     if (handler.name in this.handlers) {
@@ -176,14 +180,6 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
     this.db = knex
   }
 
-  // TODO: Replace with checkDb function?
-  getDb(): Database {
-    if (this.db) {
-      return this.db
-    }
-    throw new BadState(`Database is not yet set.`)
-  }
-
   async createProcess(
     type: ProcessType,
     name: ProcessName,
@@ -193,8 +189,10 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
 
     // Set up the process.
     const process = new Process<VendorElementType, VendorState, VendorActionData>(name, origin)
-    // const db = this.getDb()
-    const processId: ProcessId = (await this.getDb()('processes').insert(process.toJSON()).returning('id'))[0]
+    if (!this.db) {
+      throw new Error('Cannot create a process without database being set.')
+    }
+    const processId: ProcessId = (await this.db('processes').insert(process.toJSON()).returning('id'))[0]
     process.id = processId
 
     // Get the initial state.
@@ -204,24 +202,30 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
     }
     const state = handler.startingState(type)
     const step = { processId, state, action: null, number: 0, directions: init.toJSON() }
-    await this.getDb()('process_steps').insert(step)
-    await this.getDb()('processes').update({ currentStep: 0 }).where({ id: processId })
+    await this.db('process_steps').insert(step)
+    await this.db('processes').update({ currentStep: 0 }).where({ id: processId })
 
     return process
   }
 
   async loadProcess(processId: ProcessId): Promise<Process<VendorElementType, VendorState, VendorActionData>> {
-    const process = await (new Process<VendorElementType, VendorState, VendorActionData>()).load(this.getDb(), processId)
+    if (!this.db) {
+      throw new Error('Cannot load a process without database being set.')
+    }
+    const process = await (new Process<VendorElementType, VendorState, VendorActionData>()).load(this.db, processId)
     return process
   }
 
   async handleAction(processId: ProcessId | null, action: Action<VendorActionData>): Promise<Directions<VendorElementType, VendorActionData> | boolean> {
+    if (!this.db) {
+      throw new Error('Cannot handle actions without database being set.')
+    }
     if (!processId) {
       throw new InvalidArgument(`Process ID not given when trying to handle action ${JSON.stringify(action.toJSON())}.`)
     }
     // Load data needed.
     const process = await this.loadProcess(processId)
-    const step = await process.loadCurrentStep(this.getDb())
+    const step = await process.loadCurrentStep(this.db)
     console.log(step)
     const handler = this.getHandler(action.process)
 

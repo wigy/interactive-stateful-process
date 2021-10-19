@@ -21,9 +21,6 @@ interface ActionData {
   count: number
 }
 
-// Processing system itself.
-const system = new ProcessingSystem<ElementType, State, ActionData>()
-
 // Handler for the process.
 class CoinHandler extends ProcessHandler<ElementType, State, ActionData> {
 
@@ -62,7 +59,7 @@ test('process handling', async () => {
   // Set up test database.
   const db = Knex(DATABASE_URL)
   await db.migrate.latest()
-  system.useKnex(db)
+  const system = new ProcessingSystem<ElementType, State, ActionData>(db)
 
   // Set up the system.
   system.register(new CoinHandler('coins'))
@@ -70,7 +67,6 @@ test('process handling', async () => {
   // Start the process.
   const start = system.startingDirections('web')
   expect(start.length).toBe(1)
-
   const process = await system.createProcess('web', 'coins', {
     type: "web",
     referrer: 'http://localhost'
