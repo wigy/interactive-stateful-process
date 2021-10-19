@@ -1,5 +1,5 @@
-import { ActionName } from "./action";
-import { ProcessId, ProcessName } from "./process";
+import { ActionName } from "./action"
+import { ProcessId, ProcessName } from "./process"
 
 export interface Input<VendorActionData> {
     id: ProcessId,

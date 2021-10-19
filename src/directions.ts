@@ -1,5 +1,5 @@
-import { ActionTemplate } from "./action";
-import { Element } from "./element";
+import { ActionTemplate } from "./action"
+import { Element } from "./element"
 import { ProcessType, ProcessName } from "./process"
 
 export interface StepContent<VendorElementType, VendorActionData> {

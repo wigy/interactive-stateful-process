@@ -101,7 +101,7 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
         if (!data) {
             throw new BadState(`Cannot find step ${this.currentStep} for process ${JSON.stringify(this.dbData)}.`)
         }
-        this.steps[this.currentStep] = new ProcessStep<VendorElementType, VendorState, VendorActionData>(data);
+        this.steps[this.currentStep] = new ProcessStep<VendorElementType, VendorState, VendorActionData>(data)
         return this.steps[this.currentStep]
     }
 }
@@ -212,7 +212,7 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
         // Load data needed.
         const process = await this.loadProcess(processId)
         const step = await process.loadCurrentStep(this.getDb())
-        console.log(step);
+        console.log(step)
         const handler = this.getHandler(action.process)
 
         return false

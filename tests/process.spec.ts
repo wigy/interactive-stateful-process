@@ -1,6 +1,6 @@
-import { ProcessingSystem, ProcessHandler, ProcessType } from '../src/process';
-import { Directions } from '../src/directions';
-import { Action } from '../src';
+import { ProcessingSystem, ProcessHandler, ProcessType } from '../src/process'
+import { Directions } from '../src/directions'
+import { Action } from '../src'
 import Knex from 'knex'
 
 const DATABASE_URL = process.env.DATABASE_URL || 'postgres://user:pass@localhost/test'
@@ -55,16 +55,16 @@ class CoinHandler extends ProcessHandler<ElementType, State, ActionData> {
 test('process handling', async () => {
 
   // Set up test database.
-  const db = Knex(DATABASE_URL);
+  const db = Knex(DATABASE_URL)
   await db.migrate.latest()
-  system.useKnex(db);
+  system.useKnex(db)
 
   // Set up the system.
   system.register(new CoinHandler('coins'))
 
   // Start the process.
-  const start = system.startingDirections('web');
-  expect(start.length).toBe(1);
+  const start = system.startingDirections('web')
+  expect(start.length).toBe(1)
 
   const process = await system.createProcess('web', 'coins', {
       type: "web",
@@ -83,4 +83,4 @@ test('process handling', async () => {
   await system.handleAction(process.id, action)
 
   await db.migrate.rollback()
-});
+})
