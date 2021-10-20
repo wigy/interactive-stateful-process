@@ -1,5 +1,4 @@
-import { BadState, InvalidArgument, NotFound, NotImplemented } from "./error"
-import { Origin } from "./origin"
+import { InvalidArgument, NotImplemented } from "./error"
 import { Directions } from './directions'
 import { Action } from "./action"
 import { Database, TimeStamp, ID } from "./common"
@@ -7,7 +6,6 @@ import { DatabaseError } from "./error"
 
 export type ProcessTitle = string
 export type ProcessName = string
-export type ProcessType = 'web' | 'database' | 'calculation'
 export type FileEncoding = 'ascii' | 'base64' | 'json'
 
 /**
@@ -271,10 +269,6 @@ export class ProcessHandler<VendorElementType, VendorState, VendorActionData> {
   startingState(file: ProcessFile): VendorState {
     throw new NotImplemented(`A handler '${this.name}' for file '${file.name}' does not implement startingState()`)
   }
-
-  startingDirections(type: ProcessType): Directions<VendorElementType, VendorActionData> | null {
-    throw new NotImplemented(`A handler '${this.name}' of type '${type}' does not implement startingPoint()`)
-  }
 }
 
 /**
@@ -321,7 +315,7 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
    * @param file
    * @returns
    */
-  async createProcess(type: ProcessType, name: ProcessName, file: ProcessFileData): Promise<Process<VendorElementType, VendorState, VendorActionData>> {
+  async createProcess(name: ProcessName, file: ProcessFileData): Promise<Process<VendorElementType, VendorState, VendorActionData>> {
     // Set up the process.
     const process = new Process<VendorElementType, VendorState, VendorActionData>(name)
     await process.save(this.db)
@@ -350,17 +344,6 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
     process.addStep(step)
     await step.save(this.db)
     return process
-  }
-
-  startingDirections(type: ProcessType): Directions<VendorElementType, VendorActionData>[] {
-    const points: Directions<VendorElementType, VendorActionData>[] = []
-    for (const handler of Object.values(this.handlers)) {
-      const point = handler.startingDirections(type)
-      if (point) {
-        points.push(point)
-      }
-    }
-    return points
   }
 
   getHandler(name: ProcessName): ProcessHandler<VendorElementType, VendorState, VendorActionData> {

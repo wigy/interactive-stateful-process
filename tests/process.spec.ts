@@ -1,4 +1,4 @@
-import { ProcessingSystem, ProcessFile } from '../src/process'
+import { ProcessingSystem } from '../src/process'
 import { Action, ProcessFileData } from '../src'
 import Knex from 'knex'
 import { CoinActionData, CoinElementType, CoinHandler, CoinState } from '../src/testing'
@@ -23,7 +23,7 @@ test('process handling with coins', async () => {
   }
 
   // Start the process.
-  const process = await system.createProcess('web', 'Handle 3 stacks of coins', sample)
+  const process = await system.createProcess('Handle 3 stacks of coins', sample)
 
   // TODO: Hmm.
   // const start = system.startingDirections('web')
