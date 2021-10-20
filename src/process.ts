@@ -128,6 +128,11 @@ export class ProcessStep<VendorElement, VendorState, VendorAction> {
       finished: this.finished,
     }
   }
+
+  async setDirections(db: Database, directions: Directions<VendorElement, VendorAction>): Promise<void> {
+    this.directions = directions
+    await db('process_steps').update({ directions: directions.toJSON() }).where({ id: this.id })
+  }
 }
 
 /**
@@ -268,6 +273,14 @@ export class ProcessHandler<VendorElement, VendorState, VendorAction> {
   startingState(file: ProcessFile): VendorState {
     throw new NotImplemented(`A handler '${this.name}' for file '${file.name}' does not implement startingState()`)
   }
+
+  /**
+   * Figure out possible directions from the given state.
+   * @param state
+   */
+  async getDirections(state: VendorState): Promise<Directions<VendorElement, VendorAction>> {
+    throw new NotImplemented(`A handler '${this.name}' for state '${JSON.stringify(state)}' does not implement getDirections()`)
+  }
 }
 
 /**
@@ -344,7 +357,8 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
     await step.save(this.db)
 
     // Find directions forward from the state.
-    // TODO: Implement.
+    const directions = await selectedHandler.getDirections(state)
+    await step.setDirections(this.db, directions)
 
     return process
   }
@@ -357,13 +371,6 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
     return this.handlers[name]
   }
 
-  async loadProcess(processId: ProcessId): Promise<Process<VendorElement, VendorState, VendorAction>> {
-    const process = await (new Process<VendorElement, VendorState, VendorAction>()).load(this.db, processId)
-    return process
-  }
-  */
-
-  /*
   async handleAction(processId: ProcessId | null, action: Action<VendorAction>): Promise<Directions<VendorElement, VendorAction> | boolean> {
     if (!processId) {
       throw new InvalidArgument(`Process ID not given when trying to handle action ${JSON.stringify(action.toJSON())}.`)

@@ -66,6 +66,7 @@ export declare class ProcessStep<VendorElement, VendorState, VendorAction> {
      * @returns
      */
     toJSON(): ProcessStepData<VendorState>;
+    setDirections(db: Database, directions: Directions<VendorElement, VendorAction>): Promise<void>;
 }
 /**
  * Overall description of the process.
@@ -124,6 +125,11 @@ export declare class ProcessHandler<VendorElement, VendorState, VendorAction> {
      * @param file
      */
     startingState(file: ProcessFile): VendorState;
+    /**
+     * Figure out possible directions from the given state.
+     * @param state
+     */
+    getDirections(state: VendorState): Promise<Directions<VendorElement, VendorAction>>;
 }
 /**
  * A collection of process handlers.

@@ -14,7 +14,7 @@
     "test": "jest --forceExit --detectOpenHandles",
     "lint": "eslint src/*.ts tests/*.ts",
     "lint:fix": "eslint --fix src/*.ts tests/*.ts",
-    "test:watch": "jest --watch --detectOpenHandles",
+    "test:watch": "jest --watch --forceExit --detectOpenHandles",
     "test:ci": "yarn run lint && yarn test"
   },
   "repository": "git@github.com:wigy/react-interactive-stateful-process.git",

@@ -1,7 +1,7 @@
-import { ProcessFile, ProcessHandler } from ".."
+import { BadState, Directions, ProcessFile, ProcessHandler } from ".."
 
 // We don't use elements in this dummy process.
-export type CoinElementType = 'none'
+export type CoinElement = 'none'
 
 // Counters for 3 types of coins.
 export interface CoinState {
@@ -12,13 +12,13 @@ export interface CoinState {
 }
 
 // Actions for changing amounts of one of the cointypes.
-export interface CoinActionData {
+export type CoinAction = {
   target: 'coin1' | 'coin5' | 'coin10'
   count: number
-}
+} | 'initialize'
 
 // Handler for the process.
-export class CoinHandler extends ProcessHandler<CoinElementType, CoinState, CoinActionData> {
+export class CoinHandler extends ProcessHandler<CoinElement, CoinState, CoinAction> {
 
   canHandle(file: ProcessFile): boolean {
     return /^#1,5,10/.test(file.data)
@@ -30,6 +30,18 @@ export class CoinHandler extends ProcessHandler<CoinElementType, CoinState, Coin
       coin1: 0,
       coin5: 0,
       coin10: 0,
+    }
+  }
+
+  async getDirections(state: CoinState): Promise<Directions<CoinElement, CoinAction>> {
+    switch (state.stage) {
+      case 'empty':
+        return new Directions<CoinElement, CoinAction>({
+          type: 'action',
+          action: 'initialize'
+        })
+      default:
+        throw new BadState(`Cannot find directions from ${JSON.stringify(state)}`)
     }
   }
 }

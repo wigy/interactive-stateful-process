@@ -94,6 +94,12 @@ export class ProcessStep {
             finished: this.finished,
         };
     }
+    setDirections(db, directions) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.directions = directions;
+            yield db('process_steps').update({ directions: directions.toJSON() }).where({ id: this.id });
+        });
+    }
 }
 /**
  * A complete description of the process state and steps taken.
@@ -175,6 +181,15 @@ export class ProcessHandler {
     startingState(file) {
         throw new NotImplemented(`A handler '${this.name}' for file '${file.name}' does not implement startingState()`);
     }
+    /**
+     * Figure out possible directions from the given state.
+     * @param state
+     */
+    getDirections(state) {
+        return __awaiter(this, void 0, void 0, function* () {
+            throw new NotImplemented(`A handler '${this.name}' for state '${JSON.stringify(state)}' does not implement getDirections()`);
+        });
+    }
 }
 /**
  * An instance of the full processing system.
@@ -238,6 +253,8 @@ export class ProcessingSystem {
             process.addStep(step);
             yield step.save(this.db);
             // Find directions forward from the state.
+            const directions = yield selectedHandler.getDirections(state);
+            yield step.setDirections(this.db, directions);
             return process;
         });
     }
