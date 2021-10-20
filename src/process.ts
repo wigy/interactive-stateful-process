@@ -68,31 +68,70 @@ export class ProcessFile {
 
 }
 
-export interface ProcessStepData<VendorElementType, VendorState, VendorActionData> {
-  directions: Directions<VendorElementType, VendorActionData>
-  action: Action<VendorActionData>
+/**
+ * A basic information of the processing step.
+ */
+export interface ProcessStepData<VendorState> {
+  processId: ID
   number: number
-  started: TimeStamp
   state: VendorState
-  finished: TimeStamp
+  handler: string
+  started?: TimeStamp
+  finished?: TimeStamp
 }
 
+/**
+ * Data of the one step in the process including possible directions and action taken to the next step, if any.
+ */
 export class ProcessStep<VendorElementType, VendorState, VendorActionData> {
+  id: ID
+  processId: ID
+  number: number
+  state: VendorState
+  handler: string
+  started: TimeStamp | undefined
+  finished: TimeStamp | undefined
   directions: Directions<VendorElementType, VendorActionData>
   action: Action<VendorActionData>
-  number: number
-  started: TimeStamp
-  state: VendorState
-  finished: TimeStamp
 
-  constructor(obj: ProcessStepData<VendorElementType, VendorState, VendorActionData>) {
-    this.directions = obj.directions
-    this.action = obj.action
+  constructor(obj: ProcessStepData<VendorState>) {
+    this.processId = obj.processId
     this.number = obj.number
-    this.started = obj.started
     this.state = obj.state
+    this.handler = obj.handler
+    this.started = obj.started
     this.finished = obj.finished
   }
+
+  /**
+   * Save the process info to the database.
+   */
+   async save(db: Database): Promise<ID> {
+    if (this.id) {
+      await db('process_steps').update(this.toJSON()).where({ id: this.id })
+      return this.id
+    } else {
+      this.id = (await db('process_steps').insert(this.toJSON()).returning('id'))[0]
+      if (this.id) return this.id
+      throw new DatabaseError(`Saving process ${JSON.stringify(this.toJSON)} failed.`)
+    }
+  }
+
+  /**
+   * Get the loaded process information as JSON object.
+   * @returns
+   */
+   toJSON(): ProcessStepData<VendorState> {
+    return {
+      processId: this.processId,
+      number: this.number,
+      state: this.state,
+      handler: this.handler,
+      started: this.started,
+      finished: this.finished,
+    }
+  }
+
 }
 
 /**
@@ -282,19 +321,25 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
     process.addFile(processFile)
     await processFile.save(this.db)
     // Find the handler.
-    let selected : ProcessHandler<VendorElementType, VendorState, VendorActionData> | null = null
+    let selectedHandler : ProcessHandler<VendorElementType, VendorState, VendorActionData> | null = null
     for (const handler of Object.values(this.handlers)) {
       if (handler.canHandle(processFile)) {
-        selected = handler
+        selectedHandler = handler
         break
       }
     }
-    if (!selected) {
+    if (!selectedHandler) {
       throw new InvalidArgument(`No handler found for the file ${file.name}.`)
     }
     // Create initial step using the handler.
-    const firstState = selected.startingState(processFile)
-    console.log(firstState)
+    const state = selectedHandler.startingState(processFile)
+    const step = new ProcessStep({
+      processId: process.id,
+      number: 0,
+      handler: selectedHandler.name,
+      state
+    })
+    await step.save(this.db)
     return process
   }
 

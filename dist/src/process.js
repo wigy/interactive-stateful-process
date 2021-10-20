@@ -51,14 +51,48 @@ export class ProcessFile {
         });
     }
 }
+/**
+ * Data of the one step in the process including possible directions and action taken to the next step, if any.
+ */
 export class ProcessStep {
     constructor(obj) {
-        this.directions = obj.directions;
-        this.action = obj.action;
+        this.processId = obj.processId;
         this.number = obj.number;
-        this.started = obj.started;
         this.state = obj.state;
+        this.handler = obj.handler;
+        this.started = obj.started;
         this.finished = obj.finished;
+    }
+    /**
+     * Save the process info to the database.
+     */
+    save(db) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.id) {
+                yield db('process_steps').update(this.toJSON()).where({ id: this.id });
+                return this.id;
+            }
+            else {
+                this.id = (yield db('process_steps').insert(this.toJSON()).returning('id'))[0];
+                if (this.id)
+                    return this.id;
+                throw new DatabaseError(`Saving process ${JSON.stringify(this.toJSON)} failed.`);
+            }
+        });
+    }
+    /**
+     * Get the loaded process information as JSON object.
+     * @returns
+     */
+    toJSON() {
+        return {
+            processId: this.processId,
+            number: this.number,
+            state: this.state,
+            handler: this.handler,
+            started: this.started,
+            finished: this.finished,
+        };
     }
 }
 /**
@@ -211,19 +245,25 @@ export class ProcessingSystem {
             process.addFile(processFile);
             yield processFile.save(this.db);
             // Find the handler.
-            let selected = null;
+            let selectedHandler = null;
             for (const handler of Object.values(this.handlers)) {
                 if (handler.canHandle(processFile)) {
-                    selected = handler;
+                    selectedHandler = handler;
                     break;
                 }
             }
-            if (!selected) {
+            if (!selectedHandler) {
                 throw new InvalidArgument(`No handler found for the file ${file.name}.`);
             }
             // Create initial step using the handler.
-            const firstState = selected.startingState(processFile);
-            console.log(firstState);
+            const state = selectedHandler.startingState(processFile);
+            const step = new ProcessStep({
+                processId: process.id,
+                number: 0,
+                handler: selectedHandler.name,
+                state
+            });
+            yield step.save(this.db);
             return process;
         });
     }

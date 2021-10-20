@@ -35,22 +35,40 @@ export declare class ProcessFile {
      */
     save(db: Database): Promise<ID>;
 }
-export interface ProcessStepData<VendorElementType, VendorState, VendorActionData> {
-    directions: Directions<VendorElementType, VendorActionData>;
-    action: Action<VendorActionData>;
+/**
+ * A basic information of the processing step.
+ */
+export interface ProcessStepData<VendorState> {
+    processId: ID;
     number: number;
-    started: TimeStamp;
     state: VendorState;
-    finished: TimeStamp;
+    handler: string;
+    started?: TimeStamp;
+    finished?: TimeStamp;
 }
+/**
+ * Data of the one step in the process including possible directions and action taken to the next step, if any.
+ */
 export declare class ProcessStep<VendorElementType, VendorState, VendorActionData> {
+    id: ID;
+    processId: ID;
+    number: number;
+    state: VendorState;
+    handler: string;
+    started: TimeStamp | undefined;
+    finished: TimeStamp | undefined;
     directions: Directions<VendorElementType, VendorActionData>;
     action: Action<VendorActionData>;
-    number: number;
-    started: TimeStamp;
-    state: VendorState;
-    finished: TimeStamp;
-    constructor(obj: ProcessStepData<VendorElementType, VendorState, VendorActionData>);
+    constructor(obj: ProcessStepData<VendorState>);
+    /**
+     * Save the process info to the database.
+     */
+    save(db: Database): Promise<ID>;
+    /**
+     * Get the loaded process information as JSON object.
+     * @returns
+     */
+    toJSON(): ProcessStepData<VendorState>;
 }
 /**
  * Overall description of the process.

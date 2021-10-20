@@ -26,7 +26,6 @@ test('process handling with coins', () => __awaiter(void 0, void 0, void 0, func
     };
     // Start the process.
     const process = yield system.createProcess('web', 'Handle 3 stacks of coins', sample);
-    console.log(process);
     // TODO: Hmm.
     // const start = system.startingDirections('web')
     // console.log(start)
@@ -43,5 +42,6 @@ test('process handling with coins', () => __awaiter(void 0, void 0, void 0, func
     // await system.handleAction(process.id, action)
     console.log('PROCESSES', yield db('processes').select('*'));
     console.log('FILES', yield db('process_files').select('*'));
+    console.log('STEPS', yield db('process_steps').select('*'));
     yield db.migrate.rollback();
 }));
