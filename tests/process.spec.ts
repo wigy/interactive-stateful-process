@@ -19,7 +19,7 @@ test('process handling with coins', async () => {
   const sample: ProcessFile = {
     name: 'sample.txt',
     encoding: 'ascii',
-    data: '2,4,10'
+    data: '#1,5,10\n2,4,10\n'
   }
 
   // Start the process.
