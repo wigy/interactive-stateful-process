@@ -7,52 +7,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { ProcessingSystem, ProcessHandler } from '../src/process';
-import { Directions } from '../src/directions';
+import { ProcessingSystem } from '../src/process';
 import { Action } from '../src';
 import Knex from 'knex';
+import { CoinHandler } from '../src/testing';
 const DATABASE_URL = process.env.DATABASE_URL || 'postgres://user:pass@localhost/test';
-const system = new ProcessingSystem();
-class CoinHandler extends ProcessHandler {
-    startingDirections(type) {
-        // Hmm. Removing this comment causes jest to crash.
-        if (type === 'web') {
-            return new Directions({
-                title: 'Coin Add or Del',
-                type: 'web',
-                process: this.name,
-                step: 0,
-                description: 'Toss coins around.',
-                content: {
-                    elements: [],
-                    actions: []
-                }
-            });
-        }
-        return null;
-    }
-    startingState(type) {
-        return {
-            coin1: 0,
-            coin5: 0,
-            coin10: 0,
-        };
-    }
-}
-test('process handling', () => __awaiter(void 0, void 0, void 0, function* () {
+test('process handling with coins', () => __awaiter(void 0, void 0, void 0, function* () {
     // Set up test database.
     const db = Knex(DATABASE_URL);
     yield db.migrate.latest();
-    system.useKnex(db);
+    const system = new ProcessingSystem(db);
     // Set up the system.
     system.register(new CoinHandler('coins'));
+    const sample = {
+        name: 'sample.txt',
+        encoding: 'ascii',
+        data: '#1,5,10\n2,4,10\n'
+    };
     // Start the process.
-    const start = system.startingDirections('web');
-    expect(start.length).toBe(1);
-    const process = yield system.createProcess('web', 'coins', {
-        type: "web",
-        referrer: 'http://localhost'
-    });
+    const process = yield system.createProcess('web', 'Handle 3 stacks of coins', sample);
+    console.log(process);
+    // TODO: Hmm.
+    // const start = system.startingDirections('web')
+    // console.log(start)
+    // expect(start.length).toBe(1)
     // Add a coin.
     const action = new Action({
         "process": "coins",
@@ -62,6 +40,8 @@ test('process handling', () => __awaiter(void 0, void 0, void 0, function* () {
             "count": +1
         }
     });
-    yield system.handleAction(process.id, action);
+    // await system.handleAction(process.id, action)
+    console.log('PROCESSES', yield db('processes').select('*'));
+    console.log('FILES', yield db('process_files').select('*'));
     yield db.migrate.rollback();
 }));

@@ -4,7 +4,7 @@ export class Action {
         this.action = obj.action;
         this.data = obj.data;
     }
-    get dbData() {
+    toJSON() {
         return {
             process: this.process,
             action: this.action,

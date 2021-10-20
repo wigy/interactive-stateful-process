@@ -7,7 +7,7 @@ export class Directions {
         this.description = obj.description;
         this.content = obj.content;
     }
-    get dbData() {
+    toJSON() {
         return {
             title: this.title,
             process: this.process,

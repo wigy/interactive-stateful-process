@@ -1,5 +1,5 @@
 import { ProcessingSystem, ProcessFile } from '../src/process'
-import { Action } from '../src'
+import { Action, ProcessFileData } from '../src'
 import Knex from 'knex'
 import { CoinActionData, CoinElementType, CoinHandler, CoinState } from '../src/testing'
 
@@ -16,7 +16,7 @@ test('process handling with coins', async () => {
   // Set up the system.
   system.register(new CoinHandler('coins'))
 
-  const sample: ProcessFile = {
+  const sample: ProcessFileData = {
     name: 'sample.txt',
     encoding: 'ascii',
     data: '#1,5,10\n2,4,10\n'
@@ -40,6 +40,7 @@ test('process handling with coins', async () => {
     }
   })
   // await system.handleAction(process.id, action)
-
+  console.log('PROCESSES', await db('processes').select('*'))
+  console.log('FILES', await db('process_files').select('*'))
   await db.migrate.rollback()
 })

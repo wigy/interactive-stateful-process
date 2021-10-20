@@ -8,6 +8,48 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { BadState, InvalidArgument, NotFound, NotImplemented } from "./error";
+import { DatabaseError } from "./error";
+/**
+ * An instance of file data for processing.
+ */
+export class ProcessFile {
+    constructor(obj) {
+        this.id = null;
+        this.processId = obj.processId || null;
+        this.name = obj.name;
+        this.encoding = obj.encoding;
+        this.data = obj.data;
+    }
+    /**
+     * Get the loaded process information as JSON object.
+     * @returns
+     */
+    toJSON() {
+        return {
+            processId: this.processId,
+            name: this.name,
+            encoding: this.encoding,
+            data: this.data
+        };
+    }
+    /**
+     * Save the file to the database.
+     */
+    save(db) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.id) {
+                yield db('process_files').update(this.toJSON()).where({ id: this.id });
+                return this.id;
+            }
+            else {
+                this.id = (yield db('process_files').insert(this.toJSON()).returning('id'))[0];
+                if (this.id)
+                    return this.id;
+                throw new DatabaseError(`Saving process ${JSON.stringify(this.toJSON)} failed.`);
+            }
+        });
+    }
+}
 export class ProcessStep {
     constructor(obj) {
         this.directions = obj.directions;
@@ -18,25 +60,55 @@ export class ProcessStep {
         this.finished = obj.finished;
     }
 }
+/**
+ * A complete description of the process state and steps taken.
+ */
 export class Process {
-    constructor(name = null, origin = null) {
+    constructor(name) {
         this.id = null;
-        this.name = name === null ? '[unknown]' : name,
-            this.complete = false;
+        this.name = name || '[no name]';
+        this.complete = false;
         this.successful = undefined;
-        this.origin = origin === null ? { type: '[unknown]' } : origin,
-            this.files = [];
+        this.files = [];
         this.steps = [];
         this.currentStep = undefined;
     }
-    get dbData() {
+    /**
+     * Get the loaded process information as JSON object.
+     * @returns
+     */
+    toJSON() {
         return {
             name: this.name,
             complete: this.complete,
             successful: this.successful,
-            origin: this.origin,
             currentStep: this.currentStep,
         };
+    }
+    /**
+     * Append a file to this process and link its ID.
+     * @param file
+     */
+    addFile(file) {
+        file.processId = this.id;
+        this.files.push(file);
+    }
+    /**
+     * Save the process info to the database.
+     */
+    save(db) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.id) {
+                yield db('processes').update(this.toJSON()).where({ id: this.id });
+                return this.id;
+            }
+            else {
+                this.id = (yield db('processes').insert(this.toJSON()).returning('id'))[0];
+                if (this.id)
+                    return this.id;
+                throw new DatabaseError(`Saving process ${JSON.stringify(this.toJSON)} failed.`);
+            }
+        });
     }
     load(db, id) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -48,7 +120,6 @@ export class Process {
             this.name = data.name;
             this.complete = data.complete;
             this.successful = data.successful;
-            this.origin = data.origin;
             this.currentStep = data.currentStep;
             this.files = [];
             this.steps = [];
@@ -58,14 +129,14 @@ export class Process {
     loadCurrentStep(db) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.id) {
-                throw new BadState(`Cannot load steps, if process have no ID ${JSON.stringify(this.dbData)}.`);
+                throw new BadState(`Cannot load steps, if process have no ID ${JSON.stringify(this.toJSON())}.`);
             }
             if (this.currentStep === undefined) {
-                throw new BadState(`Cannot load any steps, since process have no current step ${JSON.stringify(this.dbData)}.`);
+                throw new BadState(`Cannot load any steps, since process have no current step ${JSON.stringify(this.toJSON())}.`);
             }
             const data = yield db('process_steps').where({ id: this.id, number: this.currentStep }).first();
             if (!data) {
-                throw new BadState(`Cannot find step ${this.currentStep} for process ${JSON.stringify(this.dbData)}.`);
+                throw new BadState(`Cannot find step ${this.currentStep} for process ${JSON.stringify(this.toJSON())}.`);
             }
             this.steps[this.currentStep] = new ProcessStep(data);
             return this.steps[this.currentStep];
@@ -81,26 +152,55 @@ export class ProcessHandler {
         return false;
     }
     startingDirections(type) {
-        throw new NotImplemented(`A handler '${this.name}' does not implement startingPoint()`);
+        throw new NotImplemented(`A handler '${this.name}' of type '${type}' does not implement startingPoint()`);
     }
     startingState(type) {
-        throw new NotImplemented(`A handler '${this.name}' does not implement startingState()`);
+        throw new NotImplemented(`A handler '${this.name}' of type '${type}' does not implement startingState()`);
     }
 }
+/**
+ * An instance of the full processing system.
+ */
 export class ProcessingSystem {
-    constructor() {
-        this.db = null;
+    /**
+     * Initialize the system and set the database instance for storing process data.
+     * @param db
+     */
+    constructor(db) {
         this.handlers = {};
+        this.db = db;
     }
+    /**
+     * Register new handler class for processing.
+     * @param handler
+     */
     register(handler) {
         if (handler.name in this.handlers) {
             throw new InvalidArgument(`The handler '${handler}' is already defined.`);
         }
         this.handlers[handler.name] = handler;
     }
+    /**
+     * Initialize new process and save it to the database.
+     * @param type
+     * @param name
+     * @param file
+     * @returns
+     */
+    createProcess(type, name, file) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Set up the process.
+            const process = new Process(name);
+            yield process.save(this.db);
+            const processFile = new ProcessFile(file);
+            process.addFile(processFile);
+            yield processFile.save(this.db);
+            return process;
+        });
+    }
     startingDirections(type) {
         const points = [];
-        for (const [_, handler] of Object.entries(this.handlers)) {
+        for (const handler of Object.values(this.handlers)) {
             const point = handler.startingDirections(type);
             if (point) {
                 points.push(point);
@@ -114,54 +214,22 @@ export class ProcessingSystem {
         }
         return this.handlers[name];
     }
-    useKnex(knex) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.db = knex;
-        });
-    }
-    getDb() {
-        if (this.db) {
-            return this.db;
-        }
-        throw new BadState(`Database is not yet set.`);
-    }
-    createProcess(type, name, origin) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const handler = this.getHandler(name);
-            // Set up the process.
-            const process = new Process(name, origin);
-            const db = this.getDb();
-            const processId = (yield this.getDb()('processes').insert(process.dbData).returning('id'))[0];
-            process.id = processId;
+    OldcreateProcess(type, name, origin) {
+        /*
+             const handler = this.getHandler(name)
+        
+        
             // Get the initial state.
-            const init = handler.startingDirections(type);
+            const init = handler.startingDirections(type)
             if (!init) {
-                throw new BadState(`Trying to find starting directions from handler '${name}' for '${type}' and got null.`);
+              throw new BadState(`Trying to find starting directions from handler '${name}' for '${type}' and got null.`)
             }
-            const state = handler.startingState(type);
-            const step = { processId, state, action: null, number: 0, directions: init.dbData };
-            yield this.getDb()('process_steps').insert(step);
-            yield this.getDb()('processes').update({ currentStep: 0 }).where({ id: processId });
-            return process;
-        });
-    }
-    loadProcess(processId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const process = yield (new Process()).load(this.getDb(), processId);
-            return process;
-        });
-    }
-    handleAction(processId, action) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!processId) {
-                throw new InvalidArgument(`Process ID not given when trying to handle action ${JSON.stringify(action.dbData)}.`);
-            }
-            // Load data needed.
-            const process = yield this.loadProcess(processId);
-            const step = yield process.loadCurrentStep(this.getDb());
-            console.log(step);
-            const handler = this.getHandler(action.process);
-            return false;
-        });
+            const state = handler.startingState(type)
+            const step = { processId, state, action: null, number: 0, directions: init.toJSON() }
+            await this.db('process_steps').insert(step)
+            await this.db('processes').update({ currentStep: 0 }).where({ id: processId })
+        
+            return process
+            */
     }
 }

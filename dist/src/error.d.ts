@@ -8,3 +8,5 @@ export declare class NotImplemented extends ProcessingError {
 }
 export declare class NotFound extends ProcessingError {
 }
+export declare class DatabaseError extends ProcessingError {
+}

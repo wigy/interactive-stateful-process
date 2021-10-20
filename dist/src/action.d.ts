@@ -6,14 +6,15 @@ export interface ActionTemplate<VendorActionData> {
     label: ActionLabel;
     data: VendorActionData;
 }
+export interface ActionData<VendorActionData> {
+    process: ProcessName;
+    action: ActionName;
+    data: VendorActionData;
+}
 export declare class Action<VendorActionData> {
     process: ProcessName;
     action: ActionName;
     data: VendorActionData;
-    constructor(obj: {
-        process: ProcessName;
-        action: ActionName;
-        data: VendorActionData;
-    });
-    get dbData(): object;
+    constructor(obj: ActionData<VendorActionData>);
+    toJSON(): ActionData<VendorActionData>;
 }

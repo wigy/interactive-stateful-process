@@ -2,19 +2,69 @@ import { BadState, InvalidArgument, NotFound, NotImplemented } from "./error"
 import { Origin } from "./origin"
 import { Directions } from './directions'
 import { Action } from "./action"
-import { Database, TimeStamp } from "./common"
-import { DatabaseError } from "."
+import { Database, TimeStamp, ID } from "./common"
+import { DatabaseError } from "./error"
 
-export type ProcessId = number
 export type ProcessTitle = string
 export type ProcessName = string
 export type ProcessType = 'web' | 'database' | 'calculation'
 export type FileEncoding = 'ascii' | 'base64'
 
-export interface ProcessFile {
+/**
+ * A data structure containing file data.
+ */
+export interface ProcessFileData {
+  processId?: ID
   name: string
   encoding: FileEncoding
   data: string
+}
+
+/**
+ * An instance of file data for processing.
+ */
+export class ProcessFile {
+  id: ID
+  processId: ID
+  name: string
+  encoding: FileEncoding
+  data: string
+
+  constructor(obj: ProcessFileData) {
+    this.id = null
+    this.processId = obj.processId || null
+    this.name = obj.name
+    this.encoding = obj.encoding
+    this.data = obj.data
+  }
+
+  /**
+   * Get the loaded process information as JSON object.
+   * @returns
+   */
+   toJSON(): ProcessFileData {
+    return {
+      processId: this.processId,
+      name: this.name,
+      encoding: this.encoding,
+      data: this.data
+    }
+  }
+
+  /**
+   * Save the file to the database.
+   */
+  async save(db: Database): Promise<ID> {
+    if (this.id) {
+      await db('process_files').update(this.toJSON()).where({ id: this.id })
+      return this.id
+    } else {
+      this.id = (await db('process_files').insert(this.toJSON()).returning('id'))[0]
+      if (this.id) return this.id
+      throw new DatabaseError(`Saving process ${JSON.stringify(this.toJSON)} failed.`)
+    }
+  }
+
 }
 
 export interface ProcessStepData<VendorElementType, VendorState, VendorActionData> {
@@ -55,7 +105,7 @@ export interface ProcessInfo {
  * A complete description of the process state and steps taken.
  */
 export class Process<VendorElementType, VendorState, VendorActionData> {
-  id: ProcessId | null
+  id: ID
   name: ProcessName
   complete: boolean
   successful: boolean | undefined
@@ -63,19 +113,20 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
   files: ProcessFile[]
   steps: ProcessStep<VendorElementType, VendorState, VendorActionData>[]
 
-  constructor(name: ProcessName | null, file: ProcessFile | null) {
+  constructor(name: ProcessName | null) {
     this.id = null
     this.name = name || '[no name]'
     this.complete = false
     this.successful = undefined
     this.files = []
-    if (file) {
-      this.files.push(file)
-    }
     this.steps = []
     this.currentStep = undefined
   }
 
+  /**
+   * Get the loaded process information as JSON object.
+   * @returns
+   */
   toJSON(): ProcessInfo {
     return {
       name: this.name,
@@ -86,9 +137,18 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
   }
 
   /**
+   * Append a file to this process and link its ID.
+   * @param file
+   */
+  addFile(file: ProcessFile): void {
+    file.processId = this.id
+    this.files.push(file)
+  }
+
+  /**
    * Save the process info to the database.
    */
-  async save(db: Database): Promise<ProcessId> {
+  async save(db: Database): Promise<ID> {
     if (this.id) {
       await db('processes').update(this.toJSON()).where({ id: this.id })
       return this.id
@@ -100,7 +160,7 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
   }
 
 
-  async load(db: Database, id: ProcessId): Promise<Process<VendorElementType, VendorState, VendorActionData>> {
+  async load(db: Database, id: ID): Promise<Process<VendorElementType, VendorState, VendorActionData>> {
 
     const data = await db('processes').where({ id }).first()
     if (!data) {
@@ -147,14 +207,17 @@ export class ProcessHandler<VendorElementType, VendorState, VendorActionData> {
   }
 
   startingDirections(type: ProcessType): Directions<VendorElementType, VendorActionData> | null {
-    throw new NotImplemented(`A handler '${this.name}' does not implement startingPoint()`)
+    throw new NotImplemented(`A handler '${this.name}' of type '${type}' does not implement startingPoint()`)
   }
 
   startingState(type: ProcessType): VendorState {
-    throw new NotImplemented(`A handler '${this.name}' does not implement startingState()`)
+    throw new NotImplemented(`A handler '${this.name}' of type '${type}' does not implement startingState()`)
   }
 }
 
+/**
+ * A collection of process handlers.
+ */
 export type ProcessHandlerMap<VendorElementType, VendorState, VendorActionData> = {
   [key: string]: ProcessHandler<VendorElementType, VendorState, VendorActionData>
 }
@@ -186,6 +249,24 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
     this.handlers[handler.name] = handler
   }
 
+  /**
+   * Initialize new process and save it to the database.
+   * @param type
+   * @param name
+   * @param file
+   * @returns
+   */
+  async createProcess(type: ProcessType, name: ProcessName, file: ProcessFileData): Promise<Process<VendorElementType, VendorState, VendorActionData>> {
+    // Set up the process.
+    const process = new Process<VendorElementType, VendorState, VendorActionData>(name)
+    await process.save(this.db)
+    const processFile = new ProcessFile(file)
+    process.addFile(processFile)
+    await processFile.save(this.db)
+
+    return process
+  }
+
   startingDirections(type: ProcessType): Directions<VendorElementType, VendorActionData>[] {
     const points: Directions<VendorElementType, VendorActionData>[] = []
     for (const handler of Object.values(this.handlers)) {
@@ -202,14 +283,6 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
       throw new InvalidArgument(`There is no handler for '${name}'.`)
     }
     return this.handlers[name]
-  }
-
-  async createProcess(type: ProcessType, name: ProcessName, file: ProcessFile): Promise<Process<VendorElementType, VendorState, VendorActionData>> {
-    // Set up the process.
-    const process = new Process<VendorElementType, VendorState, VendorActionData>(name, file)
-    process.save(this.db)
-
-    return process
   }
 
   OldcreateProcess(type: ProcessType, name: ProcessName, origin: Origin): void {
