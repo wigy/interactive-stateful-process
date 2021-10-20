@@ -18,7 +18,7 @@ test('process handling with coins', () => __awaiter(void 0, void 0, void 0, func
     yield db.migrate.latest();
     const system = new ProcessingSystem(db);
     // Set up the system.
-    system.register(new CoinHandler('coins'));
+    system.register(new CoinHandler('Coin Pile Adder'));
     const sample = {
         name: 'sample.txt',
         encoding: 'ascii',

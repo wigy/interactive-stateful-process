@@ -37,6 +37,7 @@ export class ProcessFile {
      */
     save(db) {
         return __awaiter(this, void 0, void 0, function* () {
+            // TODO: Handle JSON encoding, if used.
             if (this.id) {
                 yield db('process_files').update(this.toJSON()).where({ id: this.id });
                 return this.id;
@@ -143,19 +144,29 @@ export class Process {
         });
     }
 }
+/**
+ * A handler taking care of moving between process states.
+ */
 export class ProcessHandler {
     constructor(name) {
         this.name = name;
     }
-    isComplete(state) {
-        // TODO: Implement.
-        return false;
+    /**
+     * Check if we are able to handle the given data.
+     * @param file
+     */
+    canHandle(file) {
+        throw new NotImplemented(`A handler '${this.name}' cannot handle file '${file.name}', since canHandle() is not implemented.`);
+    }
+    /**
+     * Construct intial state from the given data.
+     * @param file
+     */
+    startingState(file) {
+        throw new NotImplemented(`A handler '${this.name}' for file '${file.name}' does not implement startingState()`);
     }
     startingDirections(type) {
         throw new NotImplemented(`A handler '${this.name}' of type '${type}' does not implement startingPoint()`);
-    }
-    startingState(type) {
-        throw new NotImplemented(`A handler '${this.name}' of type '${type}' does not implement startingState()`);
     }
 }
 /**
@@ -176,7 +187,10 @@ export class ProcessingSystem {
      */
     register(handler) {
         if (handler.name in this.handlers) {
-            throw new InvalidArgument(`The handler '${handler}' is already defined.`);
+            throw new InvalidArgument(`The handler '${handler.name}' is already defined.`);
+        }
+        if (handler.name.length > 32) {
+            throw new InvalidArgument(`The handler name '${handler.name}' is too long.`);
         }
         this.handlers[handler.name] = handler;
     }
@@ -192,9 +206,24 @@ export class ProcessingSystem {
             // Set up the process.
             const process = new Process(name);
             yield process.save(this.db);
+            // Save the file and attach it to the process.
             const processFile = new ProcessFile(file);
             process.addFile(processFile);
             yield processFile.save(this.db);
+            // Find the handler.
+            let selected = null;
+            for (const handler of Object.values(this.handlers)) {
+                if (handler.canHandle(processFile)) {
+                    selected = handler;
+                    break;
+                }
+            }
+            if (!selected) {
+                throw new InvalidArgument(`No handler found for the file ${file.name}.`);
+            }
+            // Create initial step using the handler.
+            const firstState = selected.startingState(processFile);
+            console.log(firstState);
             return process;
         });
     }

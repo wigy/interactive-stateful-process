@@ -8,7 +8,7 @@ import { DatabaseError } from "./error"
 export type ProcessTitle = string
 export type ProcessName = string
 export type ProcessType = 'web' | 'database' | 'calculation'
-export type FileEncoding = 'ascii' | 'base64'
+export type FileEncoding = 'ascii' | 'base64' | 'json'
 
 /**
  * A data structure containing file data.
@@ -55,6 +55,7 @@ export class ProcessFile {
    * Save the file to the database.
    */
   async save(db: Database): Promise<ID> {
+    // TODO: Handle JSON encoding, if used.
     if (this.id) {
       await db('process_files').update(this.toJSON()).where({ id: this.id })
       return this.id
@@ -94,6 +95,9 @@ export class ProcessStep<VendorElementType, VendorState, VendorActionData> {
   }
 }
 
+/**
+ * Overall description of the process.
+ */
 export interface ProcessInfo {
   name: ProcessName
   complete: boolean
@@ -193,6 +197,9 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
   }
 }
 
+/**
+ * A handler taking care of moving between process states.
+ */
 export class ProcessHandler<VendorElementType, VendorState, VendorActionData> {
 
   name: string
@@ -201,17 +208,24 @@ export class ProcessHandler<VendorElementType, VendorState, VendorActionData> {
     this.name = name
   }
 
-  isComplete(state: VendorState): boolean {
-    // TODO: Implement.
-    return false
+  /**
+   * Check if we are able to handle the given data.
+   * @param file
+   */
+  canHandle(file: ProcessFile): boolean {
+    throw new NotImplemented(`A handler '${this.name}' cannot handle file '${file.name}', since canHandle() is not implemented.`)
+  }
+
+  /**
+   * Construct intial state from the given data.
+   * @param file
+   */
+  startingState(file: ProcessFile): VendorState {
+    throw new NotImplemented(`A handler '${this.name}' for file '${file.name}' does not implement startingState()`)
   }
 
   startingDirections(type: ProcessType): Directions<VendorElementType, VendorActionData> | null {
     throw new NotImplemented(`A handler '${this.name}' of type '${type}' does not implement startingPoint()`)
-  }
-
-  startingState(type: ProcessType): VendorState {
-    throw new NotImplemented(`A handler '${this.name}' of type '${type}' does not implement startingState()`)
   }
 }
 
@@ -244,7 +258,10 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
    */
   register(handler: ProcessHandler<VendorElementType, VendorState, VendorActionData>): void {
     if (handler.name in this.handlers) {
-      throw new InvalidArgument(`The handler '${handler}' is already defined.`)
+      throw new InvalidArgument(`The handler '${handler.name}' is already defined.`)
+    }
+    if (handler.name.length > 32) {
+      throw new InvalidArgument(`The handler name '${handler.name}' is too long.`)
     }
     this.handlers[handler.name] = handler
   }
@@ -260,10 +277,24 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
     // Set up the process.
     const process = new Process<VendorElementType, VendorState, VendorActionData>(name)
     await process.save(this.db)
+    // Save the file and attach it to the process.
     const processFile = new ProcessFile(file)
     process.addFile(processFile)
     await processFile.save(this.db)
-
+    // Find the handler.
+    let selected : ProcessHandler<VendorElementType, VendorState, VendorActionData> | null = null
+    for (const handler of Object.values(this.handlers)) {
+      if (handler.canHandle(processFile)) {
+        selected = handler
+        break
+      }
+    }
+    if (!selected) {
+      throw new InvalidArgument(`No handler found for the file ${file.name}.`)
+    }
+    // Create initial step using the handler.
+    const firstState = selected.startingState(processFile)
+    console.log(firstState)
     return process
   }
 

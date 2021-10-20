@@ -14,7 +14,7 @@ test('process handling with coins', async () => {
   const system = new ProcessingSystem<CoinElementType, CoinState, CoinActionData>(db)
 
   // Set up the system.
-  system.register(new CoinHandler('coins'))
+  system.register(new CoinHandler('Coin Pile Adder'))
 
   const sample: ProcessFileData = {
     name: 'sample.txt',

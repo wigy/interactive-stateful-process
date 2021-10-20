@@ -5,7 +5,7 @@ import { Database, TimeStamp, ID } from "./common";
 export declare type ProcessTitle = string;
 export declare type ProcessName = string;
 export declare type ProcessType = 'web' | 'database' | 'calculation';
-export declare type FileEncoding = 'ascii' | 'base64';
+export declare type FileEncoding = 'ascii' | 'base64' | 'json';
 /**
  * A data structure containing file data.
  */
@@ -52,6 +52,9 @@ export declare class ProcessStep<VendorElementType, VendorState, VendorActionDat
     finished: TimeStamp;
     constructor(obj: ProcessStepData<VendorElementType, VendorState, VendorActionData>);
 }
+/**
+ * Overall description of the process.
+ */
 export interface ProcessInfo {
     name: ProcessName;
     complete: boolean;
@@ -87,12 +90,23 @@ export declare class Process<VendorElementType, VendorState, VendorActionData> {
     load(db: Database, id: ID): Promise<Process<VendorElementType, VendorState, VendorActionData>>;
     loadCurrentStep(db: Database): Promise<ProcessStep<VendorElementType, VendorState, VendorActionData>>;
 }
+/**
+ * A handler taking care of moving between process states.
+ */
 export declare class ProcessHandler<VendorElementType, VendorState, VendorActionData> {
     name: string;
     constructor(name: string);
-    isComplete(state: VendorState): boolean;
+    /**
+     * Check if we are able to handle the given data.
+     * @param file
+     */
+    canHandle(file: ProcessFile): boolean;
+    /**
+     * Construct intial state from the given data.
+     * @param file
+     */
+    startingState(file: ProcessFile): VendorState;
     startingDirections(type: ProcessType): Directions<VendorElementType, VendorActionData> | null;
-    startingState(type: ProcessType): VendorState;
 }
 /**
  * A collection of process handlers.

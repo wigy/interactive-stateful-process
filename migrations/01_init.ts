@@ -27,6 +27,7 @@ export async function up (knex): Promise<void> {
         table.foreign('processId').references('processes.id')
 
         table.integer('number').notNullable()
+        table.string('handler', 32).notNullable()
         table.json('directions')
         table.json('action').default(null)
         table.datetime('started').defaultTo(knex.fn.now())
