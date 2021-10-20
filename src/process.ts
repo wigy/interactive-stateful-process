@@ -72,7 +72,7 @@ export class ProcessFile {
  * A basic information of the processing step.
  */
 export interface ProcessStepData<VendorState> {
-  processId: ID
+  processId?: ID
   number: number
   state: VendorState
   handler: string
@@ -95,7 +95,7 @@ export class ProcessStep<VendorElementType, VendorState, VendorActionData> {
   action: Action<VendorActionData>
 
   constructor(obj: ProcessStepData<VendorState>) {
-    this.processId = obj.processId
+    this.processId = obj.processId || null
     this.number = obj.number
     this.state = obj.state
     this.handler = obj.handler
@@ -131,7 +131,6 @@ export class ProcessStep<VendorElementType, VendorState, VendorActionData> {
       finished: this.finished,
     }
   }
-
 }
 
 /**
@@ -189,6 +188,15 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
   }
 
   /**
+   * Append a step to this process and link its ID.
+   * @param step
+   */
+   addStep(step: ProcessStep<VendorElementType, VendorState, VendorActionData>): void {
+    step.processId = this.id
+    this.steps.push(step)
+  }
+
+  /**
    * Save the process info to the database.
    */
   async save(db: Database): Promise<ID> {
@@ -202,7 +210,7 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
     }
   }
 
-
+  /*
   async load(db: Database, id: ID): Promise<Process<VendorElementType, VendorState, VendorActionData>> {
 
     const data = await db('processes').where({ id }).first()
@@ -234,6 +242,7 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
     this.steps[this.currentStep] = new ProcessStep<VendorElementType, VendorState, VendorActionData>(data)
     return this.steps[this.currentStep]
   }
+  */
 }
 
 /**
@@ -333,12 +342,12 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
     }
     // Create initial step using the handler.
     const state = selectedHandler.startingState(processFile)
-    const step = new ProcessStep({
-      processId: process.id,
+    const step = new ProcessStep<VendorElementType, VendorState, VendorActionData>({
       number: 0,
       handler: selectedHandler.name,
       state
     })
+    process.addStep(step)
     await step.save(this.db)
     return process
   }
@@ -359,25 +368,6 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
       throw new InvalidArgument(`There is no handler for '${name}'.`)
     }
     return this.handlers[name]
-  }
-
-  OldcreateProcess(type: ProcessType, name: ProcessName, origin: Origin): void {
-/*
-     const handler = this.getHandler(name)
-
-
-    // Get the initial state.
-    const init = handler.startingDirections(type)
-    if (!init) {
-      throw new BadState(`Trying to find starting directions from handler '${name}' for '${type}' and got null.`)
-    }
-    const state = handler.startingState(type)
-    const step = { processId, state, action: null, number: 0, directions: init.toJSON() }
-    await this.db('process_steps').insert(step)
-    await this.db('processes').update({ currentStep: 0 }).where({ id: processId })
-
-    return process
-    */
   }
 
   /*
