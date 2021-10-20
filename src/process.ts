@@ -344,6 +344,8 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
     await step.save(this.db)
 
     // Find directions forward from the state.
+    // TODO: Implement.
+
     return process
   }
 
