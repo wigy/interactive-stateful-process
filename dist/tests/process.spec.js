@@ -8,7 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { ProcessingSystem } from '../src/process';
-import { Action } from '../src';
 import Knex from 'knex';
 import { CoinHandler } from '../src/testing';
 const DATABASE_URL = process.env.DATABASE_URL || 'postgres://user:pass@localhost/test';
@@ -25,20 +24,22 @@ test('process handling with coins', () => __awaiter(void 0, void 0, void 0, func
         data: '#1,5,10\n2,4,10\n'
     };
     // Start the process.
-    const process = yield system.createProcess('web', 'Handle 3 stacks of coins', sample);
+    const process = yield system.createProcess('Handle 3 stacks of coins', sample);
     // TODO: Hmm.
     // const start = system.startingDirections('web')
     // console.log(start)
     // expect(start.length).toBe(1)
     // Add a coin.
-    const action = new Action({
-        "process": "coins",
-        "action": "init",
-        "data": {
-            "target": "coin1",
-            "count": +1
-        }
-    });
+    /*
+    const action = new Action<CoinActionData>({
+      "process": "coins",
+      "action": "init",
+      "data": {
+        "target": "coin1",
+        "count": +1
+      }
+    })
+    */
     // await system.handleAction(process.id, action)
     console.log('PROCESSES', yield db('processes').select('*'));
     console.log('FILES', yield db('process_files').select('*'));

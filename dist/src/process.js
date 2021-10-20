@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { BadState, InvalidArgument, NotFound, NotImplemented } from "./error";
+import { InvalidArgument, NotImplemented } from "./error";
 import { DatabaseError } from "./error";
 /**
  * An instance of file data for processing.
@@ -56,7 +56,7 @@ export class ProcessFile {
  */
 export class ProcessStep {
     constructor(obj) {
-        this.processId = obj.processId;
+        this.processId = obj.processId || null;
         this.number = obj.number;
         this.state = obj.state;
         this.handler = obj.handler;
@@ -129,6 +129,14 @@ export class Process {
         this.files.push(file);
     }
     /**
+     * Append a step to this process and link its ID.
+     * @param step
+     */
+    addStep(step) {
+        step.processId = this.id;
+        this.steps.push(step);
+    }
+    /**
      * Save the process info to the database.
      */
     save(db) {
@@ -143,38 +151,6 @@ export class Process {
                     return this.id;
                 throw new DatabaseError(`Saving process ${JSON.stringify(this.toJSON)} failed.`);
             }
-        });
-    }
-    load(db, id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = yield db('processes').where({ id }).first();
-            if (!data) {
-                throw new NotFound(`Cannot find process with ID = ${id}.`);
-            }
-            this.id = id;
-            this.name = data.name;
-            this.complete = data.complete;
-            this.successful = data.successful;
-            this.currentStep = data.currentStep;
-            this.files = [];
-            this.steps = [];
-            return this;
-        });
-    }
-    loadCurrentStep(db) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!this.id) {
-                throw new BadState(`Cannot load steps, if process have no ID ${JSON.stringify(this.toJSON())}.`);
-            }
-            if (this.currentStep === undefined) {
-                throw new BadState(`Cannot load any steps, since process have no current step ${JSON.stringify(this.toJSON())}.`);
-            }
-            const data = yield db('process_steps').where({ id: this.id, number: this.currentStep }).first();
-            if (!data) {
-                throw new BadState(`Cannot find step ${this.currentStep} for process ${JSON.stringify(this.toJSON())}.`);
-            }
-            this.steps[this.currentStep] = new ProcessStep(data);
-            return this.steps[this.currentStep];
         });
     }
 }
@@ -198,9 +174,6 @@ export class ProcessHandler {
      */
     startingState(file) {
         throw new NotImplemented(`A handler '${this.name}' for file '${file.name}' does not implement startingState()`);
-    }
-    startingDirections(type) {
-        throw new NotImplemented(`A handler '${this.name}' of type '${type}' does not implement startingPoint()`);
     }
 }
 /**
@@ -235,7 +208,7 @@ export class ProcessingSystem {
      * @param file
      * @returns
      */
-    createProcess(type, name, file) {
+    createProcess(name, file) {
         return __awaiter(this, void 0, void 0, function* () {
             // Set up the process.
             const process = new Process(name);
@@ -258,47 +231,14 @@ export class ProcessingSystem {
             // Create initial step using the handler.
             const state = selectedHandler.startingState(processFile);
             const step = new ProcessStep({
-                processId: process.id,
                 number: 0,
                 handler: selectedHandler.name,
                 state
             });
+            process.addStep(step);
             yield step.save(this.db);
+            // Find directions forward from the state.
             return process;
         });
-    }
-    startingDirections(type) {
-        const points = [];
-        for (const handler of Object.values(this.handlers)) {
-            const point = handler.startingDirections(type);
-            if (point) {
-                points.push(point);
-            }
-        }
-        return points;
-    }
-    getHandler(name) {
-        if (!(name in this.handlers)) {
-            throw new InvalidArgument(`There is no handler for '${name}'.`);
-        }
-        return this.handlers[name];
-    }
-    OldcreateProcess(type, name, origin) {
-        /*
-             const handler = this.getHandler(name)
-        
-        
-            // Get the initial state.
-            const init = handler.startingDirections(type)
-            if (!init) {
-              throw new BadState(`Trying to find starting directions from handler '${name}' for '${type}' and got null.`)
-            }
-            const state = handler.startingState(type)
-            const step = { processId, state, action: null, number: 0, directions: init.toJSON() }
-            await this.db('process_steps').insert(step)
-            await this.db('processes').update({ currentStep: 0 }).where({ id: processId })
-        
-            return process
-            */
     }
 }

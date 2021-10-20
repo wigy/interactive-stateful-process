@@ -1,4 +1,4 @@
-import { Directions, ProcessFile, ProcessHandler, ProcessType } from "..";
+import { ProcessFile, ProcessHandler } from "..";
 export declare type CoinElementType = 'none';
 export interface CoinState {
     stage: 'empty' | 'initialized' | 'running';
@@ -13,5 +13,4 @@ export interface CoinActionData {
 export declare class CoinHandler extends ProcessHandler<CoinElementType, CoinState, CoinActionData> {
     canHandle(file: ProcessFile): boolean;
     startingState(): CoinState;
-    startingDirections(type: ProcessType): Directions<CoinElementType, CoinActionData> | null;
 }

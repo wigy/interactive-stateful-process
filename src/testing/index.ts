@@ -1,4 +1,4 @@
-import { Directions, ProcessFile, ProcessHandler } from ".."
+import { ProcessFile, ProcessHandler } from ".."
 
 // We don't use elements in this dummy process.
 export type CoinElementType = 'none'
@@ -31,20 +31,5 @@ export class CoinHandler extends ProcessHandler<CoinElementType, CoinState, Coin
       coin5: 0,
       coin10: 0,
     }
-  }
-
-  startingDirections(): Directions<CoinElementType, CoinActionData> | null {
-    return new Directions<CoinElementType, CoinActionData>({
-      title: 'Coin Add or Del',
-      process: this.name,
-      step: 0,
-      description: 'Toss coins around.',
-      content: {
-        elements: [],
-        actions: []
-      }
-    })
-
-    return null
   }
 }

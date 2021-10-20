@@ -1,5 +1,5 @@
 import { ProcessingSystem } from '../src/process'
-import { Action, ProcessFileData } from '../src'
+import { ProcessFileData } from '../src'
 import Knex from 'knex'
 import { CoinActionData, CoinElementType, CoinHandler, CoinState } from '../src/testing'
 
@@ -31,6 +31,7 @@ test('process handling with coins', async () => {
   // expect(start.length).toBe(1)
 
   // Add a coin.
+  /*
   const action = new Action<CoinActionData>({
     "process": "coins",
     "action": "init",
@@ -39,6 +40,7 @@ test('process handling with coins', async () => {
       "count": +1
     }
   })
+  */
   // await system.handleAction(process.id, action)
   console.log('PROCESSES', await db('processes').select('*'))
   console.log('FILES', await db('process_files').select('*'))

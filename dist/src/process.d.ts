@@ -1,10 +1,7 @@
-import { Origin } from "./origin";
 import { Directions } from './directions';
-import { Action } from "./action";
 import { Database, TimeStamp, ID } from "./common";
 export declare type ProcessTitle = string;
 export declare type ProcessName = string;
-export declare type ProcessType = 'web' | 'database' | 'calculation';
 export declare type FileEncoding = 'ascii' | 'base64' | 'json';
 /**
  * A data structure containing file data.
@@ -39,7 +36,7 @@ export declare class ProcessFile {
  * A basic information of the processing step.
  */
 export interface ProcessStepData<VendorState> {
-    processId: ID;
+    processId?: ID;
     number: number;
     state: VendorState;
     handler: string;
@@ -49,7 +46,7 @@ export interface ProcessStepData<VendorState> {
 /**
  * Data of the one step in the process including possible directions and action taken to the next step, if any.
  */
-export declare class ProcessStep<VendorElementType, VendorState, VendorActionData> {
+export declare class ProcessStep<VendorElement, VendorState, VendorAction> {
     id: ID;
     processId: ID;
     number: number;
@@ -57,8 +54,8 @@ export declare class ProcessStep<VendorElementType, VendorState, VendorActionDat
     handler: string;
     started: TimeStamp | undefined;
     finished: TimeStamp | undefined;
-    directions: Directions<VendorElementType, VendorActionData>;
-    action: Action<VendorActionData>;
+    directions: Directions<VendorElement, VendorAction>;
+    action: VendorAction;
     constructor(obj: ProcessStepData<VendorState>);
     /**
      * Save the process info to the database.
@@ -82,14 +79,14 @@ export interface ProcessInfo {
 /**
  * A complete description of the process state and steps taken.
  */
-export declare class Process<VendorElementType, VendorState, VendorActionData> {
+export declare class Process<VendorElement, VendorState, VendorAction> {
     id: ID;
     name: ProcessName;
     complete: boolean;
     successful: boolean | undefined;
     currentStep: number | undefined;
     files: ProcessFile[];
-    steps: ProcessStep<VendorElementType, VendorState, VendorActionData>[];
+    steps: ProcessStep<VendorElement, VendorState, VendorAction>[];
     constructor(name: ProcessName | null);
     /**
      * Get the loaded process information as JSON object.
@@ -102,16 +99,19 @@ export declare class Process<VendorElementType, VendorState, VendorActionData> {
      */
     addFile(file: ProcessFile): void;
     /**
+     * Append a step to this process and link its ID.
+     * @param step
+     */
+    addStep(step: ProcessStep<VendorElement, VendorState, VendorAction>): void;
+    /**
      * Save the process info to the database.
      */
     save(db: Database): Promise<ID>;
-    load(db: Database, id: ID): Promise<Process<VendorElementType, VendorState, VendorActionData>>;
-    loadCurrentStep(db: Database): Promise<ProcessStep<VendorElementType, VendorState, VendorActionData>>;
 }
 /**
  * A handler taking care of moving between process states.
  */
-export declare class ProcessHandler<VendorElementType, VendorState, VendorActionData> {
+export declare class ProcessHandler<VendorElement, VendorState, VendorAction> {
     name: string;
     constructor(name: string);
     /**
@@ -124,20 +124,19 @@ export declare class ProcessHandler<VendorElementType, VendorState, VendorAction
      * @param file
      */
     startingState(file: ProcessFile): VendorState;
-    startingDirections(type: ProcessType): Directions<VendorElementType, VendorActionData> | null;
 }
 /**
  * A collection of process handlers.
  */
-export declare type ProcessHandlerMap<VendorElementType, VendorState, VendorActionData> = {
-    [key: string]: ProcessHandler<VendorElementType, VendorState, VendorActionData>;
+export declare type ProcessHandlerMap<VendorElement, VendorState, VendorAction> = {
+    [key: string]: ProcessHandler<VendorElement, VendorState, VendorAction>;
 };
 /**
  * An instance of the full processing system.
  */
-export declare class ProcessingSystem<VendorElementType, VendorState, VendorActionData> {
+export declare class ProcessingSystem<VendorElement, VendorState, VendorAction> {
     db: Database;
-    handlers: ProcessHandlerMap<VendorElementType, VendorState, VendorActionData>;
+    handlers: ProcessHandlerMap<VendorElement, VendorState, VendorAction>;
     /**
      * Initialize the system and set the database instance for storing process data.
      * @param db
@@ -147,7 +146,7 @@ export declare class ProcessingSystem<VendorElementType, VendorState, VendorActi
      * Register new handler class for processing.
      * @param handler
      */
-    register(handler: ProcessHandler<VendorElementType, VendorState, VendorActionData>): void;
+    register(handler: ProcessHandler<VendorElement, VendorState, VendorAction>): void;
     /**
      * Initialize new process and save it to the database.
      * @param type
@@ -155,8 +154,5 @@ export declare class ProcessingSystem<VendorElementType, VendorState, VendorActi
      * @param file
      * @returns
      */
-    createProcess(type: ProcessType, name: ProcessName, file: ProcessFileData): Promise<Process<VendorElementType, VendorState, VendorActionData>>;
-    startingDirections(type: ProcessType): Directions<VendorElementType, VendorActionData>[];
-    getHandler(name: ProcessName): ProcessHandler<VendorElementType, VendorState, VendorActionData>;
-    OldcreateProcess(type: ProcessType, name: ProcessName, origin: Origin): void;
+    createProcess(name: ProcessName, file: ProcessFileData): Promise<Process<VendorElement, VendorState, VendorAction>>;
 }

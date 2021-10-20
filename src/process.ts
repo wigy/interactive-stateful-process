@@ -1,6 +1,5 @@
 import { InvalidArgument, NotImplemented } from "./error"
 import { Directions } from './directions'
-import { Action } from "./action"
 import { Database, TimeStamp, ID } from "./common"
 import { DatabaseError } from "./error"
 
@@ -81,7 +80,7 @@ export interface ProcessStepData<VendorState> {
 /**
  * Data of the one step in the process including possible directions and action taken to the next step, if any.
  */
-export class ProcessStep<VendorElementType, VendorState, VendorActionData> {
+export class ProcessStep<VendorElement, VendorState, VendorAction> {
   id: ID
   processId: ID
   number: number
@@ -89,8 +88,8 @@ export class ProcessStep<VendorElementType, VendorState, VendorActionData> {
   handler: string
   started: TimeStamp | undefined
   finished: TimeStamp | undefined
-  directions: Directions<VendorElementType, VendorActionData>
-  action: Action<VendorActionData>
+  directions: Directions<VendorElement, VendorAction>
+  action: VendorAction
 
   constructor(obj: ProcessStepData<VendorState>) {
     this.processId = obj.processId || null
@@ -144,14 +143,14 @@ export interface ProcessInfo {
 /**
  * A complete description of the process state and steps taken.
  */
-export class Process<VendorElementType, VendorState, VendorActionData> {
+export class Process<VendorElement, VendorState, VendorAction> {
   id: ID
   name: ProcessName
   complete: boolean
   successful: boolean | undefined
   currentStep: number | undefined
   files: ProcessFile[]
-  steps: ProcessStep<VendorElementType, VendorState, VendorActionData>[]
+  steps: ProcessStep<VendorElement, VendorState, VendorAction>[]
 
   constructor(name: ProcessName | null) {
     this.id = null
@@ -189,7 +188,7 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
    * Append a step to this process and link its ID.
    * @param step
    */
-   addStep(step: ProcessStep<VendorElementType, VendorState, VendorActionData>): void {
+   addStep(step: ProcessStep<VendorElement, VendorState, VendorAction>): void {
     step.processId = this.id
     this.steps.push(step)
   }
@@ -209,7 +208,7 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
   }
 
   /*
-  async load(db: Database, id: ID): Promise<Process<VendorElementType, VendorState, VendorActionData>> {
+  async load(db: Database, id: ID): Promise<Process<VendorElement, VendorState, VendorAction>> {
 
     const data = await db('processes').where({ id }).first()
     if (!data) {
@@ -226,7 +225,7 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
     return this
   }
 
-  async loadCurrentStep(db: Database): Promise<ProcessStep<VendorElementType, VendorState, VendorActionData>> {
+  async loadCurrentStep(db: Database): Promise<ProcessStep<VendorElement, VendorState, VendorAction>> {
     if (!this.id) {
       throw new BadState(`Cannot load steps, if process have no ID ${JSON.stringify(this.toJSON())}.`)
     }
@@ -237,7 +236,7 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
     if (!data) {
       throw new BadState(`Cannot find step ${this.currentStep} for process ${JSON.stringify(this.toJSON())}.`)
     }
-    this.steps[this.currentStep] = new ProcessStep<VendorElementType, VendorState, VendorActionData>(data)
+    this.steps[this.currentStep] = new ProcessStep<VendorElement, VendorState, VendorAction>(data)
     return this.steps[this.currentStep]
   }
   */
@@ -246,7 +245,7 @@ export class Process<VendorElementType, VendorState, VendorActionData> {
 /**
  * A handler taking care of moving between process states.
  */
-export class ProcessHandler<VendorElementType, VendorState, VendorActionData> {
+export class ProcessHandler<VendorElement, VendorState, VendorAction> {
 
   name: string
 
@@ -274,17 +273,17 @@ export class ProcessHandler<VendorElementType, VendorState, VendorActionData> {
 /**
  * A collection of process handlers.
  */
-export type ProcessHandlerMap<VendorElementType, VendorState, VendorActionData> = {
-  [key: string]: ProcessHandler<VendorElementType, VendorState, VendorActionData>
+export type ProcessHandlerMap<VendorElement, VendorState, VendorAction> = {
+  [key: string]: ProcessHandler<VendorElement, VendorState, VendorAction>
 }
 
 /**
  * An instance of the full processing system.
  */
-export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> {
+export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
 
   db: Database
-  handlers: ProcessHandlerMap<VendorElementType, VendorState, VendorActionData> = {}
+  handlers: ProcessHandlerMap<VendorElement, VendorState, VendorAction> = {}
 
   /**
    * Initialize the system and set the database instance for storing process data.
@@ -298,7 +297,7 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
    * Register new handler class for processing.
    * @param handler
    */
-  register(handler: ProcessHandler<VendorElementType, VendorState, VendorActionData>): void {
+  register(handler: ProcessHandler<VendorElement, VendorState, VendorAction>): void {
     if (handler.name in this.handlers) {
       throw new InvalidArgument(`The handler '${handler.name}' is already defined.`)
     }
@@ -315,16 +314,16 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
    * @param file
    * @returns
    */
-  async createProcess(name: ProcessName, file: ProcessFileData): Promise<Process<VendorElementType, VendorState, VendorActionData>> {
+  async createProcess(name: ProcessName, file: ProcessFileData): Promise<Process<VendorElement, VendorState, VendorAction>> {
     // Set up the process.
-    const process = new Process<VendorElementType, VendorState, VendorActionData>(name)
+    const process = new Process<VendorElement, VendorState, VendorAction>(name)
     await process.save(this.db)
     // Save the file and attach it to the process.
     const processFile = new ProcessFile(file)
     process.addFile(processFile)
     await processFile.save(this.db)
     // Find the handler.
-    let selectedHandler : ProcessHandler<VendorElementType, VendorState, VendorActionData> | null = null
+    let selectedHandler : ProcessHandler<VendorElement, VendorState, VendorAction> | null = null
     for (const handler of Object.values(this.handlers)) {
       if (handler.canHandle(processFile)) {
         selectedHandler = handler
@@ -336,32 +335,34 @@ export class ProcessingSystem<VendorElementType, VendorState, VendorActionData> 
     }
     // Create initial step using the handler.
     const state = selectedHandler.startingState(processFile)
-    const step = new ProcessStep<VendorElementType, VendorState, VendorActionData>({
+    const step = new ProcessStep<VendorElement, VendorState, VendorAction>({
       number: 0,
       handler: selectedHandler.name,
       state
     })
     process.addStep(step)
     await step.save(this.db)
+
+    // Find directions forward from the state.
     return process
   }
 
-  getHandler(name: ProcessName): ProcessHandler<VendorElementType, VendorState, VendorActionData> {
+  /*
+  getHandler(name: ProcessName): ProcessHandler<VendorElement, VendorState, VendorAction> {
     if (!(name in this.handlers)) {
       throw new InvalidArgument(`There is no handler for '${name}'.`)
     }
     return this.handlers[name]
   }
 
-  /*
-  async loadProcess(processId: ProcessId): Promise<Process<VendorElementType, VendorState, VendorActionData>> {
-    const process = await (new Process<VendorElementType, VendorState, VendorActionData>()).load(this.db, processId)
+  async loadProcess(processId: ProcessId): Promise<Process<VendorElement, VendorState, VendorAction>> {
+    const process = await (new Process<VendorElement, VendorState, VendorAction>()).load(this.db, processId)
     return process
   }
   */
 
   /*
-  async handleAction(processId: ProcessId | null, action: Action<VendorActionData>): Promise<Directions<VendorElementType, VendorActionData> | boolean> {
+  async handleAction(processId: ProcessId | null, action: Action<VendorAction>): Promise<Directions<VendorElement, VendorAction> | boolean> {
     if (!processId) {
       throw new InvalidArgument(`Process ID not given when trying to handle action ${JSON.stringify(action.toJSON())}.`)
     }
