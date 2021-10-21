@@ -40,11 +40,12 @@ export class CoinHandler extends ProcessHandler<CoinElement, CoinState, CoinActi
           type: 'action',
           action: { target: 'initialize' }
         })
+      case 'running':
       case 'initialized':
           return new Directions<CoinElement, CoinAction>({
-            type: 'ui',
-            element: 'ask'
-          })
+          type: 'ui',
+          element: 'ask'
+        })
       default:
         throw new BadState(`Cannot find directions from ${JSON.stringify(state)}`)
     }
@@ -59,6 +60,18 @@ export class CoinHandler extends ProcessHandler<CoinElement, CoinState, CoinActi
         state.coin10 += c10
       })
       state.stage = 'initialized'
+    }
+    else if (action.target === 'coin1') {
+      state.coin1 += action.count
+      state.stage = 'running'
+    }
+    else if (action.target === 'coin5') {
+      state.coin5 += action.count
+      state.stage = 'running'
+    }
+    else if (action.target === 'coin10') {
+      state.coin10 += action.count
+      state.stage = 'running'
     }
     return state
   }

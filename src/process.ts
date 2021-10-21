@@ -355,6 +355,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
       const action = clone(step.directions.action)
       try {
         if (action) {
+          // TODO: Safeguard for handler call.
           const nextState = await handler.action(action, state, this.files)
           await this.proceedToState(action, nextState)
         } else {
@@ -393,24 +394,28 @@ export class Process<VendorElement, VendorState, VendorAction> {
     return ProcessStatus.INCOMPLETE
   }
 
-  /*
-  async load(db: Database, id: ID): Promise<Process<VendorElement, VendorState, VendorAction>> {
-
-    const data = await db('processes').where({ id }).first()
-    if (!data) {
-      throw new NotFound(`Cannot find process with ID = ${id}.`)
+  /**
+   * Get the state of the current step of the process.
+   */
+  state(): VendorState {
+    if (this.currentStep === null || this.currentStep === undefined) {
+      throw new BadState(`Cannot check state when there is no current step loaded for ${this}`)
     }
-    this.id = id
-    this.name = data.name
-    this.complete = data.complete
-    this.successful = data.successful
-    this.currentStep = data.currentStep
-    this.files = []
-    this.steps = []
-
-    return this
+    const step = this.steps[this.currentStep]
+    return step.state
   }
-  */
+
+  /**
+   * Handle external input coming ing.
+   * @param action
+   */
+  async input(action: VendorAction): Promise<void> {
+    const step = await this.getCurrentStep()
+    const handler = this.system.getHandler(step.handler)
+    // TODO: Safeguard for handler call.
+    const nextState = await handler.action(action, clone(step.state), this.files)
+    await this.proceedToState(action, nextState)
+  }
 }
 
 /**
@@ -514,6 +519,7 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
     // Find the handler.
     let selectedHandler : ProcessHandler<VendorElement, VendorState, VendorAction> | null = null
     for (const handler of Object.values(this.handlers)) {
+      // TODO: Safeguard for handler call.
       if (handler.canHandle(processFile)) {
         selectedHandler = handler
         break
@@ -555,19 +561,4 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
     }
     return this.handlers[name]
   }
-  /*
-
-  async handleAction(processId: ProcessId | null, action: Action<VendorAction>): Promise<Directions<VendorElement, VendorAction> | boolean> {
-    if (!processId) {
-      throw new InvalidArgument(`Process ID not given when trying to handle action ${JSON.stringify(action.toJSON())}.`)
-    }
-    // Load data needed.
-    const process = await this.loadProcess(processId)
-    const step = await process.loadCurrentStep(this.db)
-    console.log(step)
-    const handler = this.getHandler(action.process)
-
-    return false
-  }
-  */
 }
