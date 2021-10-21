@@ -5,7 +5,7 @@ export type CoinElement = 'none'
 
 // Counters for 3 types of coins.
 export interface CoinState {
-  stage: 'empty' | 'initialized' | 'running'
+  stage: 'empty' | 'initialized'
   coin1: number
   coin5: number
   coin10: number
@@ -43,5 +43,18 @@ export class CoinHandler extends ProcessHandler<CoinElement, CoinState, CoinActi
       default:
         throw new BadState(`Cannot find directions from ${JSON.stringify(state)}`)
     }
+  }
+
+  async action(action: CoinAction, state: CoinState, files: ProcessFile[]): Promise<CoinState> {
+    if (action === 'initialize') {
+      files.forEach(f => {
+        const [c1, c5, c10] = f.data.split('\n')[1].split(',').map(n => parseInt(n))
+        state.coin1 += c1
+        state.coin5 += c5
+        state.coin10 += c10
+      })
+      state.stage = 'initialized'
+    }
+    return state
   }
 }

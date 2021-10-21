@@ -21,6 +21,8 @@
   "author": "Tommi Ronkainen <tommi.ronkainen@gmail.com>",
   "license": "GPL-3.0-only",
   "dependencies": {
+    "@types/clone": "^2.1.1",
+    "clone": "^2.1.2",
     "knex": "^0.95.11",
     "pg": "^8.7.1",
     "ts-opaque": "^3.0.1"

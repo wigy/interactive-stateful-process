@@ -2,6 +2,7 @@ import { InvalidArgument, NotImplemented } from "./error"
 import { Directions } from './directions'
 import { Database, ID } from "./common"
 import { BadState, DatabaseError } from "./error"
+import clone from "clone"
 
 export type ProcessTitle = string
 export type ProcessName = string
@@ -33,6 +34,10 @@ export class ProcessFile {
     this.name = obj.name
     this.encoding = obj.encoding
     this.data = obj.data
+  }
+
+  toString(): string {
+    return `ProcessFile #${this.id} ${this.name}`
   }
 
   /**
@@ -107,6 +112,10 @@ export class ProcessStep<VendorElement, VendorState, VendorAction> {
     this.handler = obj.handler
     this.started = obj.started
     this.finished = obj.finished
+  }
+
+  toString(): string {
+    return `ProcessStep ${this.number} of Process #${this.processId}`
   }
 
   /**
@@ -188,6 +197,10 @@ export class Process<VendorElement, VendorState, VendorAction> {
     this.files = []
     this.steps = []
     this.currentStep = undefined
+  }
+
+  toString(): string {
+    return `Process #${this.id} ${this.name}`
   }
 
   /**
@@ -276,9 +289,28 @@ export class Process<VendorElement, VendorState, VendorAction> {
     return this.steps[this.currentStep]
   }
 
+  /**
+   * Execute process as long as it is completed, failed or requires additional input.
+   */
   async run(): Promise<void> { // TODO: Return something?
     const step = await this.getCurrentStep()
-    console.log(step)
+    console.log(`${step}`)
+    if (step.directions.isImmediate()) {
+      const handler = this.system.getHandler(step.handler)
+      const state = clone(step.state)
+      const action = clone(step.directions.action)
+      try {
+        if (action) {
+          const nextState = await handler.action(action, state, this.files)
+          console.log(nextState)
+        } else {
+          throw new BadState(`Process step ${step} has no action.`)
+        }
+      } catch (err) {
+        // TODO: Internal logging? Or just return error?
+        console.error(err)
+      }
+    }
   }
 
   /*
@@ -318,6 +350,16 @@ export class ProcessHandler<VendorElement, VendorState, VendorAction> {
    */
   canHandle(file: ProcessFile): boolean {
     throw new NotImplemented(`A handler '${this.name}' cannot handle file '${file.name}', since canHandle() is not implemented.`)
+  }
+
+  /**
+   * Execute an action to the state in order to produce new state. Note that state is cloned and can be modified to be new state.
+   * @param action
+   * @param state
+   * @param files
+   */
+  async action(action: VendorAction, state: VendorState, files: ProcessFile[]): Promise<VendorState> {
+    throw new NotImplemented(`A handler '${this.name}' for files ${files.map(f => `'${f}''`).join(', ')} does not implement action()`)
   }
 
   /**
@@ -422,13 +464,18 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
     return process
   }
 
-  /*
-  getHandler(name: ProcessName): ProcessHandler<VendorElement, VendorState, VendorAction> {
+  /**
+   * Get the named handler or throw an error if not registered.
+   * @param name
+   * @returns
+   */
+  getHandler(name: string): ProcessHandler<VendorElement, VendorState, VendorAction> {
     if (!(name in this.handlers)) {
       throw new InvalidArgument(`There is no handler for '${name}'.`)
     }
     return this.handlers[name]
   }
+  /*
 
   async handleAction(processId: ProcessId | null, action: Action<VendorAction>): Promise<Directions<VendorElement, VendorAction> | boolean> {
     if (!processId) {

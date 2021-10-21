@@ -42,4 +42,11 @@ export class Directions<VendorElement, VendorAction> {
     }
     return ret
   }
+
+  /**
+   * Check if the direction can be determined without user intervention.
+   */
+  isImmediate(): boolean {
+    return this.type === 'action'
+  }
 }
