@@ -55,6 +55,10 @@ test('process handling with coins', async () => {
     coin10: 2,
   })
 
+  // TODO: Reload the process from the disk.
+  // TODO: Add failure check (coin < 0) and success check (coin > 10) and run process until finished.
+  // TODO: Add check for making exception during the processing.
+
   // console.log('PROCESSES', await db('processes').select('*'))
   // console.log('FILES', await db('process_files').select('*'))
   // console.log('STEPS', await db('process_steps').select('*'))
