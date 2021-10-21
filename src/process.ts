@@ -22,10 +22,10 @@ export type FileEncoding = 'ascii' | 'base64' | 'json'
  *
  */
 export enum ProcessStatus {
-  INCOMPLETE,
-  WAITING,
-  SUCCEEDED,
-  FAILED
+  INCOMPLETE = "INCOMPLETE",
+  WAITING = "WAITING",
+  SUCCEEDED = "SUCCEEDED",
+  FAILED = "FAILED"
 }
 
 /**
@@ -337,7 +337,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
   /**
    * Execute process as long as it is completed, failed or requires additional input.
    */
-  async run(): Promise<boolean> {
+  async run(): Promise<void> {
     let step
     let MAX_RUNS = 100
     while (true) {
@@ -365,8 +365,32 @@ export class Process<VendorElement, VendorState, VendorAction> {
         console.error(err)
       }
     }
-    // TODO: Return true if finished. Or true if need input?
-    return false
+    await this.updateStatus()
+  }
+
+  /**
+   * Resolve the status of the process and update it to the database.
+   */
+  async updateStatus(): Promise<void> {
+    await this.db('processes').update({ status: this.status() }).where({ id: this.id })
+  }
+
+  /**
+   * Get the status of the process.
+   */
+  status(): ProcessStatus {
+    if (this.currentStep === null || this.currentStep === undefined) {
+      throw new BadState(`Cannot check status when there is no current step loaded for ${this}`)
+    }
+    const step = this.steps[this.currentStep]
+    if (step.directions.isComplete() && step.finished) {
+      if (this.successful === true) return ProcessStatus.SUCCEEDED
+      if (this.successful === false) return ProcessStatus.FAILED
+    }
+    if (!step.directions.isImmediate() && !step.finished) {
+      return ProcessStatus.WAITING
+    }
+    return ProcessStatus.INCOMPLETE
   }
 
   /*

@@ -6,6 +6,8 @@ export async function up (knex): Promise<void> {
         table.boolean('complete').notNullable().default(false)
         table.boolean('successful').default(null)
         table.integer('currentStep').default(null)
+        table.text('error').default(null)
+        table.enum('status', ['INCOMPLETE', 'WAITING', 'SUCCEEDED', 'FAILED'], { useNative: true, enumName: 'process_status' }).notNullable().default('INCOMPLETE')
 
         table.index(['name'])
     })
@@ -43,4 +45,5 @@ export async function down (knex): Promise<void> {
     await knex.schema.dropTable('process_files')
     await knex.schema.dropTable('process_steps')
     await knex.schema.dropTable('processes')
+    await knex.schema.raw('DROP TYPE process_status')
 }

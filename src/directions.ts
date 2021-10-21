@@ -1,7 +1,7 @@
 /**
  * Definition of the how the direction plays out.
  */
-export type DirectionsType = 'action' | 'ui'
+export type DirectionsType = 'action' | 'ui' | 'complete'
 
 /**
  * Definition of direction data.
@@ -48,5 +48,12 @@ export class Directions<VendorElement, VendorAction> {
    */
   isImmediate(): boolean {
     return this.type === 'action'
+  }
+
+  /**
+   * Check if there are no directions forward.
+   */
+  isComplete(): boolean {
+    return this.type === 'complete'
   }
 }
