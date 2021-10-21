@@ -76,12 +76,13 @@ export class ProcessFile {
 /**
  * A basic information of the processing step.
  */
-export interface ProcessStepData<VendorState> {
+export interface ProcessStepData<VendorState, VendorAction> {
   processId?: ID
   number: number
   description?: string
   state: VendorState
   handler: string
+  action?: VendorAction
   started?: Date
   finished?: Date
 }
@@ -102,14 +103,15 @@ export class ProcessStep<VendorElement, VendorState, VendorAction> {
   started: Date | undefined
   finished: Date | undefined
   directions: Directions<VendorElement, VendorAction>
-  action: VendorAction
+  action: VendorAction | undefined
 
-  constructor(obj: ProcessStepData<VendorState>) {
+  constructor(obj: ProcessStepData<VendorState, VendorAction>) {
     this.processId = obj.processId || null
     this.number = obj.number
     this.description = obj.description
     this.state = obj.state
     this.handler = obj.handler
+    this.action = obj.action
     this.started = obj.started
     this.finished = obj.finished
   }
@@ -144,12 +146,13 @@ export class ProcessStep<VendorElement, VendorState, VendorAction> {
    * Get the loaded process information as JSON object.
    * @returns
    */
-   toJSON(): ProcessStepData<VendorState> {
+   toJSON(): ProcessStepData<VendorState, VendorAction> {
     return {
       processId: this.processId,
       number: this.number,
       state: this.state,
       handler: this.handler,
+      action: this.action,
       started: this.started,
       finished: this.finished,
     }
@@ -249,6 +252,31 @@ export class Process<VendorElement, VendorState, VendorAction> {
   }
 
   /**
+   * Mark the current state as completed and create new additional step with the new state.
+   * @param state
+   */
+  async proceedToState(action: VendorAction, state: VendorState): Promise<void> {
+    const current = await this.getCurrentStep()
+    const handler = this.system.getHandler(current.handler)
+    current.action = action
+    current.finished = new Date()
+    current.save()
+    const nextStep = new ProcessStep<VendorElement, VendorState, VendorAction>({
+      number: current.number + 1,
+      state,
+      handler: handler.name
+    })
+    this.addStep(nextStep)
+    this.currentStep = (this.currentStep || 0) + 1
+    this.save()
+    await nextStep.save()
+    // TODO: This call should be wrapped safely and end the process on error if it fails.
+    const directions = await handler.getDirections(state)
+    await nextStep.setDirections(this.db, directions)
+    // TODO: We could check if the process is complete here.
+  }
+
+  /**
    * Get a reference to the database.
    */
   get db(): Database {
@@ -292,17 +320,26 @@ export class Process<VendorElement, VendorState, VendorAction> {
   /**
    * Execute process as long as it is completed, failed or requires additional input.
    */
-  async run(): Promise<void> { // TODO: Return something?
-    const step = await this.getCurrentStep()
-    console.log(`${step}`)
-    if (step.directions.isImmediate()) {
+  async run(): Promise<boolean> {
+    let step
+    let MAX_RUNS = 100
+    while (true) {
+      MAX_RUNS--
+      if (MAX_RUNS < 0) {
+        console.error(`Maximum number of executions reached for the process ${this}.`)
+        break
+      }
+      step = await this.getCurrentStep()
+      if (!step.directions.isImmediate()) {
+        break
+      }
       const handler = this.system.getHandler(step.handler)
       const state = clone(step.state)
       const action = clone(step.directions.action)
       try {
         if (action) {
           const nextState = await handler.action(action, state, this.files)
-          console.log(nextState)
+          await this.proceedToState(action, nextState)
         } else {
           throw new BadState(`Process step ${step} has no action.`)
         }
@@ -311,6 +348,8 @@ export class Process<VendorElement, VendorState, VendorAction> {
         console.error(err)
       }
     }
+    // TODO: Return true if finished. Or true if need input?
+    return false
   }
 
   /*
@@ -460,6 +499,7 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
     // Find directions forward from the state.
     const directions = await selectedHandler.getDirections(state)
     await step.setDirections(this.db, directions)
+    // TODO: We could check if the process is already complete here.
 
     return process
   }

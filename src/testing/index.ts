@@ -1,11 +1,11 @@
 import { BadState, Directions, ProcessFile, ProcessHandler } from ".."
 
 // We don't use elements in this dummy process.
-export type CoinElement = 'none'
+export type CoinElement = 'none' | 'ask'
 
 // Counters for 3 types of coins.
 export interface CoinState {
-  stage: 'empty' | 'initialized'
+  stage: 'empty' | 'initialized' | 'running'
   coin1: number
   coin5: number
   coin10: number
@@ -15,7 +15,7 @@ export interface CoinState {
 export type CoinAction = {
   target: 'coin1' | 'coin5' | 'coin10'
   count: number
-} | 'initialize'
+} | { target: 'initialize' }
 
 // Handler for the process.
 export class CoinHandler extends ProcessHandler<CoinElement, CoinState, CoinAction> {
@@ -38,15 +38,20 @@ export class CoinHandler extends ProcessHandler<CoinElement, CoinState, CoinActi
       case 'empty':
         return new Directions<CoinElement, CoinAction>({
           type: 'action',
-          action: 'initialize'
+          action: { target: 'initialize' }
         })
+      case 'initialized':
+          return new Directions<CoinElement, CoinAction>({
+            type: 'ui',
+            element: 'ask'
+          })
       default:
         throw new BadState(`Cannot find directions from ${JSON.stringify(state)}`)
     }
   }
 
   async action(action: CoinAction, state: CoinState, files: ProcessFile[]): Promise<CoinState> {
-    if (action === 'initialize') {
+    if (action.target === 'initialize') {
       files.forEach(f => {
         const [c1, c5, c10] = f.data.split('\n')[1].split(',').map(n => parseInt(n))
         state.coin1 += c1
