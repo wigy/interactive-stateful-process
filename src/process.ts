@@ -315,6 +315,28 @@ export class Process<VendorElement, VendorState, VendorAction> {
   }
 
   /**
+   * Load the process data and its files. Note that current step is not yet loaded here, but when using getCurrentStep().
+   * @param id
+   */
+  async load(id: ID): Promise<void> {
+    // Load basic info.
+    const data = await this.db('processes').select('*').where({ id }).first()
+    if (!data) {
+      throw new InvalidArgument(`Cannot find process #${id}`)
+    }
+    Object.assign(this, data)
+    this.id = id
+    // Load files.
+    this.files = (await this.db('process_files').select('*').where({ processId: this.id })).map(fileData => {
+      const file = new ProcessFile(fileData)
+      file.id = fileData.id
+      return file
+    })
+    // Load current step.
+    await this.getCurrentStep()
+  }
+
+  /**
    * Load the step with the given number from the database.
    * @param number
    * @returns
@@ -326,7 +348,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
     if (this.currentStep === undefined) {
       throw new BadState(`Cannot load any steps, since process have no current step ${JSON.stringify(this.toJSON())}.`)
     }
-    const data = await this.db('process_steps').where({ id: this.id, number }).first()
+    const data = await this.db('process_steps').where({ processId: this.id, number }).first()
     if (!data) {
       throw new BadState(`Cannot find step ${this.currentStep} for process ${JSON.stringify(this.toJSON())}.`)
     }
@@ -560,5 +582,16 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
       throw new InvalidArgument(`There is no handler for '${name}'.`)
     }
     return this.handlers[name]
+  }
+
+  /**
+   * Load the process data from the disk.
+   * @param id
+   * @returns
+   */
+  async loadProcess(id: ID): Promise<Process<VendorElement, VendorState, VendorAction>> {
+    const process = new Process<VendorElement, VendorState, VendorAction>(this, null)
+    await process.load(id)
+    return process
   }
 }
