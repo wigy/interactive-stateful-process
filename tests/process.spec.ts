@@ -57,6 +57,13 @@ test('process handling with coins', async () => {
 
   // Reload the process from the disk.
   const copy = await system.loadProcess(process.id)
+  expect(copy.state()).toStrictEqual({
+    stage: 'running',
+    coin1: 6,
+    coin5: 4,
+    coin10: 2,
+  })
+
   console.log(await copy.getCurrentStep())
   // TODO: Add failure check (coin < 0) and success check (coin > 10) and run process until finished.
   // TODO: Add check for making exception during the processing.
