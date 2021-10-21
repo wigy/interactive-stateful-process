@@ -14,6 +14,7 @@ test('process handling with coins', async () => {
 
   // Set up the system.
   system.register(new CoinHandler('Coin Pile Adder'))
+  system.logger.info = () => undefined
 
   const sample: ProcessFileData = {
     name: 'sample.txt',
@@ -72,7 +73,36 @@ test('process handling with coins', async () => {
     coin5: 4,
     coin10: 2,
   })
-  // TODO: Add check for making exception during the processing.
+
+  // Create another process.
+  const failing = await system.createProcess('Intentional crash with coins', sample)
+  expect(failing.status).toBe(ProcessStatus.INCOMPLETE)
+  expect(failing.state).toStrictEqual({
+    stage: 'empty',
+    coin1: 0,
+    coin5: 0,
+    coin10: 0,
+  })
+  await failing.run()
+  expect(failing.status).toBe(ProcessStatus.WAITING)
+  expect(failing.state).toStrictEqual({
+    stage: 'initialized',
+    coin1: 2,
+    coin5: 4,
+    coin10: 10,
+  })
+
+  // Make it crash.
+  system.logger.error = () => undefined
+  await failing.input({ target: 'trigger error' })
+  expect(failing.status).toBe(ProcessStatus.CRASHED)
+  expect(failing.state).toStrictEqual({
+    stage: 'initialized',
+    coin1: 2,
+    coin5: 4,
+    coin10: 10,
+  })
+
   // TODO: Rolling back steps.
 
   // console.log('PROCESSES', await db('processes').select('*'))

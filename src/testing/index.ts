@@ -15,7 +15,7 @@ export interface CoinState {
 export type CoinAction = {
   target: 'coin1' | 'coin5' | 'coin10'
   count: number
-} | { target: 'initialize' }
+} | { target: 'initialize' } | { target: 'trigger error' }
 
 // Handler for the process.
 export class CoinHandler extends ProcessHandler<CoinElement, CoinState, CoinAction> {
@@ -72,6 +72,9 @@ export class CoinHandler extends ProcessHandler<CoinElement, CoinState, CoinActi
     else if (action.target === 'coin10') {
       state.coin10 += action.count
       state.stage = 'running'
+    }
+    else if (action.target === 'trigger error') {
+      throw new Error('This error was intentionally triggered.')
     }
     return state
   }

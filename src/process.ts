@@ -25,7 +25,8 @@ export enum ProcessStatus {
   INCOMPLETE = "INCOMPLETE",
   WAITING = "WAITING",
   SUCCEEDED = "SUCCEEDED",
-  FAILED = "FAILED"
+  FAILED = "FAILED",
+  CRASHED = "CRASHED"
 }
 
 /**
@@ -198,6 +199,7 @@ export interface ProcessInfo {
   successful: boolean | undefined
   currentStep: number | undefined
   status: ProcessStatus
+  error?: string
 }
 
 /**
@@ -216,6 +218,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
   status: ProcessStatus
   files: ProcessFile[]
   steps: ProcessStep<VendorElement, VendorState, VendorAction>[]
+  error: string | undefined
 
   constructor(system: ProcessingSystem<VendorElement, VendorState, VendorAction>, name: ProcessName | null) {
     this.system = system
@@ -375,7 +378,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
     while (true) {
       MAX_RUNS--
       if (MAX_RUNS < 0) {
-        console.error(`Maximum number of executions reached for the process ${this}.`)
+        this.system.logger.error(`Maximum number of executions reached for the process ${this}.`)
         break
       }
       step = await this.getCurrentStep()
@@ -388,18 +391,32 @@ export class Process<VendorElement, VendorState, VendorAction> {
       const action = clone(step.directions.action)
       try {
         if (action) {
-          // TODO: Safeguard for handler call.
           const nextState = await handler.action(action, state, this.files)
           await this.proceedToState(action, nextState)
         } else {
           throw new BadState(`Process step ${step} has no action.`)
         }
       } catch (err) {
-        // TODO: Internal logging? Or just return error?
-        console.error(err)
-        await this.updateStatus()
+        this.system.logger.error(err)
+        return this.crashed(err)
       }
     }
+  }
+
+  /**
+   * Record the error and mark the process as finished with an error.
+   * @param err
+   */
+  async crashed(err: Error): Promise<void> {
+    this.system.logger.error('Processing failed:', err)
+    if (this.currentStep !== undefined && this.currentStep !== null) {
+      const step = await this.loadStep(this.currentStep)
+      step.finished = new Date()
+      await step.save()
+    }
+    this.error = `${err.name}: ${err.message}`
+    await this.save()
+    await this.updateStatus()
   }
 
   /**
@@ -407,16 +424,23 @@ export class Process<VendorElement, VendorState, VendorAction> {
    */
   async updateStatus(): Promise<void> {
     let status = ProcessStatus.INCOMPLETE
-    if (this.currentStep === null || this.currentStep === undefined) {
-      throw new BadState(`Cannot check status when there is no current step loaded for ${this}`)
+    if (this.error) {
+      status = ProcessStatus.CRASHED
+    } else {
+      if (this.currentStep === null || this.currentStep === undefined) {
+        throw new BadState(`Cannot check status when there is no current step loaded for ${this}`)
+      }
+      const step = this.steps[this.currentStep]
+      if (step.finished) {
+        if (this.successful === true) status = ProcessStatus.SUCCEEDED
+        if (this.successful === false) status = ProcessStatus.FAILED
+      }
+      if (step.directions) {
+        status = step.directions.isImmediate() ? ProcessStatus.INCOMPLETE : ProcessStatus.WAITING
+      }
     }
-    const step = this.steps[this.currentStep]
-    if (step.finished) {
-      if (this.successful === true) status = ProcessStatus.SUCCEEDED
-      if (this.successful === false) status = ProcessStatus.FAILED
-    }
-    if (step.directions) {
-      status = step.directions.isImmediate() ? ProcessStatus.INCOMPLETE : ProcessStatus.WAITING
+    if (this.status !== status) {
+      this.system.logger.info(`Process ${this} is now ${status}`)
     }
     this.status = status
     await this.db('processes').update({ status }).where({ id: this.id })
@@ -440,8 +464,12 @@ export class Process<VendorElement, VendorState, VendorAction> {
   async input(action: VendorAction): Promise<void> {
     const step = await this.getCurrentStep()
     const handler = this.system.getHandler(step.handler)
-    // TODO: Safeguard for handler call.
-    const nextState = await handler.action(action, clone(step.state), this.files)
+    let nextState
+    try {
+      nextState = await handler.action(action, clone(step.state), this.files)
+    } catch(err) {
+      return this.crashed(err)
+    }
     await this.proceedToState(action, nextState)
   }
 }
@@ -514,6 +542,10 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
 
   db: Database
   handlers: ProcessHandlerMap<VendorElement, VendorState, VendorAction> = {}
+  logger: {
+    info: (...msg) => void
+    error: (...msg) => void
+  }
 
   /**
    * Initialize the system and set the database instance for storing process data.
@@ -521,6 +553,10 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
    */
   constructor(db: Database) {
     this.db = db
+    this.logger = {
+      info: (...msg) => console.log(...msg),
+      error: (...msg) => console.error(...msg)
+    }
   }
 
   /**
@@ -555,10 +591,14 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
     // Find the handler.
     let selectedHandler : ProcessHandler<VendorElement, VendorState, VendorAction> | null = null
     for (const handler of Object.values(this.handlers)) {
-      // TODO: Safeguard for handler call.
-      if (handler.canHandle(processFile)) {
-        selectedHandler = handler
-        break
+      try {
+        if (handler.canHandle(processFile)) {
+          selectedHandler = handler
+          break
+        }
+      } catch(err) {
+        await process.crashed(err)
+        return process
       }
     }
     if (!selectedHandler) {
@@ -588,8 +628,13 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
    * Check if we are in the finished state and if not, find the directions forward.
    */
   async checkFinishAndFindDirections(handler: ProcessHandler<VendorElement, VendorState, VendorAction>, step: ProcessStep<VendorElement, VendorState, VendorAction>): Promise<void> {
-    // TODO: Safe guards for handler calls.
-    const result = handler.checkCompletion(step.state)
+    let result
+    try {
+      result = handler.checkCompletion(step.state)
+    } catch(err) {
+      return step.process.crashed(err)
+    }
+
     if (result === undefined) {
       const directions = await handler.getDirections(step.state)
       await step.setDirections(this.db, directions)
