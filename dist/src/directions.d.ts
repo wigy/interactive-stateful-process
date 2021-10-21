@@ -18,5 +18,9 @@ export declare class Directions<VendorElement, VendorAction> {
     element?: VendorElement;
     action?: VendorAction;
     constructor(obj: DirectionsData<VendorElement, VendorAction>);
+    /**
+     * Construct JSON data of the member fields that has been set.
+     * @returns
+     */
     toJSON(): DirectionsData<VendorElement, VendorAction>;
 }

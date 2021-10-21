@@ -47,6 +47,7 @@ export interface ProcessStepData<VendorState> {
  * Data of the one step in the process including possible directions and action taken to the next step, if any.
  */
 export declare class ProcessStep<VendorElement, VendorState, VendorAction> {
+    process: Process<VendorElement, VendorState, VendorAction>;
     id: ID;
     processId: ID;
     number: number;
@@ -58,9 +59,13 @@ export declare class ProcessStep<VendorElement, VendorState, VendorAction> {
     action: VendorAction;
     constructor(obj: ProcessStepData<VendorState>);
     /**
+     * Get a reference to the database.
+     */
+    get db(): Database;
+    /**
      * Save the process info to the database.
      */
-    save(db: Database): Promise<ID>;
+    save(): Promise<ID>;
     /**
      * Get the loaded process information as JSON object.
      * @returns
@@ -81,6 +86,7 @@ export interface ProcessInfo {
  * A complete description of the process state and steps taken.
  */
 export declare class Process<VendorElement, VendorState, VendorAction> {
+    system: ProcessingSystem<VendorElement, VendorState, VendorAction>;
     id: ID;
     name: ProcessName;
     complete: boolean;
@@ -88,7 +94,7 @@ export declare class Process<VendorElement, VendorState, VendorAction> {
     currentStep: number | undefined;
     files: ProcessFile[];
     steps: ProcessStep<VendorElement, VendorState, VendorAction>[];
-    constructor(name: ProcessName | null);
+    constructor(system: ProcessingSystem<VendorElement, VendorState, VendorAction>, name: ProcessName | null);
     /**
      * Get the loaded process information as JSON object.
      * @returns
@@ -100,14 +106,18 @@ export declare class Process<VendorElement, VendorState, VendorAction> {
      */
     addFile(file: ProcessFile): void;
     /**
-     * Append a step to this process and link its ID.
+     * Append a step to this process and link its ID. Increase current step.
      * @param step
      */
-    addStep(step: ProcessStep<VendorElement, VendorState, VendorAction>): void;
+    addStep(step: ProcessStep<VendorElement, VendorState, VendorAction>): Promise<void>;
+    /**
+     * Get a reference to the database.
+     */
+    get db(): Database;
     /**
      * Save the process info to the database.
      */
-    save(db: Database): Promise<ID>;
+    save(): Promise<ID>;
 }
 /**
  * A handler taking care of moving between process states.
@@ -161,4 +171,5 @@ export declare class ProcessingSystem<VendorElement, VendorState, VendorAction> 
      * @returns
      */
     createProcess(name: ProcessName, file: ProcessFileData): Promise<Process<VendorElement, VendorState, VendorAction>>;
+    run(process: Process<VendorElement, VendorState, VendorAction>): void;
 }

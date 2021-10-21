@@ -7,6 +7,10 @@ export class Directions {
         this.element = obj.element;
         this.action = obj.action;
     }
+    /**
+     * Construct JSON data of the member fields that has been set.
+     * @returns
+     */
     toJSON() {
         const ret = {
             type: this.type

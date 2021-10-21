@@ -84,6 +84,9 @@ export interface ProcessStepData<VendorState> {
  * Data of the one step in the process including possible directions and action taken to the next step, if any.
  */
 export class ProcessStep<VendorElement, VendorState, VendorAction> {
+
+  process: Process<VendorElement, VendorState, VendorAction>
+
   id: ID
   processId: ID
   number: number
@@ -104,14 +107,21 @@ export class ProcessStep<VendorElement, VendorState, VendorAction> {
   }
 
   /**
+   * Get a reference to the database.
+   */
+   get db(): Database {
+    return this.process.db
+  }
+
+  /**
    * Save the process info to the database.
    */
-   async save(db: Database): Promise<ID> {
+   async save(): Promise<ID> {
     if (this.id) {
-      await db('process_steps').update(this.toJSON()).where({ id: this.id })
+      await this.db('process_steps').update(this.toJSON()).where({ id: this.id })
       return this.id
     } else {
-      this.id = (await db('process_steps').insert(this.toJSON()).returning('id'))[0]
+      this.id = (await this.db('process_steps').insert(this.toJSON()).returning('id'))[0]
       if (this.id) return this.id
       throw new DatabaseError(`Saving process ${JSON.stringify(this.toJSON)} failed.`)
     }
@@ -152,6 +162,9 @@ export interface ProcessInfo {
  * A complete description of the process state and steps taken.
  */
 export class Process<VendorElement, VendorState, VendorAction> {
+
+  system: ProcessingSystem<VendorElement, VendorState, VendorAction>
+
   id: ID
   name: ProcessName
   complete: boolean
@@ -161,7 +174,9 @@ export class Process<VendorElement, VendorState, VendorAction> {
   files: ProcessFile[]
   steps: ProcessStep<VendorElement, VendorState, VendorAction>[]
 
-  constructor(name: ProcessName | null) {
+  constructor(system: ProcessingSystem<VendorElement, VendorState, VendorAction>, name: ProcessName | null) {
+    this.system = system
+
     this.id = null
     this.name = name || '[no name]'
     this.complete = false
@@ -199,21 +214,27 @@ export class Process<VendorElement, VendorState, VendorAction> {
    */
    async addStep(step: ProcessStep<VendorElement, VendorState, VendorAction>): Promise<void> {
     step.processId = this.id
+    step.process = this
     this.steps.push(step)
     this.currentStep = this.steps.length - 1
-    // TODO: Save.
-    // await db('processes').update(this.toJSON()).where({ id: this.id })
+  }
+
+  /**
+   * Get a reference to the database.
+   */
+  get db(): Database {
+    return this.system.db
   }
 
   /**
    * Save the process info to the database.
    */
-  async save(db: Database): Promise<ID> {
+  async save(): Promise<ID> {
     if (this.id) {
-      await db('processes').update(this.toJSON()).where({ id: this.id })
+      await this.db('processes').update(this.toJSON()).where({ id: this.id })
       return this.id
     } else {
-      this.id = (await db('processes').insert(this.toJSON()).returning('id'))[0]
+      this.id = (await this.db('processes').insert(this.toJSON()).returning('id'))[0]
       if (this.id) return this.id
       throw new DatabaseError(`Saving process ${JSON.stringify(this.toJSON)} failed.`)
     }
@@ -336,8 +357,8 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
    */
   async createProcess(name: ProcessName, file: ProcessFileData): Promise<Process<VendorElement, VendorState, VendorAction>> {
     // Set up the process.
-    const process = new Process<VendorElement, VendorState, VendorAction>(name)
-    await process.save(this.db)
+    const process = new Process<VendorElement, VendorState, VendorAction>(this, name)
+    await process.save()
     // Save the file and attach it to the process.
     const processFile = new ProcessFile(file)
     process.addFile(processFile)
@@ -361,7 +382,8 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
       state
     })
     process.addStep(step)
-    await step.save(this.db)
+    await step.save()
+    await process.save()
 
     // Find directions forward from the state.
     const directions = await selectedHandler.getDirections(state)
@@ -371,6 +393,7 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
   }
 
   run(process: Process<VendorElement, VendorState, VendorAction>): void {
+    // TODO: Delegate processing.
     return
   }
 

@@ -25,10 +25,7 @@ test('process handling with coins', () => __awaiter(void 0, void 0, void 0, func
     };
     // Start the process.
     const process = yield system.createProcess('Handle 3 stacks of coins', sample);
-    // TODO: Hmm.
-    // const start = system.startingDirections('web')
-    // console.log(start)
-    // expect(start.length).toBe(1)
+    system.run(process);
     // Add a coin.
     /*
     const action = new Action<CoinActionData>({

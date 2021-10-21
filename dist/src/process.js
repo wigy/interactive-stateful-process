@@ -37,16 +37,19 @@ export class ProcessFile {
      */
     save(db) {
         return __awaiter(this, void 0, void 0, function* () {
-            // TODO: Handle JSON encoding, if used.
+            const out = this.toJSON();
+            if (this.encoding === 'json') {
+                out.data = JSON.stringify(out.data);
+            }
             if (this.id) {
-                yield db('process_files').update(this.toJSON()).where({ id: this.id });
+                yield db('process_files').update(out).where({ id: this.id });
                 return this.id;
             }
             else {
-                this.id = (yield db('process_files').insert(this.toJSON()).returning('id'))[0];
+                this.id = (yield db('process_files').insert(out).returning('id'))[0];
                 if (this.id)
                     return this.id;
-                throw new DatabaseError(`Saving process ${JSON.stringify(this.toJSON)} failed.`);
+                throw new DatabaseError(`Saving process ${JSON.stringify(out)} failed.`);
             }
         });
     }
@@ -64,16 +67,22 @@ export class ProcessStep {
         this.finished = obj.finished;
     }
     /**
+     * Get a reference to the database.
+     */
+    get db() {
+        return this.process.db;
+    }
+    /**
      * Save the process info to the database.
      */
-    save(db) {
+    save() {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.id) {
-                yield db('process_steps').update(this.toJSON()).where({ id: this.id });
+                yield this.db('process_steps').update(this.toJSON()).where({ id: this.id });
                 return this.id;
             }
             else {
-                this.id = (yield db('process_steps').insert(this.toJSON()).returning('id'))[0];
+                this.id = (yield this.db('process_steps').insert(this.toJSON()).returning('id'))[0];
                 if (this.id)
                     return this.id;
                 throw new DatabaseError(`Saving process ${JSON.stringify(this.toJSON)} failed.`);
@@ -105,7 +114,8 @@ export class ProcessStep {
  * A complete description of the process state and steps taken.
  */
 export class Process {
-    constructor(name) {
+    constructor(system, name) {
+        this.system = system;
         this.id = null;
         this.name = name || '[no name]';
         this.complete = false;
@@ -135,24 +145,34 @@ export class Process {
         this.files.push(file);
     }
     /**
-     * Append a step to this process and link its ID.
+     * Append a step to this process and link its ID. Increase current step.
      * @param step
      */
     addStep(step) {
-        step.processId = this.id;
-        this.steps.push(step);
+        return __awaiter(this, void 0, void 0, function* () {
+            step.processId = this.id;
+            step.process = this;
+            this.steps.push(step);
+            this.currentStep = this.steps.length - 1;
+        });
+    }
+    /**
+     * Get a reference to the database.
+     */
+    get db() {
+        return this.system.db;
     }
     /**
      * Save the process info to the database.
      */
-    save(db) {
+    save() {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.id) {
-                yield db('processes').update(this.toJSON()).where({ id: this.id });
+                yield this.db('processes').update(this.toJSON()).where({ id: this.id });
                 return this.id;
             }
             else {
-                this.id = (yield db('processes').insert(this.toJSON()).returning('id'))[0];
+                this.id = (yield this.db('processes').insert(this.toJSON()).returning('id'))[0];
                 if (this.id)
                     return this.id;
                 throw new DatabaseError(`Saving process ${JSON.stringify(this.toJSON)} failed.`);
@@ -226,8 +246,8 @@ export class ProcessingSystem {
     createProcess(name, file) {
         return __awaiter(this, void 0, void 0, function* () {
             // Set up the process.
-            const process = new Process(name);
-            yield process.save(this.db);
+            const process = new Process(this, name);
+            yield process.save();
             // Save the file and attach it to the process.
             const processFile = new ProcessFile(file);
             process.addFile(processFile);
@@ -251,11 +271,16 @@ export class ProcessingSystem {
                 state
             });
             process.addStep(step);
-            yield step.save(this.db);
+            yield step.save();
+            yield process.save();
             // Find directions forward from the state.
             const directions = yield selectedHandler.getDirections(state);
             yield step.setDirections(this.db, directions);
             return process;
         });
+    }
+    run(process) {
+        // TODO: Delegate processing.
+        return;
     }
 }
