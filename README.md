@@ -14,4 +14,8 @@ a description of possible ways forward from the state.
 
 Some other party may be intervening in this point. It is possible that directions information is sent to
 the UI and some additional information is collected. Once done, the new information is collected and
-an `Action` is sent back for the processing.
+an `Action` is sent back for the processing. Alternatively directions may contain directly an action to
+execute next, in which case process continues immediately.
+
+The iteration continues until an error happens or the handler recognizes the state as successful (or failed)
+completion.

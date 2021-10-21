@@ -26,7 +26,7 @@ test('process handling with coins', async () => {
   const process = await system.createProcess('Handle 3 stacks of coins', sample)
   await process.run()
 
-  console.log(process.toJSON())
+  //console.log(process.status())
   // Add a coin.
   /*
   const action = new Action<CoinActionData>({

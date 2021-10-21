@@ -4,12 +4,32 @@ import { Database, ID } from "./common"
 import { BadState, DatabaseError } from "./error"
 import clone from "clone"
 
-export type ProcessTitle = string
+/**
+ * The name of the process.
+ */
 export type ProcessName = string
+/**
+ * How the process input data is encoded.
+ */
 export type FileEncoding = 'ascii' | 'base64' | 'json'
+/**
+ * Overall status of the process.
+ *
+ *  * INCOMPLETE - Something has stopped the process before it has been finished properly.
+ *  * WAITING - The process is currently waiting for external input.
+ *  * SUCCEEDED - The process is completed successfully.
+ *  * FAILED - The process has failed.
+ *
+ */
+export enum ProcessStatus {
+  INCOMPLETE,
+  WAITING,
+  SUCCEEDED,
+  FAILED
+}
 
 /**
- * A data structure containing file data.
+ * A data structure containing input data for the process.
  */
 export interface ProcessFileData {
   processId?: ID
@@ -19,7 +39,7 @@ export interface ProcessFileData {
 }
 
 /**
- * An instance of file data for processing.
+ * An instance of input data for processing.
  */
 export class ProcessFile {
   id: ID
@@ -79,7 +99,6 @@ export class ProcessFile {
 export interface ProcessStepData<VendorState, VendorAction> {
   processId?: ID
   number: number
-  description?: string
   state: VendorState
   handler: string
   action?: VendorAction
@@ -97,7 +116,6 @@ export class ProcessStep<VendorElement, VendorState, VendorAction> {
   id: ID
   processId: ID
   number: number
-  description: string | undefined
   state: VendorState
   handler: string
   started: Date | undefined
@@ -108,7 +126,6 @@ export class ProcessStep<VendorElement, VendorState, VendorAction> {
   constructor(obj: ProcessStepData<VendorState, VendorAction>) {
     this.processId = obj.processId || null
     this.number = obj.number
-    this.description = obj.description
     this.state = obj.state
     this.handler = obj.handler
     this.action = obj.action
@@ -485,7 +502,6 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
     const state = selectedHandler.startingState(processFile)
     const step = new ProcessStep<VendorElement, VendorState, VendorAction>({
       number: 0,
-      description: 'Process started',
       handler: selectedHandler.name,
       state
     })
