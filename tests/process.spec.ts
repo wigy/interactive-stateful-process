@@ -24,7 +24,7 @@ test('process handling with coins', async () => {
 
   // Start the process.
   const process = await system.createProcess('Handle 3 stacks of coins', sample)
-  system.run(process)
+  await process.run()
 
 
   // Add a coin.
@@ -38,9 +38,8 @@ test('process handling with coins', async () => {
     }
   })
   */
-  // await system.handleAction(process.id, action)
-  console.log('PROCESSES', await db('processes').select('*'))
-  console.log('FILES', await db('process_files').select('*'))
-  console.log('STEPS', await db('process_steps').select('*'))
+  // console.log('PROCESSES', await db('processes').select('*'))
+  // console.log('FILES', await db('process_files').select('*'))
+  // console.log('STEPS', await db('process_steps').select('*'))
   await db.migrate.rollback()
 })

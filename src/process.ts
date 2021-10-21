@@ -1,7 +1,7 @@
 import { InvalidArgument, NotImplemented } from "./error"
 import { Directions } from './directions'
-import { Database, TimeStamp, ID } from "./common"
-import { DatabaseError } from "./error"
+import { Database, ID } from "./common"
+import { BadState, DatabaseError } from "./error"
 
 export type ProcessTitle = string
 export type ProcessName = string
@@ -74,10 +74,11 @@ export class ProcessFile {
 export interface ProcessStepData<VendorState> {
   processId?: ID
   number: number
+  description?: string
   state: VendorState
   handler: string
-  started?: TimeStamp
-  finished?: TimeStamp
+  started?: Date
+  finished?: Date
 }
 
 /**
@@ -90,16 +91,18 @@ export class ProcessStep<VendorElement, VendorState, VendorAction> {
   id: ID
   processId: ID
   number: number
+  description: string | undefined
   state: VendorState
   handler: string
-  started: TimeStamp | undefined
-  finished: TimeStamp | undefined
+  started: Date | undefined
+  finished: Date | undefined
   directions: Directions<VendorElement, VendorAction>
   action: VendorAction
 
   constructor(obj: ProcessStepData<VendorState>) {
     this.processId = obj.processId || null
     this.number = obj.number
+    this.description = obj.description
     this.state = obj.state
     this.handler = obj.handler
     this.started = obj.started
@@ -121,6 +124,7 @@ export class ProcessStep<VendorElement, VendorState, VendorAction> {
       await this.db('process_steps').update(this.toJSON()).where({ id: this.id })
       return this.id
     } else {
+      this.started = new Date()
       this.id = (await this.db('process_steps').insert(this.toJSON()).returning('id'))[0]
       if (this.id) return this.id
       throw new DatabaseError(`Saving process ${JSON.stringify(this.toJSON)} failed.`)
@@ -209,14 +213,26 @@ export class Process<VendorElement, VendorState, VendorAction> {
   }
 
   /**
-   * Append a step to this process and link its ID. Increase current step.
+   * Append a step to this process and link its ID.
    * @param step
    */
    async addStep(step: ProcessStep<VendorElement, VendorState, VendorAction>): Promise<void> {
     step.processId = this.id
     step.process = this
     this.steps.push(step)
-    this.currentStep = this.steps.length - 1
+  }
+
+  /**
+   * Load the current step if necessary and return it.
+   */
+  async getCurrentStep(): Promise<ProcessStep<VendorElement, VendorState, VendorAction>> {
+    if (this.currentStep === null || this.currentStep === undefined) {
+      throw new BadState(`Process #${this.id} ${this.name} has invalid current step.`)
+    }
+    if (this.steps[this.currentStep]) {
+      return this.steps[this.currentStep]
+    }
+    return this.loadStep(this.currentStep)
   }
 
   /**
@@ -240,6 +256,31 @@ export class Process<VendorElement, VendorState, VendorAction> {
     }
   }
 
+  /**
+   * Load the step with the given number from the database.
+   * @param number
+   * @returns
+   */
+  async loadStep(number: number): Promise<ProcessStep<VendorElement, VendorState, VendorAction>> {
+    if (!this.id) {
+      throw new BadState(`Cannot load steps, if the process have no ID ${JSON.stringify(this.toJSON())}.`)
+    }
+    if (this.currentStep === undefined) {
+      throw new BadState(`Cannot load any steps, since process have no current step ${JSON.stringify(this.toJSON())}.`)
+    }
+    const data = await this.db('process_steps').where({ id: this.id, number }).first()
+    if (!data) {
+      throw new BadState(`Cannot find step ${this.currentStep} for process ${JSON.stringify(this.toJSON())}.`)
+    }
+    this.steps[this.currentStep] = new ProcessStep<VendorElement, VendorState, VendorAction>(data)
+    return this.steps[this.currentStep]
+  }
+
+  async run(): Promise<void> { // TODO: Return something?
+    const step = await this.getCurrentStep()
+    console.log(step)
+  }
+
   /*
   async load(db: Database, id: ID): Promise<Process<VendorElement, VendorState, VendorAction>> {
 
@@ -256,21 +297,6 @@ export class Process<VendorElement, VendorState, VendorAction> {
     this.steps = []
 
     return this
-  }
-
-  async loadCurrentStep(db: Database): Promise<ProcessStep<VendorElement, VendorState, VendorAction>> {
-    if (!this.id) {
-      throw new BadState(`Cannot load steps, if process have no ID ${JSON.stringify(this.toJSON())}.`)
-    }
-    if (this.currentStep === undefined) {
-      throw new BadState(`Cannot load any steps, since process have no current step ${JSON.stringify(this.toJSON())}.`)
-    }
-    const data = await db('process_steps').where({ id: this.id, number: this.currentStep }).first()
-    if (!data) {
-      throw new BadState(`Cannot find step ${this.currentStep} for process ${JSON.stringify(this.toJSON())}.`)
-    }
-    this.steps[this.currentStep] = new ProcessStep<VendorElement, VendorState, VendorAction>(data)
-    return this.steps[this.currentStep]
   }
   */
 }
@@ -378,11 +404,15 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
     const state = selectedHandler.startingState(processFile)
     const step = new ProcessStep<VendorElement, VendorState, VendorAction>({
       number: 0,
+      description: 'Process started',
       handler: selectedHandler.name,
       state
     })
+
     process.addStep(step)
     await step.save()
+
+    process.currentStep = 0
     await process.save()
 
     // Find directions forward from the state.
@@ -390,11 +420,6 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
     await step.setDirections(this.db, directions)
 
     return process
-  }
-
-  run(process: Process<VendorElement, VendorState, VendorAction>): void {
-    // TODO: Delegate processing.
-    return
   }
 
   /*

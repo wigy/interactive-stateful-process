@@ -1,6 +1,7 @@
 export async function up (knex): Promise<void> {
     await knex.schema.createTable('processes', function (table) {
         table.increments('id')
+        table.integer('ownerId').default(null)
         table.string('name', 32).notNullable()
         table.boolean('complete').notNullable().default(false)
         table.boolean('successful').default(null)
@@ -27,7 +28,7 @@ export async function up (knex): Promise<void> {
         table.foreign('processId').references('processes.id')
 
         table.integer('number').notNullable()
-        // TODO: Add description field to be filled for easier UI presentation.
+        table.string('description', 512).default(null)
         table.string('handler', 32).notNullable()
         table.json('directions')
         table.json('action').default(null)
