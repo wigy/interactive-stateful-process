@@ -24,11 +24,8 @@ test('process handling with coins', async () => {
 
   // Start the process.
   const process = await system.createProcess('Handle 3 stacks of coins', sample)
+  system.run(process)
 
-  // TODO: Hmm.
-  // const start = system.startingDirections('web')
-  // console.log(start)
-  // expect(start.length).toBe(1)
 
   // Add a coin.
   /*

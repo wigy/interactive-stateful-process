@@ -156,6 +156,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
   name: ProcessName
   complete: boolean
   successful: boolean | undefined
+  // TODO: Add retryable support.
   currentStep: number | undefined
   files: ProcessFile[]
   steps: ProcessStep<VendorElement, VendorState, VendorAction>[]
@@ -193,12 +194,15 @@ export class Process<VendorElement, VendorState, VendorAction> {
   }
 
   /**
-   * Append a step to this process and link its ID.
+   * Append a step to this process and link its ID. Increase current step.
    * @param step
    */
-   addStep(step: ProcessStep<VendorElement, VendorState, VendorAction>): void {
+   async addStep(step: ProcessStep<VendorElement, VendorState, VendorAction>): Promise<void> {
     step.processId = this.id
     this.steps.push(step)
+    this.currentStep = this.steps.length - 1
+    // TODO: Save.
+    // await db('processes').update(this.toJSON()).where({ id: this.id })
   }
 
   /**
@@ -364,6 +368,10 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
     await step.setDirections(this.db, directions)
 
     return process
+  }
+
+  run(process: Process<VendorElement, VendorState, VendorAction>): void {
+    return
   }
 
   /*
