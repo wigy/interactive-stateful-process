@@ -57,13 +57,12 @@ test('process handling with coins', async () => {
 
   // Reload the process from the disk.
   const copy = await system.loadProcess(process.id)
-  // TODO: Fix missing directions.
   console.log(await copy.getCurrentStep())
   // TODO: Add failure check (coin < 0) and success check (coin > 10) and run process until finished.
   // TODO: Add check for making exception during the processing.
   // TODO: Rolling back steps.
 
-  console.log('PROCESSES', await db('processes').select('*'))
+  // console.log('PROCESSES', await db('processes').select('*'))
   // console.log('FILES', await db('process_files').select('*'))
   // console.log('STEPS', await db('process_steps').select('*'))
   await db.migrate.rollback()

@@ -96,12 +96,13 @@ export class ProcessFile {
 /**
  * A basic information of the processing step.
  */
-export interface ProcessStepData<VendorState, VendorAction> {
+export interface ProcessStepData<VendorElement, VendorState, VendorAction> {
   processId?: ID
   number: number
   state: VendorState
   handler: string
   action?: VendorAction
+  directions?: Directions<VendorElement, VendorAction>
   started?: Date
   finished?: Date
 }
@@ -120,14 +121,15 @@ export class ProcessStep<VendorElement, VendorState, VendorAction> {
   handler: string
   started: Date | undefined
   finished: Date | undefined
-  directions: Directions<VendorElement, VendorAction>
-  action: VendorAction | undefined
+  directions?: Directions<VendorElement, VendorAction>
+  action?: VendorAction | undefined
 
-  constructor(obj: ProcessStepData<VendorState, VendorAction>) {
+  constructor(obj: ProcessStepData<VendorElement, VendorState, VendorAction>) {
     this.processId = obj.processId || null
     this.number = obj.number
     this.state = obj.state
     this.handler = obj.handler
+    this.directions = obj.directions
     this.action = obj.action
     this.started = obj.started
     this.finished = obj.finished
@@ -163,11 +165,12 @@ export class ProcessStep<VendorElement, VendorState, VendorAction> {
    * Get the loaded process information as JSON object.
    * @returns
    */
-   toJSON(): ProcessStepData<VendorState, VendorAction> {
+   toJSON(): ProcessStepData<VendorElement, VendorState, VendorAction> {
     return {
       processId: this.processId,
       number: this.number,
       state: this.state,
+      directions: this.directions,
       handler: this.handler,
       action: this.action,
       started: this.started,
@@ -175,6 +178,11 @@ export class ProcessStep<VendorElement, VendorState, VendorAction> {
     }
   }
 
+  /**
+   * Set directions and update database.
+   * @param db
+   * @param directions
+   */
   async setDirections(db: Database, directions: Directions<VendorElement, VendorAction>): Promise<void> {
     this.directions = directions
     await db('process_steps').update({ directions: directions.toJSON() }).where({ id: this.id })
@@ -406,6 +414,9 @@ export class Process<VendorElement, VendorState, VendorAction> {
       throw new BadState(`Cannot check status when there is no current step loaded for ${this}`)
     }
     const step = this.steps[this.currentStep]
+    if (!step.directions) {
+      return ProcessStatus.INCOMPLETE
+    }
     if (step.directions.isComplete() && step.finished) {
       if (this.successful === true) return ProcessStatus.SUCCEEDED
       if (this.successful === false) return ProcessStatus.FAILED
