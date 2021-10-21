@@ -197,6 +197,7 @@ export interface ProcessInfo {
   complete: boolean
   successful: boolean | undefined
   currentStep: number | undefined
+  status: ProcessStatus
 }
 
 /**
@@ -212,6 +213,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
   successful: boolean | undefined
   // TODO: Add retryable support.
   currentStep: number | undefined
+  status: ProcessStatus
   files: ProcessFile[]
   steps: ProcessStep<VendorElement, VendorState, VendorAction>[]
 
@@ -225,6 +227,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
     this.files = []
     this.steps = []
     this.currentStep = undefined
+    this.status = ProcessStatus.INCOMPLETE
   }
 
   toString(): string {
@@ -241,6 +244,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
       complete: this.complete,
       successful: this.successful,
       currentStep: this.currentStep,
+      status: this.status,
     }
   }
 
@@ -329,7 +333,6 @@ export class Process<VendorElement, VendorState, VendorAction> {
     if (!data) {
       throw new InvalidArgument(`Cannot find process #${id}`)
     }
-    delete data.status
     Object.assign(this, data)
     this.id = id
     // Load files.
@@ -377,6 +380,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
       }
       step = await this.getCurrentStep()
       if (!step.directions.isImmediate()) {
+        await this.updateStatus()
         break
       }
       const handler = this.system.getHandler(step.handler)
@@ -393,41 +397,35 @@ export class Process<VendorElement, VendorState, VendorAction> {
       } catch (err) {
         // TODO: Internal logging? Or just return error?
         console.error(err)
+        await this.updateStatus()
       }
     }
-    await this.updateStatus()
   }
 
   /**
    * Resolve the status of the process and update it to the database.
    */
   async updateStatus(): Promise<void> {
-    await this.db('processes').update({ status: this.status() }).where({ id: this.id })
-  }
-
-  /**
-   * Get the status of the process.
-   */
-  status(): ProcessStatus {
-    // TODO: Move to updateStatus() and use ´status´ as data field as usual.
+    let status = ProcessStatus.INCOMPLETE
     if (this.currentStep === null || this.currentStep === undefined) {
       throw new BadState(`Cannot check status when there is no current step loaded for ${this}`)
     }
     const step = this.steps[this.currentStep]
     if (step.finished) {
-      if (this.successful === true) return ProcessStatus.SUCCEEDED
-      if (this.successful === false) return ProcessStatus.FAILED
+      if (this.successful === true) status = ProcessStatus.SUCCEEDED
+      if (this.successful === false) status = ProcessStatus.FAILED
     }
     if (step.directions) {
-      return step.directions.isImmediate() ? ProcessStatus.INCOMPLETE : ProcessStatus.WAITING
+      status = step.directions.isImmediate() ? ProcessStatus.INCOMPLETE : ProcessStatus.WAITING
     }
-    return ProcessStatus.INCOMPLETE
+    this.status = status
+    await this.db('processes').update({ status }).where({ id: this.id })
   }
 
   /**
    * Get the state of the current step of the process.
    */
-  state(): VendorState {
+  get state(): VendorState {
     if (this.currentStep === null || this.currentStep === undefined) {
       throw new BadState(`Cannot check state when there is no current step loaded for ${this}`)
     }
@@ -603,9 +601,9 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
       await step.save()
       step.process.complete = true
       step.process.successful = result
-      await step.process.updateStatus()
       await step.process.save()
     }
+    await step.process.updateStatus()
   }
 
   /**

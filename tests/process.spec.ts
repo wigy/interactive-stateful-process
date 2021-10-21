@@ -23,8 +23,8 @@ test('process handling with coins', async () => {
 
   // Launch the process.
   const process = await system.createProcess('Handle 3 stacks of coins', sample)
-  expect(process.status()).toBe(ProcessStatus.INCOMPLETE)
-  expect(process.state()).toStrictEqual({
+  expect(process.status).toBe(ProcessStatus.INCOMPLETE)
+  expect(process.state).toStrictEqual({
     stage: 'empty',
     coin1: 0,
     coin5: 0,
@@ -33,8 +33,8 @@ test('process handling with coins', async () => {
 
   // Let it run a bit.
   await process.run()
-  expect(process.status()).toBe(ProcessStatus.WAITING)
-  expect(process.state()).toStrictEqual({
+  expect(process.status).toBe(ProcessStatus.WAITING)
+  expect(process.state).toStrictEqual({
     stage: 'initialized',
     coin1: 2,
     coin5: 4,
@@ -45,8 +45,8 @@ test('process handling with coins', async () => {
   await process.input({ target: 'coin1', count: +4 })
   await process.input({ target: 'coin5', count: +0 })
   await process.input({ target: 'coin10', count: -8 })
-  expect(process.status()).toBe(ProcessStatus.WAITING)
-  expect(process.state()).toStrictEqual({
+  expect(process.status).toBe(ProcessStatus.WAITING)
+  expect(process.state).toStrictEqual({
     stage: 'running',
     coin1: 6,
     coin5: 4,
@@ -55,8 +55,8 @@ test('process handling with coins', async () => {
 
   // Reload the process from the disk.
   const copy = await system.loadProcess(process.id)
-  expect(copy.status()).toBe(ProcessStatus.WAITING)
-  expect(copy.state()).toStrictEqual({
+  expect(copy.status).toBe(ProcessStatus.WAITING)
+  expect(copy.state).toStrictEqual({
     stage: 'running',
     coin1: 6,
     coin5: 4,
@@ -65,8 +65,8 @@ test('process handling with coins', async () => {
 
   // Pump it to the finish.
   await copy.input({ target: 'coin1', count: +5 })
-  expect(copy.status()).toBe(ProcessStatus.SUCCEEDED)
-  expect(copy.state()).toStrictEqual({
+  expect(copy.status).toBe(ProcessStatus.SUCCEEDED)
+  expect(copy.state).toStrictEqual({
     stage: 'running',
     coin1: 11,
     coin5: 4,
