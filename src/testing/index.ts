@@ -75,4 +75,18 @@ export class CoinHandler extends ProcessHandler<CoinElement, CoinState, CoinActi
     }
     return state
   }
+
+  checkCompletion(state: CoinState): boolean | undefined {
+    if (state.stage === 'running') {
+      // If any pile is negative, process fails.
+      if (state.coin1 < 0 || state.coin5 < 0 || state.coin10 < 0) {
+        return false
+      }
+      // If any pile is over 10, process succeeds.
+      if (state.coin1 > 10 || state.coin5 > 10 || state.coin10 > 10) {
+        return true
+      }
+    }
+  }
+
 }

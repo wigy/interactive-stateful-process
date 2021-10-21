@@ -129,7 +129,7 @@ export class ProcessStep<VendorElement, VendorState, VendorAction> {
     this.number = obj.number
     this.state = obj.state
     this.handler = obj.handler
-    this.directions = obj.directions
+    this.directions = obj.directions ? new Directions<VendorElement, VendorAction>(obj.directions) : undefined
     this.action = obj.action
     this.started = obj.started
     this.finished = obj.finished
@@ -295,10 +295,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
     this.currentStep = (this.currentStep || 0) + 1
     this.save()
     await nextStep.save()
-    // TODO: This call should be wrapped safely and end the process on error if it fails.
-    const directions = await handler.getDirections(state)
-    await nextStep.setDirections(this.db, directions)
-    // TODO: We could check if the process is complete here.
+    await this.system.checkFinishAndFindDirections(handler, nextStep)
   }
 
   /**
@@ -332,6 +329,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
     if (!data) {
       throw new InvalidArgument(`Cannot find process #${id}`)
     }
+    delete data.status
     Object.assign(this, data)
     this.id = id
     // Load files.
@@ -361,6 +359,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
       throw new BadState(`Cannot find step ${this.currentStep} for process ${JSON.stringify(this.toJSON())}.`)
     }
     this.steps[this.currentStep] = new ProcessStep<VendorElement, VendorState, VendorAction>(data)
+    this.steps[this.currentStep].process = this
     return this.steps[this.currentStep]
   }
 
@@ -410,19 +409,17 @@ export class Process<VendorElement, VendorState, VendorAction> {
    * Get the status of the process.
    */
   status(): ProcessStatus {
+    // TODO: Move to updateStatus() and use ´status´ as data field as usual.
     if (this.currentStep === null || this.currentStep === undefined) {
       throw new BadState(`Cannot check status when there is no current step loaded for ${this}`)
     }
     const step = this.steps[this.currentStep]
-    if (!step.directions) {
-      return ProcessStatus.INCOMPLETE
-    }
-    if (step.directions.isComplete() && step.finished) {
+    if (step.finished) {
       if (this.successful === true) return ProcessStatus.SUCCEEDED
       if (this.successful === false) return ProcessStatus.FAILED
     }
-    if (!step.directions.isImmediate() && !step.finished) {
-      return ProcessStatus.WAITING
+    if (step.directions) {
+      return step.directions.isImmediate() ? ProcessStatus.INCOMPLETE : ProcessStatus.WAITING
     }
     return ProcessStatus.INCOMPLETE
   }
@@ -468,6 +465,14 @@ export class ProcessHandler<VendorElement, VendorState, VendorAction> {
    */
   canHandle(file: ProcessFile): boolean {
     throw new NotImplemented(`A handler '${this.name}' cannot handle file '${file.name}', since canHandle() is not implemented.`)
+  }
+
+  /**
+   * Check if the state is either successful `true` or failed `false` or not yet complete `undefined`.
+   * @param state
+   */
+  checkCompletion(state: VendorState): boolean | undefined {
+    throw new NotImplemented(`A handler '${this.name}' cannot check state '${JSON.stringify(state)}', since checkCompletion() is not implemented.`)
   }
 
   /**
@@ -575,12 +580,32 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
     process.currentStep = 0
     await process.save()
 
-    // Find directions forward from the state.
-    const directions = await selectedHandler.getDirections(state)
-    await step.setDirections(this.db, directions)
-    // TODO: We could check if the process is already complete here.
+    // Find directions forward from the initial state.
+    await this.checkFinishAndFindDirections(selectedHandler, step)
 
     return process
+  }
+
+  /**
+   * Check if we are in the finished state and if not, find the directions forward.
+   */
+  async checkFinishAndFindDirections(handler: ProcessHandler<VendorElement, VendorState, VendorAction>, step: ProcessStep<VendorElement, VendorState, VendorAction>): Promise<void> {
+    // TODO: Safe guards for handler calls.
+    const result = handler.checkCompletion(step.state)
+    if (result === undefined) {
+      const directions = await handler.getDirections(step.state)
+      await step.setDirections(this.db, directions)
+    } else {
+      // Process is finished.
+      step.directions = undefined
+      step.action = undefined
+      step.finished = new Date()
+      await step.save()
+      step.process.complete = true
+      step.process.successful = result
+      await step.process.updateStatus()
+      await step.process.save()
+    }
   }
 
   /**

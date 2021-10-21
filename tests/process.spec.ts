@@ -42,12 +42,10 @@ test('process handling with coins', async () => {
   })
 
   // Give some manual input.
-  let action: CoinAction = { target: 'coin1', count: +4 }
-  await process.input(action)
-  action = { target: 'coin5', count: +0 }
-  await process.input(action)
-  action = { target: 'coin10', count: -8 }
-  await process.input(action)
+  await process.input({ target: 'coin1', count: +4 })
+  await process.input({ target: 'coin5', count: +0 })
+  await process.input({ target: 'coin10', count: -8 })
+  expect(process.status()).toBe(ProcessStatus.WAITING)
   expect(process.state()).toStrictEqual({
     stage: 'running',
     coin1: 6,
@@ -57,6 +55,7 @@ test('process handling with coins', async () => {
 
   // Reload the process from the disk.
   const copy = await system.loadProcess(process.id)
+  expect(copy.status()).toBe(ProcessStatus.WAITING)
   expect(copy.state()).toStrictEqual({
     stage: 'running',
     coin1: 6,
@@ -64,8 +63,15 @@ test('process handling with coins', async () => {
     coin10: 2,
   })
 
-  console.log(await copy.getCurrentStep())
-  // TODO: Add failure check (coin < 0) and success check (coin > 10) and run process until finished.
+  // Pump it to the finish.
+  await copy.input({ target: 'coin1', count: +5 })
+  expect(copy.status()).toBe(ProcessStatus.SUCCEEDED)
+  expect(copy.state()).toStrictEqual({
+    stage: 'running',
+    coin1: 11,
+    coin5: 4,
+    coin10: 2,
+  })
   // TODO: Add check for making exception during the processing.
   // TODO: Rolling back steps.
 
