@@ -1,7 +1,7 @@
 /**
  * Definition of the how the direction plays out.
  */
-export declare type DirectionsType = 'action' | 'ui';
+export declare type DirectionsType = 'action' | 'ui' | 'complete';
 /**
  * Definition of direction data.
  */
@@ -23,4 +23,12 @@ export declare class Directions<VendorElement, VendorAction> {
      * @returns
      */
     toJSON(): DirectionsData<VendorElement, VendorAction>;
+    /**
+     * Check if the direction can be determined without user intervention.
+     */
+    isImmediate(): boolean;
+    /**
+     * Check if there are no directions forward.
+     */
+    isComplete(): boolean;
 }

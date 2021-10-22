@@ -1,4 +1,4 @@
-import { BadState, Directions, ProcessFile, ProcessHandler } from ".."
+import { BadState, Directions, ProcessFile, ProcessHandler, ProcessStep } from ".."
 
 // We don't use elements in this dummy process.
 export type CoinElement = 'none' | 'ask'
@@ -92,4 +92,9 @@ export class CoinHandler extends ProcessHandler<CoinElement, CoinState, CoinActi
     }
   }
 
+  async rollback(step: ProcessStep<CoinElement, CoinState, CoinAction>): Promise<boolean> {
+    // Have an arbitrary condition to allow imaginary rollback: not allowed if any pile is empty.
+    const { coin1, coin5, coin10 } = step.state
+    return coin1 !== 0 && coin5 !== 0 && coin10 !== 0
+  }
 }

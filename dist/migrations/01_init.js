@@ -11,10 +11,13 @@ export function up(knex) {
     return __awaiter(this, void 0, void 0, function* () {
         yield knex.schema.createTable('processes', function (table) {
             table.increments('id');
+            table.integer('ownerId').default(null);
             table.string('name', 32).notNullable();
             table.boolean('complete').notNullable().default(false);
             table.boolean('successful').default(null);
             table.integer('currentStep').default(null);
+            table.text('error').default(null);
+            table.enum('status', ['INCOMPLETE', 'WAITING', 'SUCCEEDED', 'FAILED', 'CRASHED'], { useNative: true, enumName: 'process_status' }).notNullable().default('INCOMPLETE');
             table.index(['name']);
         });
         yield knex.schema.createTable('process_files', function (table) {
@@ -31,7 +34,6 @@ export function up(knex) {
             table.integer('processId').notNullable();
             table.foreign('processId').references('processes.id');
             table.integer('number').notNullable();
-            // TODO: Add description field to be filled for easier UI presentation.
             table.string('handler', 32).notNullable();
             table.json('directions');
             table.json('action').default(null);
@@ -47,5 +49,6 @@ export function down(knex) {
         yield knex.schema.dropTable('process_files');
         yield knex.schema.dropTable('process_steps');
         yield knex.schema.dropTable('processes');
+        yield knex.schema.raw('DROP TYPE process_status');
     });
 }

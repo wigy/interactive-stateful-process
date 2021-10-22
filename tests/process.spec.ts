@@ -103,7 +103,50 @@ test('process handling with coins', async () => {
     coin10: 10,
   })
 
-  // TODO: Rolling back steps.
+  // And create yet one more process.
+  const process2 = await system.createProcess('Rolling back with coins', sample)
+  expect(process2.status).toBe(ProcessStatus.INCOMPLETE)
+  expect(process2.state).toStrictEqual({
+    stage: 'empty',
+    coin1: 0,
+    coin5: 0,
+    coin10: 0,
+  })
+  await process2.run()
+  expect(process2.status).toBe(ProcessStatus.WAITING)
+  expect(process2.state).toStrictEqual({
+    stage: 'initialized',
+    coin1: 2,
+    coin5: 4,
+    coin10: 10,
+  })
+  await process2.input({ target: 'coin5', count: +6 })
+  expect(process2.status).toBe(ProcessStatus.WAITING)
+  expect(process2.state).toStrictEqual({
+    stage: 'running',
+    coin1: 2,
+    coin5: 10,
+    coin10: 10,
+  })
+
+  // Now roll back steps.
+  await process2.rollback()
+  expect(process2.status).toBe(ProcessStatus.WAITING)
+  expect(process2.state).toStrictEqual({
+    stage: 'initialized',
+    coin1: 2,
+    coin5: 4,
+    coin10: 10,
+  })
+
+  await process2.rollback()
+  expect(process2.status).toBe(ProcessStatus.INCOMPLETE)
+  expect(process2.state).toStrictEqual({
+    stage: 'empty',
+    coin1: 0,
+    coin5: 0,
+    coin10: 0,
+  })
 
   // console.log('PROCESSES', await db('processes').select('*'))
   // console.log('FILES', await db('process_files').select('*'))

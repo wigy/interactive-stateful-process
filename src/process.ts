@@ -18,7 +18,8 @@ export type FileEncoding = 'ascii' | 'base64' | 'json'
  *  * INCOMPLETE - Something has stopped the process before it has been finished properly.
  *  * WAITING - The process is currently waiting for external input.
  *  * SUCCEEDED - The process is completed successfully.
- *  * FAILED - The process has failed.
+ *  * FAILED - The process is completed unsuccessfully.
+ *  * CRASHED - A handler has crashed at some point and process is halted.
  *
  */
 export enum ProcessStatus {
@@ -213,7 +214,6 @@ export class Process<VendorElement, VendorState, VendorAction> {
   name: ProcessName
   complete: boolean
   successful: boolean | undefined
-  // TODO: Add retryable support.
   currentStep: number | undefined
   status: ProcessStatus
   files: ProcessFile[]
@@ -472,6 +472,38 @@ export class Process<VendorElement, VendorState, VendorAction> {
     }
     await this.proceedToState(action, nextState)
   }
+
+  /**
+   * Roll back the latest step.
+   */
+  async rollback(): Promise<boolean> {
+    if (this.currentStep === null || this.currentStep === undefined) {
+      throw new BadState(`Cannot roll back when there is no current step.`)
+    }
+    if (this.currentStep < 1) {
+      throw new BadState(`Cannot roll back when there is only initial step in the process.`)
+    }
+    const step = await this.getCurrentStep()
+    this.system.logger.info(`Attempt of rolling back '${step}' from '${this}'.`)
+    const handler = this.system.getHandler(step.handler)
+    const result = await handler.rollback(step)
+    if (result) {
+      if (this.error) {
+        this.error = undefined
+      }
+      await this.db('process_steps').delete().where({ id: step.id })
+      this.currentStep--
+      await this.save()
+      const newCurrentStep = await this.getCurrentStep()
+      newCurrentStep.finished = undefined
+      await newCurrentStep.save()
+      await this.updateStatus()
+      this.system.logger.info(`Roll back of '${this}' to '${newCurrentStep}' successful.`)
+      return true
+    }
+    this.system.logger.info(`Not able to roll back '${this}'.`)
+    return false
+  }
 }
 
 /**
@@ -525,6 +557,14 @@ export class ProcessHandler<VendorElement, VendorState, VendorAction> {
    */
   async getDirections(state: VendorState): Promise<Directions<VendorElement, VendorAction>> {
     throw new NotImplemented(`A handler '${this.name}' for state '${JSON.stringify(state)}' does not implement getDirections()`)
+  }
+
+  /**
+   * See if it is possible rollback a step.
+   * @param step
+   */
+  async rollback(step: ProcessStep<VendorElement, VendorState, VendorAction>): Promise<boolean> {
+    throw new NotImplemented(`A handler '${this.name}' for step '${step}' does not implement rollback()`)
   }
 }
 

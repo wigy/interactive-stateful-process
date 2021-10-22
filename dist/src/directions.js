@@ -23,4 +23,16 @@ export class Directions {
         }
         return ret;
     }
+    /**
+     * Check if the direction can be determined without user intervention.
+     */
+    isImmediate() {
+        return this.type === 'action';
+    }
+    /**
+     * Check if there are no directions forward.
+     */
+    isComplete() {
+        return this.type === 'complete';
+    }
 }
