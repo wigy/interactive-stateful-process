@@ -18,7 +18,8 @@ export async function up (knex): Promise<void> {
         table.integer('processId').notNullable()
         table.foreign('processId').references('processes.id')
         table.text('name')
-        table.text('encoding')
+        table.string('type', 64)
+        table.string('encoding', 16)
         table.text('data')
 
         table.index(['processId'])

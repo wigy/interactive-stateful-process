@@ -36,7 +36,7 @@ export enum ProcessStatus {
 export interface ProcessFileData {
   processId?: ID
   name: string
-  mimeType?: string
+  type?: string
   encoding: FileEncoding
   data: string
 }
@@ -48,6 +48,7 @@ export class ProcessFile {
   id: ID
   processId: ID
   name: string
+  type?: string
   encoding: FileEncoding
   data: string
 
@@ -55,6 +56,7 @@ export class ProcessFile {
     this.id = null
     this.processId = obj.processId || null
     this.name = obj.name
+    this.type = obj.type
     this.encoding = obj.encoding
     this.data = obj.data
   }
@@ -71,6 +73,7 @@ export class ProcessFile {
     return {
       processId: this.processId,
       name: this.name,
+      type: this.type,
       encoding: this.encoding,
       data: this.data
     }
@@ -651,7 +654,7 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
       }
     }
     if (!selectedHandler) {
-      await process.crashed(new InvalidArgument(`No handler found for the file ${file.name} of type ${file.mimeType}.`))
+      await process.crashed(new InvalidArgument(`No handler found for the file ${file.name} of type ${file.type}.`))
       return process
     }
     // Create initial step using the handler.
