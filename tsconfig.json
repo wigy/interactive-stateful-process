@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
-        "module": "esnext",
-        "target": "es2015",
+        "target": "es5",
+        "module": "commonjs",
         "esModuleInterop": true,
         "strictNullChecks": true,
         "moduleResolution": "node",
@@ -9,6 +9,7 @@
         "outDir": "./dist"
     },
     "include": [
+        "example/**/*",
         "src/**/*",
         "tests/**/*",
         "migrations/**/*"
