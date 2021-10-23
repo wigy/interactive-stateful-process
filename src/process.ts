@@ -249,6 +249,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
       successful: this.successful,
       currentStep: this.currentStep,
       status: this.status,
+      error: this.error
     }
   }
 
@@ -415,7 +416,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
       step.finished = new Date()
       await step.save()
     }
-    this.error = `${err.name}: ${err.message}`
+    this.error = err.stack ? err.stack : `${err.name}: ${err.message}`
     await this.save()
     await this.updateStatus()
   }
@@ -619,7 +620,7 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
    * @param type
    * @param name
    * @param file
-   * @returns
+   * @returns New process that is already in crashed state, if no handler
    */
   async createProcess(name: ProcessName, file: ProcessFileData): Promise<Process<VendorElement, VendorState, VendorAction>> {
     // Set up the process.
@@ -643,7 +644,8 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
       }
     }
     if (!selectedHandler) {
-      throw new InvalidArgument(`No handler found for the file ${file.name}.`)
+      await process.crashed(new InvalidArgument(`No handler found for the file ${file.name}.`))
+      return process
     }
     // Create initial step using the handler.
     const state = selectedHandler.startingState(processFile)

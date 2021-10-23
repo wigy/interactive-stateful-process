@@ -148,6 +148,16 @@ test('process handling with coins', async () => {
     coin10: 0,
   })
 
+  // Try totally wrong file.
+  const badSample: ProcessFileData = {
+    name: 'bad.txt',
+    encoding: 'ascii',
+    data: 'rubbish\n'
+  }
+  const failingProcess = await system.createProcess('Try bad file', badSample)
+  expect(failingProcess.status).toBe(ProcessStatus.CRASHED)
+  expect(failingProcess.error).toBeTruthy()
+
   // console.log('PROCESSES', await db('processes').select('*'))
   // console.log('FILES', await db('process_files').select('*'))
   // console.log('STEPS', await db('process_steps').select('*'))
