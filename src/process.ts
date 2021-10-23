@@ -372,6 +372,13 @@ export class Process<VendorElement, VendorState, VendorAction> {
   }
 
   /**
+   * Check if the process can be run.
+   */
+  canRun(): boolean {
+    return !this.complete && (this.status === ProcessStatus.INCOMPLETE || this.status === ProcessStatus.WAITING)
+  }
+
+  /**
    * Execute process as long as it is completed, failed or requires additional input.
    */
   async run(): Promise<void> {
@@ -596,8 +603,8 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
   constructor(db: Database) {
     this.db = db
     this.logger = {
-      info: (...msg) => console.log(...msg),
-      error: (...msg) => console.error(...msg)
+      info: (...msg) => console.log(new Date(), ...msg),
+      error: (...msg) => console.error(new Date(), ...msg)
     }
   }
 
@@ -644,7 +651,7 @@ export class ProcessingSystem<VendorElement, VendorState, VendorAction> {
       }
     }
     if (!selectedHandler) {
-      await process.crashed(new InvalidArgument(`No handler found for the file ${file.name}.`))
+      await process.crashed(new InvalidArgument(`No handler found for the file ${file.name} of type ${file.mimeType}.`))
       return process
     }
     // Create initial step using the handler.

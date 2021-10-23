@@ -33,10 +33,10 @@ class ISPDemoServer {
       return system
     }
 
-    this.app.use((req, res, next) => { console.log(req.method, req.url); next() })
+    this.app.use((req, res, next) => { console.log(new Date(), req.method, req.url); next() })
     this.app.use(cors('*'))
     this.app.use(express.json())
-    this.app.use('/api/isp', router(configurator))
+    this.app.use('/api/isp', router(db, configurator))
 
     this.server = this.app.listen(PORT, () => {
       console.log(`Server started on port ${PORT}.`)
