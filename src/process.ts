@@ -417,7 +417,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
    * @param err
    */
   async crashed(err: Error): Promise<void> {
-    this.system.logger.error('Processing failed:', err)
+    this.system.logger.error(`Processing of ${this} failed:`, err)
     if (this.currentStep !== undefined && this.currentStep !== null) {
       const step = await this.loadStep(this.currentStep)
       step.finished = new Date()
