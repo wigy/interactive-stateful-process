@@ -19,3 +19,9 @@ execute next, in which case process continues immediately.
 
 The iteration continues until an error happens or the handler recognizes the state as successful (or failed)
 completion.
+
+# Version History
+
+## v1.0.0
+
+* Core functionality.
