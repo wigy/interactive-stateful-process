@@ -35,7 +35,7 @@ class ISPDemoServer {
 
     this.app.use((req, res, next) => { console.log(new Date(), req.method, req.url); next() })
     this.app.use(cors('*'))
-    this.app.use(express.json())
+    this.app.use(express.json({ limit: '1024MB' }))
     this.app.use('/api/isp', router(db, configurator))
 
     this.server = this.app.listen(PORT, () => {

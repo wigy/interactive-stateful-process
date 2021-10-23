@@ -11,7 +11,7 @@ export type ProcessName = string
 /**
  * How the process input data is encoded.
  */
-export type FileEncoding = 'ascii' | 'base64' | 'json'
+export type FileEncoding = 'utf-8' | 'base64' | 'json'
 /**
  * Overall status of the process.
  *

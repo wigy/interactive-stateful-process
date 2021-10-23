@@ -18,7 +18,7 @@ test('process handling with coins', async () => {
 
   const sample: ProcessFileData = {
     name: 'sample.txt',
-    encoding: 'ascii',
+    encoding: 'utf-8',
     data: '#1,5,10\n2,4,10\n'
   }
 
@@ -151,7 +151,7 @@ test('process handling with coins', async () => {
   // Try totally wrong file.
   const badSample: ProcessFileData = {
     name: 'bad.txt',
-    encoding: 'ascii',
+    encoding: 'utf-8',
     data: 'rubbish\n'
   }
   const failingProcess = await system.createProcess('Try bad file', badSample)
