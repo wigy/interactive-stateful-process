@@ -8,8 +8,11 @@ import { Database, ID } from ".."
 export default function(db: Database) {
   return {
     process: {
-      get: async (id: ID) => {
-        return db('processes').select('*').where({ id })
+      get: async (id: ID = null) => {
+        if (id) {
+          return db('processes').select('*').where({ id }).first()
+        }
+        return db('processes').select('*')
       }
     }
   }

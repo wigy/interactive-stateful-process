@@ -2,7 +2,7 @@ export async function up (knex): Promise<void> {
     await knex.schema.createTable('processes', function (table) {
         table.increments('id')
         table.integer('ownerId').default(null)
-        table.string('name', 32).notNullable()
+        table.string('name', 128).notNullable()
         table.boolean('complete').notNullable().default(false)
         table.boolean('successful').default(null)
         table.integer('currentStep').default(null)
