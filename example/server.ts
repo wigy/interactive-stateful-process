@@ -1,6 +1,7 @@
 import express from 'express'
 import { Server } from 'http'
 import Knex from 'knex'
+import cors from 'cors'
 import { router } from '../src/server/router'
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3302
@@ -15,6 +16,8 @@ class ISPDemoServer {
     const db = Knex(DATABASE_URL)
     await db.migrate.latest()
 
+    this.app.use((req, res, next) => { console.log(req.method, req.url); next() })
+    this.app.use(cors('*'))
     this.app.use(express.json())
     this.app.use('/api/isp', router())
 
