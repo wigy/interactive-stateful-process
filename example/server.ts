@@ -1,14 +1,19 @@
 import express from 'express'
 import { Server } from 'http'
+import Knex from 'knex'
 import { router } from '../src/server/router'
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3302
+const DATABASE_URL = process.env.DATABASE_URL || 'postgres://user:pass@localhost/test'
 
 class ISPDemoServer {
-  public app = express()
+  private app = express()
   private server: Server
 
   public start = async () => {
+
+    const db = Knex(DATABASE_URL)
+    await db.migrate.latest()
 
     this.app.use(express.json())
     this.app.use('/api/isp', router())

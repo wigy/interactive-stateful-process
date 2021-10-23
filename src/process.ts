@@ -36,6 +36,7 @@ export enum ProcessStatus {
 export interface ProcessFileData {
   processId?: ID
   name: string
+  mimeType?: string
   encoding: FileEncoding
   data: string
 }
