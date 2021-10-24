@@ -1,8 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Directions = void 0;
 /**
  * Data describing possible directions forward from the given state.
  */
-export class Directions {
-    constructor(obj) {
+var Directions = /** @class */ (function () {
+    function Directions(obj) {
         this.type = obj.type;
         this.element = obj.element;
         this.action = obj.action;
@@ -11,8 +14,8 @@ export class Directions {
      * Construct JSON data of the member fields that has been set.
      * @returns
      */
-    toJSON() {
-        const ret = {
+    Directions.prototype.toJSON = function () {
+        var ret = {
             type: this.type
         };
         if (this.element) {
@@ -22,17 +25,19 @@ export class Directions {
             ret.action = this.action;
         }
         return ret;
-    }
+    };
     /**
      * Check if the direction can be determined without user intervention.
      */
-    isImmediate() {
+    Directions.prototype.isImmediate = function () {
         return this.type === 'action';
-    }
+    };
     /**
      * Check if there are no directions forward.
      */
-    isComplete() {
+    Directions.prototype.isComplete = function () {
         return this.type === 'complete';
-    }
-}
+    };
+    return Directions;
+}());
+exports.Directions = Directions;
