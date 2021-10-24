@@ -2,7 +2,7 @@ import { Database, ID, InvalidArgument, ProcessName } from ".."
 import { Process } from "./Process"
 import { ProcessFile, ProcessFileData } from "./ProcessFile"
 import { ProcessStep } from "./ProcessStep"
-import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler"
+import { ProcessHandler, ProcessHandlerMap } from "./ProessHandler"
 
 /**
  * An instance of the full processing system.
