@@ -15,7 +15,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DatabaseError = exports.NotFound = exports.NotImplemented = exports.BadState = exports.InvalidArgument = exports.ProcessingError = void 0;
+exports.DatabaseError = exports.NotFound = exports.NotImplemented = exports.BadState = exports.InvalidArgument = exports.InvalidFile = exports.ProcessingError = void 0;
 var ProcessingError = /** @class */ (function (_super) {
     __extends(ProcessingError, _super);
     function ProcessingError() {
@@ -24,6 +24,14 @@ var ProcessingError = /** @class */ (function (_super) {
     return ProcessingError;
 }(Error));
 exports.ProcessingError = ProcessingError;
+var InvalidFile = /** @class */ (function (_super) {
+    __extends(InvalidFile, _super);
+    function InvalidFile() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return InvalidFile;
+}(ProcessingError));
+exports.InvalidFile = InvalidFile;
 var InvalidArgument = /** @class */ (function (_super) {
     __extends(InvalidArgument, _super);
     function InvalidArgument() {

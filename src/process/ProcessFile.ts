@@ -1,4 +1,5 @@
-import { Database, DatabaseError, FileEncoding, ID } from ".."
+import chardet from 'chardet'
+import { Database, DatabaseError, FileEncoding, ID, InvalidFile } from ".."
 
 /**
  * A data structure containing input data for the process.
@@ -21,6 +22,7 @@ export class ProcessFile {
   type?: string
   encoding: FileEncoding
   data: string
+  private decoded?: string
 
   constructor(obj: ProcessFileData) {
     this.id = null
@@ -29,6 +31,7 @@ export class ProcessFile {
     this.type = obj.type
     this.encoding = obj.encoding
     this.data = obj.data
+    this.decoded = undefined
   }
 
   toString(): string {
@@ -64,6 +67,64 @@ export class ProcessFile {
       this.id = (await db('process_files').insert(out).returning('id'))[0]
       if (this.id) return this.id
       throw new DatabaseError(`Saving process ${JSON.stringify(out)} failed.`)
+    }
+  }
+
+  /**
+   * Check if the first line of the text file matches to the regular expression.
+   * @param re
+   */
+  firstLineMatch(re: RegExp): boolean {
+    const str = this.decode()
+    const n = str.indexOf('\n')
+    const line1 = n < 0 ? str : str.substr(0, n).trim()
+    return re.test(line1)
+  }
+
+  /**
+   * Find out if the content is binary or text.
+   *
+   * The mime type has to start with `text/`.
+   */
+  isTextFile(): boolean {
+    return this.type?.startsWith('text/') || false
+  }
+
+  /**
+   * Convert chardet encoding to the supported buffer encoding
+   * "ascii" | "utf8" | "utf-8" | "utf16le" | "ucs2" | "ucs-2" | "base64" | "latin1" | "binary" | "hex"
+   */
+  parseEncoding(encoding: string): BufferEncoding {
+    switch (encoding.toUpperCase()) {
+      case 'UTF-8':
+        return 'utf-8'
+      case 'ISO-8859-1':
+        return 'latin1'
+      case 'UTF-16LE':
+        return 'utf16le'
+      default:
+        throw new InvalidFile(`Not able to map text encoding ${encoding}.`)
+    }
+  }
+
+  /**
+   * Try to recognize the file content and decode if it is a recognizable text format.
+   */
+  decode(): string {
+    if (this.decoded) {
+      return this.decoded
+    }
+    switch(this.encoding) {
+      case 'base64':
+        const buffer = Buffer.from(this.data, 'base64')
+        const encoding = chardet.detect(buffer)
+        if (!encoding) {
+          throw new InvalidFile(`Cannot determine encoding for '${this}'.`)
+        }
+        this.decoded = buffer.toString(this.parseEncoding(encoding))
+        return this.decoded
+      default:
+        throw new InvalidFile(`An encoding '${this.encoding}' is not yet supported.`)
     }
   }
 }

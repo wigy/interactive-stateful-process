@@ -3,7 +3,7 @@ import { Server } from 'http'
 import Knex from 'knex'
 import cors from 'cors'
 import { router } from './router'
-import { Database, ProcessingSystem } from '..'
+import { Database, ProcessHandler, ProcessingSystem } from '..'
 
 /**
  * Simple demo server.
@@ -13,10 +13,12 @@ export class ISPDemoServer<DemoElement, DemoState, DemoAction> {
   private server: Server
   private port: number
   private db: Database
+  private handlers: ProcessHandler<DemoElement, DemoState, DemoAction>[]
 
-  constructor(port: number, databaseUrl: string) {
+  constructor(port: number, databaseUrl: string, handlers: ProcessHandler<DemoElement, DemoState, DemoAction>[] = []) {
     this.port = port
     this.db = Knex(databaseUrl)
+    this.handlers = handlers
   }
 
   public start = async (): Promise<void> => {
@@ -26,7 +28,7 @@ export class ISPDemoServer<DemoElement, DemoState, DemoAction> {
 
     const configurator = () => {
       const system = new ProcessingSystem<DemoElement, DemoState, DemoAction>(this.db)
-      // TODO: Register demo handlers.
+      this.handlers.forEach(handler => system.register(handler))
       return system
     }
 

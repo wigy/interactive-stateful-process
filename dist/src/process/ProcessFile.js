@@ -35,8 +35,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProcessFile = void 0;
+var chardet_1 = __importDefault(require("chardet"));
 var __1 = require("..");
 /**
  * An instance of input data for processing.
@@ -49,6 +53,7 @@ var ProcessFile = /** @class */ (function () {
         this.type = obj.type;
         this.encoding = obj.encoding;
         this.data = obj.data;
+        this.decoded = undefined;
     }
     ProcessFile.prototype.toString = function () {
         return "ProcessFile #" + this.id + " " + this.name;
@@ -95,6 +100,61 @@ var ProcessFile = /** @class */ (function () {
                 }
             });
         });
+    };
+    /**
+     * Check if the first line of the text file matches to the regular expression.
+     * @param re
+     */
+    ProcessFile.prototype.firstLineMatch = function (re) {
+        var str = this.decode();
+        var n = str.indexOf('\n');
+        var line1 = n < 0 ? str : str.substr(0, n).trim();
+        return re.test(line1);
+    };
+    /**
+     * Find out if the content is binary or text.
+     *
+     * The mime type has to start with `text/`.
+     */
+    ProcessFile.prototype.isTextFile = function () {
+        var _a;
+        return ((_a = this.type) === null || _a === void 0 ? void 0 : _a.startsWith('text/')) || false;
+    };
+    /**
+     * Convert chardet encoding to the supported buffer encoding
+     * "ascii" | "utf8" | "utf-8" | "utf16le" | "ucs2" | "ucs-2" | "base64" | "latin1" | "binary" | "hex"
+     */
+    ProcessFile.prototype.parseEncoding = function (encoding) {
+        switch (encoding.toUpperCase()) {
+            case 'UTF-8':
+                return 'utf-8';
+            case 'ISO-8859-1':
+                return 'latin1';
+            case 'UTF-16LE':
+                return 'utf16le';
+            default:
+                throw new __1.InvalidFile("Not able to map text encoding " + encoding + ".");
+        }
+    };
+    /**
+     * Try to recognize the file content and decode if it is a recognizable text format.
+     */
+    ProcessFile.prototype.decode = function () {
+        if (this.decoded) {
+            return this.decoded;
+        }
+        switch (this.encoding) {
+            case 'base64':
+                var buffer = Buffer.from(this.data, 'base64');
+                var encoding = chardet_1.default.detect(buffer);
+                if (!encoding) {
+                    throw new __1.InvalidFile("Cannot determine encoding for '" + this + "'.");
+                }
+                this.decoded = buffer.toString(this.parseEncoding(encoding));
+                return this.decoded;
+            default:
+                throw new __1.InvalidFile("An encoding '" + this.encoding + "' is not yet supported.");
+        }
     };
     return ProcessFile;
 }());

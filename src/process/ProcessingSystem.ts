@@ -33,6 +33,9 @@ import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler"
    * @param handler
    */
   register(handler: ProcessHandler<VendorElement, VendorState, VendorAction>): void {
+    if (!handler.name) {
+      throw new InvalidArgument(`A handler without name cannot be registered.`)
+    }
     if (handler.name in this.handlers) {
       throw new InvalidArgument(`The handler '${handler.name}' is already defined.`)
     }
@@ -75,7 +78,13 @@ import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler"
       return process
     }
     // Create initial step using the handler.
-    const state = selectedHandler.startingState(processFile)
+    let state
+    try {
+      state = selectedHandler.startingState(processFile)
+    } catch(err) {
+      await process.crashed(err)
+      return process
+    }
     const step = new ProcessStep<VendorElement, VendorState, VendorAction>({
       number: 0,
       handler: selectedHandler.name,

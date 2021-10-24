@@ -83,6 +83,9 @@ var ProcessingSystem = /** @class */ (function () {
      * @param handler
      */
     ProcessingSystem.prototype.register = function (handler) {
+        if (!handler.name) {
+            throw new __1.InvalidArgument("A handler without name cannot be registered.");
+        }
         if (handler.name in this.handlers) {
             throw new __1.InvalidArgument("The handler '" + handler.name + "' is already defined.");
         }
@@ -100,7 +103,7 @@ var ProcessingSystem = /** @class */ (function () {
      */
     ProcessingSystem.prototype.createProcess = function (name, file) {
         return __awaiter(this, void 0, void 0, function () {
-            var process, processFile, selectedHandler, _i, _a, handler, err_1, state, step;
+            var process, processFile, selectedHandler, _i, _a, handler, err_1, state, err_2, step;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -147,7 +150,16 @@ var ProcessingSystem = /** @class */ (function () {
                         _b.sent();
                         return [2 /*return*/, process];
                     case 10:
+                        _b.trys.push([10, 11, , 13]);
                         state = selectedHandler.startingState(processFile);
+                        return [3 /*break*/, 13];
+                    case 11:
+                        err_2 = _b.sent();
+                        return [4 /*yield*/, process.crashed(err_2)];
+                    case 12:
+                        _b.sent();
+                        return [2 /*return*/, process];
+                    case 13:
                         step = new ProcessStep_1.ProcessStep({
                             number: 0,
                             handler: selectedHandler.name,
@@ -155,17 +167,17 @@ var ProcessingSystem = /** @class */ (function () {
                         });
                         process.addStep(step);
                         return [4 /*yield*/, step.save()];
-                    case 11:
+                    case 14:
                         _b.sent();
                         process.currentStep = 0;
                         return [4 /*yield*/, process.save()
                             // Find directions forward from the initial state.
                         ];
-                    case 12:
+                    case 15:
                         _b.sent();
                         // Find directions forward from the initial state.
                         return [4 /*yield*/, this.checkFinishAndFindDirections(selectedHandler, step)];
-                    case 13:
+                    case 16:
                         // Find directions forward from the initial state.
                         _b.sent();
                         return [2 /*return*/, process];

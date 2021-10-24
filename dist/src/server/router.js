@@ -64,7 +64,7 @@ function router(db, configurator) {
                 case 0:
                     system = configurator(req);
                     files = req.body.files;
-                    return [4 /*yield*/, system.createProcess("Uploading " + files[0].mimeType + " file " + files[0].name, files[0])];
+                    return [4 /*yield*/, system.createProcess("Uploading " + files[0].type + " file " + files[0].name, files[0])];
                 case 1:
                     process = _c.sent();
                     if (!process.canRun()) return [3 /*break*/, 3];

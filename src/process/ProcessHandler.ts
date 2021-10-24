@@ -18,7 +18,7 @@ import { ProcessStep } from "./ProcessStep"
    * @param file
    */
   canHandle(file: ProcessFile): boolean {
-    throw new NotImplemented(`A handler '${this.name}' cannot handle file '${file.name}', since canHandle() is not implemented.`)
+    throw new NotImplemented(`A handler '${this.name}' cannot check file '${file.name}', since canHandle() is not implemented.`)
   }
 
   /**

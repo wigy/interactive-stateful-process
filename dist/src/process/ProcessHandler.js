@@ -50,7 +50,7 @@ var ProcessHandler = /** @class */ (function () {
      * @param file
      */
     ProcessHandler.prototype.canHandle = function (file) {
-        throw new __1.NotImplemented("A handler '" + this.name + "' cannot handle file '" + file.name + "', since canHandle() is not implemented.");
+        throw new __1.NotImplemented("A handler '" + this.name + "' cannot check file '" + file.name + "', since canHandle() is not implemented.");
     };
     /**
      * Check if the state is either successful `true` or failed `false` or not yet complete `undefined`.

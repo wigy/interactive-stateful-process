@@ -49,8 +49,9 @@ var __1 = require("..");
  * Simple demo server.
  */
 var ISPDemoServer = /** @class */ (function () {
-    function ISPDemoServer(port, databaseUrl) {
+    function ISPDemoServer(port, databaseUrl, handlers) {
         var _this = this;
+        if (handlers === void 0) { handlers = []; }
         this.app = (0, express_1.default)();
         this.start = function () { return __awaiter(_this, void 0, void 0, function () {
             var configurator;
@@ -65,7 +66,7 @@ var ISPDemoServer = /** @class */ (function () {
                         _a.sent();
                         configurator = function () {
                             var system = new __1.ProcessingSystem(_this.db);
-                            // TODO: Register demo handlers.
+                            _this.handlers.forEach(function (handler) { return system.register(handler); });
                             return system;
                         };
                         this.app.use(function (req, res, next) { console.log(new Date(), req.method, req.url); next(); });
@@ -84,6 +85,7 @@ var ISPDemoServer = /** @class */ (function () {
         }); };
         this.port = port;
         this.db = (0, knex_1.default)(databaseUrl);
+        this.handlers = handlers;
     }
     return ISPDemoServer;
 }());
