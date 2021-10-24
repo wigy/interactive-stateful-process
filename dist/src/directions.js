@@ -4,8 +4,8 @@ exports.Directions = void 0;
 /**
  * Data describing possible directions forward from the given state.
  */
-var Directions = /** @class */ (function () {
-    function Directions(obj) {
+class Directions {
+    constructor(obj) {
         this.type = obj.type;
         this.element = obj.element;
         this.action = obj.action;
@@ -14,8 +14,8 @@ var Directions = /** @class */ (function () {
      * Construct JSON data of the member fields that has been set.
      * @returns
      */
-    Directions.prototype.toJSON = function () {
-        var ret = {
+    toJSON() {
+        const ret = {
             type: this.type
         };
         if (this.element) {
@@ -25,19 +25,18 @@ var Directions = /** @class */ (function () {
             ret.action = this.action;
         }
         return ret;
-    };
+    }
     /**
      * Check if the direction can be determined without user intervention.
      */
-    Directions.prototype.isImmediate = function () {
+    isImmediate() {
         return this.type === 'action';
-    };
+    }
     /**
      * Check if there are no directions forward.
      */
-    Directions.prototype.isComplete = function () {
+    isComplete() {
         return this.type === 'complete';
-    };
-    return Directions;
-}());
+    }
+}
 exports.Directions = Directions;
