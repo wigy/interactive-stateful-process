@@ -96,6 +96,7 @@ import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler"
 
     process.currentStep = 0
     await process.save()
+    this.logger.info(`Created process ${process}.`)
 
     // Find directions forward from the initial state.
     await this.checkFinishAndFindDirections(selectedHandler, step)

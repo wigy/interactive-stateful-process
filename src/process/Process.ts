@@ -114,6 +114,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
     })
     this.addStep(nextStep)
     this.currentStep = (this.currentStep || 0) + 1
+    this.system.logger.info(`Proceeding ${this} to new step ${this.currentStep}.`)
     this.save()
     await nextStep.save()
     await this.system.checkFinishAndFindDirections(handler, nextStep)
