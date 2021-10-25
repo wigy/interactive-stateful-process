@@ -24,6 +24,7 @@
   "dependencies": {
     "chardet": "^1.4.0",
     "clone": "^2.1.2",
+    "csv-parse": "^4.16.3",
     "express": "^4.17.1",
     "knex": "^0.95.11",
     "pg": "^8.7.1",
