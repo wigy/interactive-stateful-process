@@ -105,7 +105,13 @@ class ProcessingSystem {
             return step.process.crashed(err);
         }
         if (result === undefined) {
-            const directions = await handler.getDirections(step.state);
+            let directions;
+            try {
+                directions = await handler.getDirections(step.state);
+            }
+            catch (err) {
+                return step.process.crashed(err);
+            }
             await step.setDirections(this.db, directions);
         }
         else {
