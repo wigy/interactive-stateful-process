@@ -180,6 +180,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
       throw new BadState(`Cannot find step ${this.currentStep} for process ${JSON.stringify(this.toJSON())}.`)
     }
     this.steps[this.currentStep] = new ProcessStep<VendorElement, VendorState, VendorAction>(data)
+    this.steps[this.currentStep].id = data.id
     this.steps[this.currentStep].process = this
     return this.steps[this.currentStep]
   }

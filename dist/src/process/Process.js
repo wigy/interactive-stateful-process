@@ -150,6 +150,7 @@ class Process {
             throw new __1.BadState(`Cannot find step ${this.currentStep} for process ${JSON.stringify(this.toJSON())}.`);
         }
         this.steps[this.currentStep] = new ProcessStep_1.ProcessStep(data);
+        this.steps[this.currentStep].id = data.id;
         this.steps[this.currentStep].process = this;
         return this.steps[this.currentStep];
     }

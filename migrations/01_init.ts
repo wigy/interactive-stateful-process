@@ -39,7 +39,7 @@ export async function up (knex): Promise<void> {
         table.json('state').notNullable()
         table.datetime('finished').default(null)
 
-        table.index(['processId', 'number'])
+        table.unique(['processId', 'number'])
     })
 }
 

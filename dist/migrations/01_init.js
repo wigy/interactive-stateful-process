@@ -35,7 +35,7 @@ async function up(knex) {
         table.datetime('started').defaultTo(knex.fn.now());
         table.json('state').notNullable();
         table.datetime('finished').default(null);
-        table.index(['processId', 'number']);
+        table.unique(['processId', 'number']);
     });
 }
 exports.up = up;
