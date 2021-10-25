@@ -204,6 +204,9 @@ export class Process<VendorElement, VendorState, VendorAction> {
         break
       }
       step = await this.getCurrentStep()
+      if (!step.directions) {
+        break
+      }
       if (!step.directions.isImmediate()) {
         await this.updateStatus()
         break
