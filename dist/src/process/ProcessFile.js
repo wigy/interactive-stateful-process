@@ -70,8 +70,7 @@ class ProcessFile {
      * The mime type has to start with `text/`.
      */
     isTextFile() {
-        var _a;
-        return ((_a = this.type) === null || _a === void 0 ? void 0 : _a.startsWith('text/')) || false;
+        return this.type?.startsWith('text/') || false;
     }
     /**
      * Convert chardet encoding to the supported buffer encoding
