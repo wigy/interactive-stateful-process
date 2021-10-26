@@ -19,8 +19,8 @@ class ProcessHandler {
     /**
      * Get the value from the system configuration.
      */
-    async getConfig(name) {
-        return this.system.getConfig(name);
+    async getConfig(section, name) {
+        return this.system.getConfig(section, name);
     }
     /**
      * Check if we are able to handle the given data.

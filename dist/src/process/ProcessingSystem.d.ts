@@ -7,7 +7,7 @@ import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler";
  * A configurator interface for fetching configuration values for the processing system.
  */
 export interface ProcessConfigurator {
-    getConfig(name: string): Promise<unknown>;
+    getConfig(section: string, name: string): Promise<unknown>;
 }
 /**
  * An instance of the full processing system.
@@ -28,7 +28,7 @@ export declare class ProcessingSystem<VendorElement, VendorState, VendorAction> 
     /**
      * Get the value from the system configuration.
      */
-    getConfig(name: string): Promise<unknown>;
+    getConfig(section: string, name: string): Promise<unknown>;
     /**
      * Register new handler class for processing.
      * @param handler

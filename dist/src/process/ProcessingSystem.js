@@ -29,8 +29,8 @@ class ProcessingSystem {
     /**
      * Get the value from the system configuration.
      */
-    async getConfig(name) {
-        return this.configurator.getConfig(name);
+    async getConfig(section, name) {
+        return this.configurator.getConfig(section, name);
     }
     /**
      * Register new handler class for processing.

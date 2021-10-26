@@ -1,4 +1,4 @@
-import { ProcessHandler } from '..';
+import { ProcessConfigurator, ProcessHandler } from '..';
 /**
  * Simple demo server.
  */
@@ -8,6 +8,7 @@ export declare class ISPDemoServer<DemoElement, DemoState, DemoAction> {
     private port;
     private db;
     private handlers;
-    constructor(port: number, databaseUrl: string, handlers?: ProcessHandler<DemoElement, DemoState, DemoAction>[]);
+    private configurator;
+    constructor(port: number, databaseUrl: string, handlers: ProcessHandler<DemoElement, DemoState, DemoAction>[], configurator?: ProcessConfigurator | null);
     start: () => Promise<void>;
 }

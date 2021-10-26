@@ -37,7 +37,7 @@ export declare class Process<VendorElement, VendorState, VendorAction> {
     /**
      * Get the value from the system configuration.
      */
-    getConfig(name: string): Promise<unknown>;
+    getConfig(section: string, name: string): Promise<unknown>;
     /**
      * Append a file to this process and link its ID.
      * @param file

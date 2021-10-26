@@ -17,7 +17,7 @@ export declare class ProcessHandler<VendorElement, VendorState, VendorAction> {
     /**
      * Get the value from the system configuration.
      */
-    getConfig(name: string): Promise<unknown>;
+    getConfig(section: string, name: string): Promise<unknown>;
     /**
      * Check if we are able to handle the given data.
      * @param file

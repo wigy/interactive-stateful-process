@@ -43,8 +43,8 @@ class Process {
     /**
      * Get the value from the system configuration.
      */
-    async getConfig(name) {
-        return this.system.getConfig(name);
+    async getConfig(section, name) {
+        return this.system.getConfig(section, name);
     }
     /**
      * Append a file to this process and link its ID.
