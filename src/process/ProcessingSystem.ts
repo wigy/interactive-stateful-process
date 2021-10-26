@@ -8,7 +8,7 @@ import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler"
  * A configurator interface for fetching configuration values for the processing system.
  */
 export interface ProcessConfigurator {
-  getConfig(name: string): Promise<unknown>
+  getConfig(section: string, name: string): Promise<unknown>
 }
 
 /**
@@ -44,8 +44,8 @@ export interface ProcessConfigurator {
   /**
    * Get the value from the system configuration.
    */
-  async getConfig(name: string): Promise<unknown> {
-    return this.configurator.getConfig(name)
+  async getConfig(section: string, name: string): Promise<unknown> {
+    return this.configurator.getConfig(section, name)
   }
 
   /**

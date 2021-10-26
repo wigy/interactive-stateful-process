@@ -26,8 +26,8 @@ import { ProcessingSystem } from "./ProcessingSystem"
   /**
    * Get the value from the system configuration.
    */
-  async getConfig(name: string): Promise<unknown> {
-    return this.system.getConfig(name)
+  async getConfig(section: string, name: string): Promise<unknown> {
+    return this.system.getConfig(section, name)
   }
 
   /**
