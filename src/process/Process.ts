@@ -66,6 +66,13 @@ export class Process<VendorElement, VendorState, VendorAction> {
   }
 
   /**
+   * Get the value from the system configuration.
+   */
+   async getConfig(name: string): Promise<unknown> {
+    return this.system.getConfig(name)
+  }
+
+  /**
    * Append a file to this process and link its ID.
    * @param file
    */

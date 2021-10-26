@@ -4,11 +4,18 @@ import { ProcessFileData } from "./ProcessFile";
 import { ProcessStep } from "./ProcessStep";
 import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler";
 /**
+ * A configurator interface for fetching configuration values for the processing system.
+ */
+export interface ProcessConfigurator {
+    getConfig(name: string): Promise<unknown>;
+}
+/**
  * An instance of the full processing system.
  */
 export declare class ProcessingSystem<VendorElement, VendorState, VendorAction> {
     db: Database;
     handlers: ProcessHandlerMap<VendorElement, VendorState, VendorAction>;
+    configurator: ProcessConfigurator;
     logger: {
         info: (...msg: any[]) => void;
         error: (...msg: any[]) => void;
@@ -18,6 +25,10 @@ export declare class ProcessingSystem<VendorElement, VendorState, VendorAction> 
      * @param db
      */
     constructor(db: Database);
+    /**
+     * Get the value from the system configuration.
+     */
+    getConfig(name: string): Promise<unknown>;
     /**
      * Register new handler class for processing.
      * @param handler

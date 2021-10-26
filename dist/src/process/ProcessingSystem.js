@@ -20,6 +20,17 @@ class ProcessingSystem {
             info: (...msg) => console.log(new Date(), ...msg),
             error: (...msg) => console.error(new Date(), ...msg)
         };
+        this.configurator = {
+            async getConfig() {
+                throw new __1.SystemError('Cannot use processing system configuration, since it is not defined.');
+            }
+        };
+    }
+    /**
+     * Get the value from the system configuration.
+     */
+    async getConfig(name) {
+        return this.configurator.getConfig(name);
     }
     /**
      * Register new handler class for processing.
@@ -35,6 +46,7 @@ class ProcessingSystem {
         if (handler.name.length > 32) {
             throw new __1.InvalidArgument(`The handler name '${handler.name}' is too long.`);
         }
+        handler.system = this;
         this.handlers[handler.name] = handler;
     }
     /**

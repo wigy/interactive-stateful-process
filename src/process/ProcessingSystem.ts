@@ -1,8 +1,15 @@
-import { Database, ID, InvalidArgument, ProcessName } from ".."
+import { Database, ID, InvalidArgument, ProcessName, SystemError } from ".."
 import { Process } from "./Process"
 import { ProcessFile, ProcessFileData } from "./ProcessFile"
 import { ProcessStep } from "./ProcessStep"
 import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler"
+
+/**
+ * A configurator interface for fetching configuration values for the processing system.
+ */
+export interface ProcessConfigurator {
+  getConfig(name: string): Promise<unknown>
+}
 
 /**
  * An instance of the full processing system.
@@ -11,6 +18,7 @@ import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler"
 
   db: Database
   handlers: ProcessHandlerMap<VendorElement, VendorState, VendorAction> = {}
+  configurator: ProcessConfigurator
   logger: {
     info: (...msg) => void
     error: (...msg) => void
@@ -26,6 +34,18 @@ import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler"
       info: (...msg) => console.log(new Date(), ...msg),
       error: (...msg) => console.error(new Date(), ...msg)
     }
+    this.configurator = {
+      async getConfig() {
+        throw new SystemError('Cannot use processing system configuration, since it is not defined.')
+      }
+    }
+  }
+
+  /**
+   * Get the value from the system configuration.
+   */
+  async getConfig(name: string): Promise<unknown> {
+    return this.configurator.getConfig(name)
   }
 
   /**
@@ -42,6 +62,7 @@ import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler"
     if (handler.name.length > 32) {
       throw new InvalidArgument(`The handler name '${handler.name}' is too long.`)
     }
+    handler.system = this
     this.handlers[handler.name] = handler
   }
 

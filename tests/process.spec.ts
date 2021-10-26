@@ -15,15 +15,17 @@ test('process handling with coins', async () => {
   // Set up the system.
   system.register(new CoinHandler('Coin Pile Adder'))
   system.logger.info = () => undefined
+  system.configurator.getConfig = async (name: string) => `Configured ${name}!`
 
+  // Launch the process.
   const sample: ProcessFileData = {
     name: 'sample.txt',
     encoding: 'utf-8',
     data: '#1,5,10\n2,4,10\n'
   }
 
-  // Launch the process.
   const process = await system.createProcess('Handle 3 stacks of coins', sample)
+  expect(await process.getConfig('TEST')).toBe('Configured TEST!')
   expect(process.status).toBe(ProcessStatus.INCOMPLETE)
   expect(process.state).toStrictEqual({
     stage: 'empty',

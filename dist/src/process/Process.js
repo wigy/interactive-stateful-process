@@ -41,6 +41,12 @@ class Process {
         };
     }
     /**
+     * Get the value from the system configuration.
+     */
+    async getConfig(name) {
+        return this.system.getConfig(name);
+    }
+    /**
      * Append a file to this process and link its ID.
      * @param file
      */

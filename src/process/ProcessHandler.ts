@@ -1,16 +1,33 @@
 import { Directions, NotImplemented } from ".."
 import { ProcessFile } from "./ProcessFile"
 import { ProcessStep } from "./ProcessStep"
+import { ProcessingSystem } from "./ProcessingSystem"
 
 /**
  * A handler taking care of moving between process states.
  */
  export class ProcessHandler<VendorElement, VendorState, VendorAction> {
 
+  system: ProcessingSystem<VendorElement, VendorState, VendorAction>
   name: string
 
   constructor(name: string) {
     this.name = name
+  }
+
+  /**
+   * Attach this handler to the processing system during the registration.
+   * @param system
+   */
+  connect(system: ProcessingSystem<VendorElement, VendorState, VendorAction>): void {
+    this.system = system
+  }
+
+  /**
+   * Get the value from the system configuration.
+   */
+  async getConfig(name: string): Promise<unknown> {
+    return this.system.getConfig(name)
   }
 
   /**

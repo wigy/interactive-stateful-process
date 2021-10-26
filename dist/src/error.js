@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DatabaseError = exports.NotFound = exports.NotImplemented = exports.BadState = exports.InvalidArgument = exports.InvalidFile = exports.ProcessingError = void 0;
+exports.SystemError = exports.DatabaseError = exports.NotFound = exports.NotImplemented = exports.BadState = exports.InvalidArgument = exports.InvalidFile = exports.ProcessingError = void 0;
 class ProcessingError extends Error {
 }
 exports.ProcessingError = ProcessingError;
@@ -22,3 +22,6 @@ exports.NotFound = NotFound;
 class DatabaseError extends ProcessingError {
 }
 exports.DatabaseError = DatabaseError;
+class SystemError extends ProcessingError {
+}
+exports.SystemError = SystemError;

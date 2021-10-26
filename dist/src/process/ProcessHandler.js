@@ -10,6 +10,19 @@ class ProcessHandler {
         this.name = name;
     }
     /**
+     * Attach this handler to the processing system during the registration.
+     * @param system
+     */
+    connect(system) {
+        this.system = system;
+    }
+    /**
+     * Get the value from the system configuration.
+     */
+    async getConfig(name) {
+        return this.system.getConfig(name);
+    }
+    /**
      * Check if we are able to handle the given data.
      * @param file
      */

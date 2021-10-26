@@ -60,6 +60,7 @@ class CoinHandler extends __1.ProcessHandler {
         return state;
     }
     checkCompletion(state) {
+        console.log(this.getConfig('dummy'));
         if (state.stage === 'running') {
             // If any pile is negative, process fails.
             if (state.coin1 < 0 || state.coin5 < 0 || state.coin10 < 0) {

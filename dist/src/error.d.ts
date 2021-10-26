@@ -12,3 +12,5 @@ export declare class NotFound extends ProcessingError {
 }
 export declare class DatabaseError extends ProcessingError {
 }
+export declare class SystemError extends ProcessingError {
+}
