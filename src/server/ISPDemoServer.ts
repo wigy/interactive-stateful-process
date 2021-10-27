@@ -3,7 +3,7 @@ import { Server } from 'http'
 import Knex from 'knex'
 import cors from 'cors'
 import { router } from './router'
-import { Database, ProcessConfigurator, ProcessHandler, ProcessingSystem } from '..'
+import { Database, ProcessConnector, ProcessHandler, ProcessingSystem } from '..'
 
 /**
  * Simple demo server.
@@ -14,9 +14,9 @@ export class ISPDemoServer<DemoElement, DemoState, DemoAction> {
   private port: number
   private db: Database
   private handlers: ProcessHandler<DemoElement, DemoState, DemoAction>[]
-  private configurator: ProcessConfigurator
+  private configurator: ProcessConnector
 
-  constructor(port: number, databaseUrl: string, handlers: ProcessHandler<DemoElement, DemoState, DemoAction>[], configurator: ProcessConfigurator|null = null) {
+  constructor(port: number, databaseUrl: string, handlers: ProcessHandler<DemoElement, DemoState, DemoAction>[], configurator: ProcessConnector|null = null) {
     this.port = port
     this.db = Knex(databaseUrl)
     this.handlers = handlers

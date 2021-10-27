@@ -5,9 +5,9 @@ import { ProcessStep } from "./ProcessStep"
 import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler"
 
 /**
- * A configurator interface for fetching configuration values for the processing system.
+ * A configurator interface for fetching configuration values for the processing system and applying results.
  */
-export interface ProcessConfigurator {
+export interface ProcessConnector {
   getConfig(section: string, name: string): Promise<unknown>
 }
 
@@ -18,7 +18,7 @@ export interface ProcessConfigurator {
 
   db: Database
   handlers: ProcessHandlerMap<VendorElement, VendorState, VendorAction> = {}
-  configurator: ProcessConfigurator
+  configurator: ProcessConnector
   logger: {
     info: (...msg) => void
     error: (...msg) => void
