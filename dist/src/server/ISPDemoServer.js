@@ -31,11 +31,16 @@ class ISPDemoServer {
             this.app.use(express_1.default.json({ limit: '1024MB' }));
             this.app.use('/api/isp', (0, router_1.router)(this.db, systemCreator));
             this.server = this.app.listen(this.port, () => {
-                console.log(`Server started on port ${this.port}.`);
+                console.log(new Date(), `Server started on port ${this.port}.`);
+                this.connector.initialize(this);
             });
             this.server.on('error', (msg) => {
-                console.error(msg);
+                console.error(new Date(), msg);
             });
+        };
+        this.stop = async () => {
+            console.log(new Date(), 'Stopping the server.');
+            await this.server.close(() => process.exit());
         };
         this.port = port;
         this.db = (0, knex_1.default)(databaseUrl);

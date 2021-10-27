@@ -8,6 +8,7 @@ import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler"
  * A connector interface for fetching configuration values and sometimes for applying results.
  */
 export interface ProcessConnector {
+  initialize(server: unknown): Promise<void>
   getConfig(section: string, name: string): Promise<unknown>
 }
 
@@ -35,6 +36,9 @@ export interface ProcessConnector {
       error: (...msg) => console.error(new Date(), ...msg)
     }
     this.connector = {
+      async initialize() {
+        this.logger.info('Connector initialized.')
+      },
       async getConfig() {
         throw new SystemError('Cannot use processing system configuration, since it is not defined.')
       }

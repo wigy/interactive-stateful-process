@@ -43,11 +43,17 @@ export class ISPDemoServer<DemoElement, DemoState, DemoAction> {
     this.app.use('/api/isp', router(this.db, systemCreator))
 
     this.server = this.app.listen(this.port, () => {
-      console.log(`Server started on port ${this.port}.`)
+      console.log(new Date(), `Server started on port ${this.port}.`)
+      this.connector.initialize(this)
     })
 
     this.server.on('error', (msg) => {
-      console.error(msg)
+      console.error(new Date(), msg)
     })
+  }
+
+  public stop = async (): Promise<void> => {
+    console.log(new Date(), 'Stopping the server.')
+    await this.server.close(() => process.exit())
   }
 }

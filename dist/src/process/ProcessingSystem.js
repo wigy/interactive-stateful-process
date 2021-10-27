@@ -21,6 +21,9 @@ class ProcessingSystem {
             error: (...msg) => console.error(new Date(), ...msg)
         };
         this.connector = {
+            async initialize() {
+                this.logger.info('Connector initialized.');
+            },
             async getConfig() {
                 throw new __1.SystemError('Cannot use processing system configuration, since it is not defined.');
             }
