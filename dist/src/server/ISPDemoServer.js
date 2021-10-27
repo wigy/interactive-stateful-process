@@ -13,7 +13,7 @@ const __1 = require("..");
  * Simple demo server.
  */
 class ISPDemoServer {
-    constructor(port, databaseUrl, handlers, configurator = null) {
+    constructor(port, databaseUrl, handlers, connector = null) {
         this.app = (0, express_1.default)();
         this.start = async () => {
             await this.db.migrate.rollback(); // If you don't want reset between restarts, remove this.
@@ -21,8 +21,8 @@ class ISPDemoServer {
             const systemCreator = () => {
                 const system = new __1.ProcessingSystem(this.db);
                 this.handlers.forEach(handler => system.register(handler));
-                if (this.configurator) {
-                    system.configurator = this.configurator;
+                if (this.connector) {
+                    system.connector = this.connector;
                 }
                 return system;
             };
@@ -40,8 +40,8 @@ class ISPDemoServer {
         this.port = port;
         this.db = (0, knex_1.default)(databaseUrl);
         this.handlers = handlers;
-        if (configurator)
-            this.configurator = configurator;
+        if (connector)
+            this.connector = connector;
     }
 }
 exports.ISPDemoServer = ISPDemoServer;

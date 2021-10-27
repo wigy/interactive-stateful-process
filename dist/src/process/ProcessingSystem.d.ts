@@ -4,9 +4,9 @@ import { ProcessFileData } from "./ProcessFile";
 import { ProcessStep } from "./ProcessStep";
 import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler";
 /**
- * A configurator interface for fetching configuration values for the processing system.
+ * A connector interface for fetching configuration values and sometimes for applying results.
  */
-export interface ProcessConfigurator {
+export interface ProcessConnector {
     getConfig(section: string, name: string): Promise<unknown>;
 }
 /**
@@ -15,7 +15,7 @@ export interface ProcessConfigurator {
 export declare class ProcessingSystem<VendorElement, VendorState, VendorAction> {
     db: Database;
     handlers: ProcessHandlerMap<VendorElement, VendorState, VendorAction>;
-    configurator: ProcessConfigurator;
+    connector: ProcessConnector;
     logger: {
         info: (...msg: any[]) => void;
         error: (...msg: any[]) => void;

@@ -15,7 +15,7 @@ test('process handling with coins', async () => {
   // Set up the system.
   system.register(new CoinHandler('Coin Pile Adder'))
   system.logger.info = () => undefined
-  system.configurator.getConfig = async (section: string, name: string) => `Configured ${section}.${name}!`
+  system.connector.getConfig = async (section: string, name: string) => `Configured ${section}.${name}!`
 
   // Launch the process.
   const sample: ProcessFileData = {

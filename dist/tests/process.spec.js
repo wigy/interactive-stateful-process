@@ -15,7 +15,7 @@ test('process handling with coins', async () => {
     // Set up the system.
     system.register(new testing_1.CoinHandler('Coin Pile Adder'));
     system.logger.info = () => undefined;
-    system.configurator.getConfig = async (section, name) => `Configured ${section}.${name}!`;
+    system.connector.getConfig = async (section, name) => `Configured ${section}.${name}!`;
     // Launch the process.
     const sample = {
         name: 'sample.txt',

@@ -5,7 +5,7 @@ import { ProcessStep } from "./ProcessStep"
 import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler"
 
 /**
- * A configurator interface for fetching configuration values for the processing system and applying results.
+ * A connector interface for fetching configuration values and sometimes for applying results.
  */
 export interface ProcessConnector {
   getConfig(section: string, name: string): Promise<unknown>
@@ -18,7 +18,7 @@ export interface ProcessConnector {
 
   db: Database
   handlers: ProcessHandlerMap<VendorElement, VendorState, VendorAction> = {}
-  configurator: ProcessConnector
+  connector: ProcessConnector
   logger: {
     info: (...msg) => void
     error: (...msg) => void
@@ -34,7 +34,7 @@ export interface ProcessConnector {
       info: (...msg) => console.log(new Date(), ...msg),
       error: (...msg) => console.error(new Date(), ...msg)
     }
-    this.configurator = {
+    this.connector = {
       async getConfig() {
         throw new SystemError('Cannot use processing system configuration, since it is not defined.')
       }
@@ -45,7 +45,7 @@ export interface ProcessConnector {
    * Get the value from the system configuration.
    */
   async getConfig(section: string, name: string): Promise<unknown> {
-    return this.configurator.getConfig(section, name)
+    return this.connector.getConfig(section, name)
   }
 
   /**

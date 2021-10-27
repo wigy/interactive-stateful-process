@@ -14,13 +14,13 @@ export class ISPDemoServer<DemoElement, DemoState, DemoAction> {
   private port: number
   private db: Database
   private handlers: ProcessHandler<DemoElement, DemoState, DemoAction>[]
-  private configurator: ProcessConnector
+  private connector: ProcessConnector
 
-  constructor(port: number, databaseUrl: string, handlers: ProcessHandler<DemoElement, DemoState, DemoAction>[], configurator: ProcessConnector|null = null) {
+  constructor(port: number, databaseUrl: string, handlers: ProcessHandler<DemoElement, DemoState, DemoAction>[], connector: ProcessConnector|null = null) {
     this.port = port
     this.db = Knex(databaseUrl)
     this.handlers = handlers
-    if (configurator) this.configurator = configurator
+    if (connector) this.connector = connector
   }
 
   public start = async (): Promise<void> => {
@@ -31,8 +31,8 @@ export class ISPDemoServer<DemoElement, DemoState, DemoAction> {
     const systemCreator = () => {
       const system = new ProcessingSystem<DemoElement, DemoState, DemoAction>(this.db)
       this.handlers.forEach(handler => system.register(handler))
-      if (this.configurator) {
-        system.configurator = this.configurator
+      if (this.connector) {
+        system.connector = this.connector
       }
       return system
     }

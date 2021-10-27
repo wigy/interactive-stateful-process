@@ -20,7 +20,7 @@ class ProcessingSystem {
             info: (...msg) => console.log(new Date(), ...msg),
             error: (...msg) => console.error(new Date(), ...msg)
         };
-        this.configurator = {
+        this.connector = {
             async getConfig() {
                 throw new __1.SystemError('Cannot use processing system configuration, since it is not defined.');
             }
@@ -30,7 +30,7 @@ class ProcessingSystem {
      * Get the value from the system configuration.
      */
     async getConfig(section, name) {
-        return this.configurator.getConfig(section, name);
+        return this.connector.getConfig(section, name);
     }
     /**
      * Register new handler class for processing.
