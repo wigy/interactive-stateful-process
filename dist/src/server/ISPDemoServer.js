@@ -35,9 +35,16 @@ class ISPDemoServer {
                 console.error(new Date(), msg);
             });
         };
-        this.stop = async () => {
+        this.stop = async (err = undefined) => {
             console.log(new Date(), 'Stopping the server.');
-            await this.server.close(() => process.exit());
+            await this.server.close(() => {
+                if (err) {
+                    throw err;
+                }
+                else {
+                    process.exit();
+                }
+            });
         };
         this.port = port;
         this.db = (0, knex_1.default)(databaseUrl);

@@ -11,5 +11,5 @@ export declare class ISPDemoServer<DemoElement, DemoState, DemoAction> {
     private connector;
     constructor(port: number, databaseUrl: string, handlers: ProcessHandler<DemoElement, DemoState, DemoAction>[], connector?: ProcessConnector | null);
     start: () => Promise<void>;
-    stop: () => Promise<void>;
+    stop: (err?: Error | undefined) => Promise<void>;
 }

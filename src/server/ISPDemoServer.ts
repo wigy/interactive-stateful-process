@@ -53,8 +53,14 @@ export class ISPDemoServer<DemoElement, DemoState, DemoAction> {
     })
   }
 
-  public stop = async (): Promise<void> => {
+  public stop = async (err: Error | undefined=undefined): Promise<void> => {
     console.log(new Date(), 'Stopping the server.')
-    await this.server.close(() => process.exit())
+    await this.server.close(() => {
+      if (err) {
+        throw err
+      } else {
+        process.exit()
+      }
+    })
   }
 }
