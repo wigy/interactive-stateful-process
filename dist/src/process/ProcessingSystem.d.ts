@@ -3,13 +3,7 @@ import { Process } from "./Process";
 import { ProcessFileData } from "./ProcessFile";
 import { ProcessStep } from "./ProcessStep";
 import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler";
-/**
- * A connector interface for fetching configuration values and sometimes for applying results.
- */
-export interface ProcessConnector {
-    initialize(server: unknown): Promise<void>;
-    getConfig(section: string, name: string): Promise<unknown>;
-}
+import { ProcessConnector } from "./ProcessConnector";
 /**
  * An instance of the full processing system.
  */

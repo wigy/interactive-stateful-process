@@ -3,14 +3,8 @@ import { Process } from "./Process"
 import { ProcessFile, ProcessFileData } from "./ProcessFile"
 import { ProcessStep } from "./ProcessStep"
 import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler"
+import { ProcessConnector } from "./ProcessConnector"
 
-/**
- * A connector interface for fetching configuration values and sometimes for applying results.
- */
-export interface ProcessConnector {
-  initialize(server: unknown): Promise<void>
-  getConfig(section: string, name: string): Promise<unknown>
-}
 
 /**
  * An instance of the full processing system.
@@ -41,6 +35,9 @@ export interface ProcessConnector {
       },
       async getConfig() {
         throw new SystemError('Cannot use processing system configuration, since it is not defined.')
+      },
+      async applyResult() {
+        this.logger.info('Result received.')
       }
     }
   }

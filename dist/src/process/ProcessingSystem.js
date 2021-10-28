@@ -26,6 +26,9 @@ class ProcessingSystem {
             },
             async getConfig() {
                 throw new __1.SystemError('Cannot use processing system configuration, since it is not defined.');
+            },
+            async applyResult() {
+                this.logger.info('Result received.');
             }
         };
     }

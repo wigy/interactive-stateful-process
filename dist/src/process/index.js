@@ -11,6 +11,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./Process"), exports);
+__exportStar(require("./ProcessConnector"), exports);
 __exportStar(require("./ProcessFile"), exports);
 __exportStar(require("./ProcessingSystem"), exports);
 __exportStar(require("./ProcessStep"), exports);
