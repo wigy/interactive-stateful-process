@@ -1,6 +1,8 @@
 import { ProcessConnector, ProcessHandler } from '..';
 /**
  * Simple demo server.
+ *
+ * TODO: Usage instructions from example.
  */
 export declare class ISPDemoServer<DemoElement, DemoState, DemoAction> {
     private app;

@@ -1,3 +1,4 @@
+import path from 'path'
 import express from 'express'
 import { Server } from 'http'
 import Knex from 'knex'
@@ -7,6 +8,8 @@ import { Database, defaultConnector, ProcessConnector, ProcessHandler, Processin
 
 /**
  * Simple demo server.
+ *
+ * TODO: Usage instructions from example.
  */
 export class ISPDemoServer<DemoElement, DemoState, DemoAction> {
   private app = express()
@@ -18,7 +21,13 @@ export class ISPDemoServer<DemoElement, DemoState, DemoAction> {
 
   constructor(port: number, databaseUrl: string, handlers: ProcessHandler<DemoElement, DemoState, DemoAction>[], connector: ProcessConnector|null = null) {
     this.port = port
-    this.db = Knex(databaseUrl)
+    this.db = Knex({
+      client: 'pg',
+      connection: databaseUrl,
+      migrations: {
+        directory: path.normalize(`${__dirname}/../../../migrations`)
+      }
+    })
     this.handlers = handlers
     if (connector) {
       this.connector = connector

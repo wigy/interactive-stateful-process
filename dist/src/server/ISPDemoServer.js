@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ISPDemoServer = void 0;
+const path_1 = __importDefault(require("path"));
 const express_1 = __importDefault(require("express"));
 const knex_1 = __importDefault(require("knex"));
 const cors_1 = __importDefault(require("cors"));
@@ -11,6 +12,8 @@ const router_1 = require("./router");
 const __1 = require("..");
 /**
  * Simple demo server.
+ *
+ * TODO: Usage instructions from example.
  */
 class ISPDemoServer {
     constructor(port, databaseUrl, handlers, connector = null) {
@@ -47,7 +50,13 @@ class ISPDemoServer {
             });
         };
         this.port = port;
-        this.db = (0, knex_1.default)(databaseUrl);
+        this.db = (0, knex_1.default)({
+            client: 'pg',
+            connection: databaseUrl,
+            migrations: {
+                directory: path_1.default.normalize(`${__dirname}/../../../migrations`)
+            }
+        });
         this.handlers = handlers;
         if (connector) {
             this.connector = connector;
