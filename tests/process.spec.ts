@@ -1,4 +1,4 @@
-import { ProcessingSystem, ProcessFileData, ProcessStatus } from '../src'
+import { ProcessingSystem, ProcessFileData, ProcessStatus, defaultConnector } from '../src'
 import Knex from 'knex'
 import { CoinAction, CoinElement, CoinHandler, CoinState } from '../src/testing'
 
@@ -10,7 +10,7 @@ test('process handling with coins', async () => {
   // Set up test database.
   const db = Knex(DATABASE_URL)
   await db.migrate.latest()
-  const system = new ProcessingSystem<CoinElement, CoinState, CoinAction>(db)
+  const system = new ProcessingSystem<CoinElement, CoinState, CoinAction>(db, defaultConnector)
 
   // Set up the system.
   system.register(new CoinHandler('Coin Pile Adder'))

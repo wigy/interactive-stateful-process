@@ -23,23 +23,13 @@ import { ProcessConnector } from "./ProcessConnector"
    * Initialize the system and set the database instance for storing process data.
    * @param db
    */
-  constructor(db: Database) {
+  constructor(db: Database, connector: ProcessConnector) {
     this.db = db
     this.logger = {
       info: (...msg) => console.log(new Date(), ...msg),
       error: (...msg) => console.error(new Date(), ...msg)
     }
-    this.connector = {
-      async initialize() {
-        this.logger.info('Connector initialized.')
-      },
-      async getConfig() {
-        throw new SystemError('Cannot use processing system configuration, since it is not defined.')
-      },
-      async applyResult() {
-        this.logger.info('Result received.')
-      }
-    }
+    this.connector = connector
   }
 
   /**
@@ -130,6 +120,7 @@ import { ProcessConnector } from "./ProcessConnector"
    * Check if we are in the finished state and if not, find the directions forward.
    */
   async checkFinishAndFindDirections(handler: ProcessHandler<VendorElement, VendorState, VendorAction>, step: ProcessStep<VendorElement, VendorState, VendorAction>): Promise<void> {
+    let done = false
     let result
     try {
       result = handler.checkCompletion(step.state)
@@ -154,8 +145,12 @@ import { ProcessConnector } from "./ProcessConnector"
       step.process.complete = true
       step.process.successful = result
       await step.process.save()
+      done = true
     }
     await step.process.updateStatus()
+    if (done) {
+      await this.connector.success(step.state)
+    }
   }
 
   /**

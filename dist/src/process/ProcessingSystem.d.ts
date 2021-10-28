@@ -19,7 +19,7 @@ export declare class ProcessingSystem<VendorElement, VendorState, VendorAction> 
      * Initialize the system and set the database instance for storing process data.
      * @param db
      */
-    constructor(db: Database);
+    constructor(db: Database, connector: ProcessConnector);
     /**
      * Get the value from the system configuration.
      */

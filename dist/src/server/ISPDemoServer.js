@@ -19,11 +19,8 @@ class ISPDemoServer {
             await this.db.migrate.rollback(); // If you don't want reset between restarts, remove this.
             await this.db.migrate.latest();
             const systemCreator = () => {
-                const system = new __1.ProcessingSystem(this.db);
+                const system = new __1.ProcessingSystem(this.db, this.connector);
                 this.handlers.forEach(handler => system.register(handler));
-                if (this.connector) {
-                    system.connector = this.connector;
-                }
                 return system;
             };
             this.app.use((req, res, next) => { console.log(new Date(), req.method, req.url); next(); });
@@ -45,8 +42,12 @@ class ISPDemoServer {
         this.port = port;
         this.db = (0, knex_1.default)(databaseUrl);
         this.handlers = handlers;
-        if (connector)
+        if (connector) {
             this.connector = connector;
+        }
+        else {
+            this.connector = __1.defaultConnector;
+        }
     }
 }
 exports.ISPDemoServer = ISPDemoServer;

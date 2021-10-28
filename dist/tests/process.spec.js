@@ -11,7 +11,7 @@ test('process handling with coins', async () => {
     // Set up test database.
     const db = (0, knex_1.default)(DATABASE_URL);
     await db.migrate.latest();
-    const system = new src_1.ProcessingSystem(db);
+    const system = new src_1.ProcessingSystem(db, src_1.defaultConnector);
     // Set up the system.
     system.register(new testing_1.CoinHandler('Coin Pile Adder'));
     system.logger.info = () => undefined;
