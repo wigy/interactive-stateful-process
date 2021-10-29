@@ -13,7 +13,13 @@ const __1 = require("..");
 /**
  * Simple demo server.
  *
- * TODO: Usage instructions from example.
+ * Usage:
+ * ```
+ *  const handler1 = new MyCustomHandler('Custom 1')
+ *  const handler2 = new MyCustomHandler('Custom 2')
+ *  const server = new ISPDemoServer<DemoElement, DemoState, DemoAction>(PORT, DATABASE_URL, [handler1, handler2])
+ *  server.start()
+ * ```
  */
 class ISPDemoServer {
     constructor(port, databaseUrl, handlers, connector = null) {
