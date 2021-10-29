@@ -54,7 +54,7 @@ class ISPDemoServer {
             client: 'pg',
             connection: databaseUrl,
             migrations: {
-                directory: path_1.default.normalize(`${__dirname}/../../../migrations`)
+                directory: path_1.default.normalize(`${__dirname}/../../../dist/migrations`)
             }
         });
         this.handlers = handlers;
