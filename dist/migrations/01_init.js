@@ -1,49 +1,56 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.down = exports.up = void 0;
 async function up(knex) {
     await knex.schema.createTable('processes', function (table) {
-        table.increments('id');
-        table.integer('ownerId').default(null);
-        table.string('name', 128).notNullable();
-        table.jsonb('config').default({});
-        table.boolean('complete').notNullable().default(false);
-        table.boolean('successful').default(null);
-        table.integer('currentStep').default(null);
-        table.text('error').default(null);
-        table.enum('status', ['INCOMPLETE', 'WAITING', 'SUCCEEDED', 'FAILED', 'CRASHED'], { useNative: true, enumName: 'process_status' }).notNullable().default('INCOMPLETE');
-        table.datetime('created').defaultTo(knex.fn.now());
-        table.index(['name']);
-    });
+        table.increments('id')
+        table.integer('ownerId').default(null)
+        table.string('name', 128).notNullable()
+        table.jsonb('config').default({})
+        table.boolean('complete').notNullable().default(false)
+        table.boolean('successful').default(null)
+        table.integer('currentStep').default(null)
+        table.text('error').default(null)
+        table.enum('status', ['INCOMPLETE', 'WAITING', 'SUCCEEDED', 'FAILED', 'CRASHED'], { useNative: true, enumName: 'process_status' }).notNullable().default('INCOMPLETE')
+        table.datetime('created').defaultTo(knex.fn.now())
+
+        table.index(['name'])
+    })
+
     await knex.schema.createTable('process_files', function (table) {
-        table.increments('id');
-        table.integer('processId').notNullable();
-        table.foreign('processId').references('processes.id');
-        table.text('name');
-        table.string('type', 64);
-        table.string('encoding', 16);
-        table.text('data');
-        table.index(['processId']);
-    });
+        table.increments('id')
+        table.integer('processId').notNullable()
+        table.foreign('processId').references('processes.id')
+        table.text('name')
+        table.string('type', 64)
+        table.string('encoding', 16)
+        table.text('data')
+
+        table.index(['processId'])
+    })
+
     await knex.schema.createTable('process_steps', function (table) {
-        table.increments('id');
-        table.integer('processId').notNullable();
-        table.foreign('processId').references('processes.id');
-        table.integer('number').notNullable();
-        table.string('handler', 32).notNullable();
-        table.jsonb('directions');
-        table.jsonb('action').default(null);
-        table.datetime('started').defaultTo(knex.fn.now());
-        table.jsonb('state').notNullable();
-        table.datetime('finished').default(null);
-        table.unique(['processId', 'number']);
-    });
+        table.increments('id')
+
+        table.integer('processId').notNullable()
+        table.foreign('processId').references('processes.id')
+
+        table.integer('number').notNullable()
+        table.string('handler', 32).notNullable()
+        table.jsonb('directions')
+        table.jsonb('action').default(null)
+        table.datetime('started').defaultTo(knex.fn.now())
+        table.jsonb('state').notNullable()
+        table.datetime('finished').default(null)
+
+        table.unique(['processId', 'number'])
+    })
 }
-exports.up = up;
+
 async function down(knex) {
-    await knex.schema.dropTable('process_files');
-    await knex.schema.dropTable('process_steps');
-    await knex.schema.dropTable('processes');
-    await knex.schema.raw('DROP TYPE process_status');
+    await knex.schema.dropTable('process_files')
+    await knex.schema.dropTable('process_steps')
+    await knex.schema.dropTable('processes')
+    await knex.schema.raw('DROP TYPE process_status')
 }
-exports.down = down;
+
+module.exports = {
+    up, down
+}

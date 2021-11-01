@@ -1,4 +1,4 @@
-import { Database, ID, InvalidArgument, ProcessName, SystemError } from ".."
+import { Database, ID, InvalidArgument, ProcessName } from ".."
 import { Process } from "./Process"
 import { ProcessFile, ProcessFileData } from "./ProcessFile"
 import { ProcessStep } from "./ProcessStep"

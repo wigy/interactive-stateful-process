@@ -1,4 +1,4 @@
-export async function up (knex): Promise<void> {
+async function up(knex) {
     await knex.schema.createTable('processes', function (table) {
         table.increments('id')
         table.integer('ownerId').default(null)
@@ -44,9 +44,13 @@ export async function up (knex): Promise<void> {
     })
 }
 
-export async function down (knex): Promise<void> {
+async function down(knex) {
     await knex.schema.dropTable('process_files')
     await knex.schema.dropTable('process_steps')
     await knex.schema.dropTable('processes')
     await knex.schema.raw('DROP TYPE process_status')
+}
+
+module.exports = {
+    up, down
 }

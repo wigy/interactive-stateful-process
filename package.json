@@ -9,7 +9,7 @@
   "scripts": {
     "demo": "ts-node-dev example/server.ts",
     "dev": "tsc -w",
-    "build": "rm -rf dist/* && tsc && rm -f dist/migrations/01_init.d.ts && yarn run doc",
+    "build": "rm -rf dist/* && tsc && cp -r migrations dist/  && yarn run doc",
     "doc": "rm -fr doc/* && typedoc --out doc src/index.ts",
     "doc:watch": "typedoc --watch --out doc src/index.ts",
     "test": "jest --forceExit --detectOpenHandles",
