@@ -39,7 +39,7 @@ export class ISPDemoServer<DemoElement, DemoState, DemoAction> {
       client: 'pg',
       connection: databaseUrl,
       migrations: {
-        directory: path.normalize(`${__dirname}/../../../dist/migrations`)
+        directory: path.normalize(`${__dirname}/../../dist/migrations`)
       }
     })
     this.handlers = handlers
