@@ -1,6 +1,6 @@
 import { ProcessConnector, ProcessHandler } from '..';
 /**
- * Simple demo server.
+ * Simple demo server for one or more handler.
  *
  * Usage:
  * ```
@@ -17,7 +17,22 @@ export declare class ISPDemoServer<DemoElement, DemoState, DemoAction> {
     private db;
     private handlers;
     private connector;
+    /**
+     * Prepare settings.
+     *
+     * @param port
+     * @param databaseUrl
+     * @param handlers
+     * @param connector
+     */
     constructor(port: number, databaseUrl: string, handlers: ProcessHandler<DemoElement, DemoState, DemoAction>[], connector?: ProcessConnector | null);
+    /**
+     * Launch the demo server.
+     */
     start: () => Promise<void>;
+    /**
+     * Exit the server. If an error is given, raise also that error.
+     * @param err
+     */
     stop: (err?: Error | undefined) => Promise<void>;
 }

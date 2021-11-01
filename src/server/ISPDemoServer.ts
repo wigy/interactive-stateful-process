@@ -7,7 +7,7 @@ import { router } from './router'
 import { Database, defaultConnector, ProcessConnector, ProcessHandler, ProcessingSystem } from '..'
 
 /**
- * Simple demo server.
+ * Simple demo server for one or more handler.
  *
  * Usage:
  * ```
@@ -25,6 +25,14 @@ export class ISPDemoServer<DemoElement, DemoState, DemoAction> {
   private handlers: ProcessHandler<DemoElement, DemoState, DemoAction>[]
   private connector: ProcessConnector
 
+  /**
+   * Prepare settings.
+   *
+   * @param port
+   * @param databaseUrl
+   * @param handlers
+   * @param connector
+   */
   constructor(port: number, databaseUrl: string, handlers: ProcessHandler<DemoElement, DemoState, DemoAction>[], connector: ProcessConnector|null = null) {
     this.port = port
     this.db = Knex({
@@ -42,6 +50,9 @@ export class ISPDemoServer<DemoElement, DemoState, DemoAction> {
     }
   }
 
+  /**
+   * Launch the demo server.
+   */
   public start = async (): Promise<void> => {
 
     await this.db.migrate.rollback() // If you don't want reset between restarts, remove this.
@@ -68,6 +79,10 @@ export class ISPDemoServer<DemoElement, DemoState, DemoAction> {
     })
   }
 
+  /**
+   * Exit the server. If an error is given, raise also that error.
+   * @param err
+   */
   public stop = async (err: Error | undefined=undefined): Promise<void> => {
     console.log(new Date(), 'Stopping the server.')
     await this.server.close(() => {

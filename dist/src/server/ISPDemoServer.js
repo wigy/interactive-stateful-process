@@ -11,7 +11,7 @@ const cors_1 = __importDefault(require("cors"));
 const router_1 = require("./router");
 const __1 = require("..");
 /**
- * Simple demo server.
+ * Simple demo server for one or more handler.
  *
  * Usage:
  * ```
@@ -22,8 +22,19 @@ const __1 = require("..");
  * ```
  */
 class ISPDemoServer {
+    /**
+     * Prepare settings.
+     *
+     * @param port
+     * @param databaseUrl
+     * @param handlers
+     * @param connector
+     */
     constructor(port, databaseUrl, handlers, connector = null) {
         this.app = (0, express_1.default)();
+        /**
+         * Launch the demo server.
+         */
         this.start = async () => {
             await this.db.migrate.rollback(); // If you don't want reset between restarts, remove this.
             await this.db.migrate.latest();
@@ -44,6 +55,10 @@ class ISPDemoServer {
                 console.error(new Date(), msg);
             });
         };
+        /**
+         * Exit the server. If an error is given, raise also that error.
+         * @param err
+         */
         this.stop = async (err = undefined) => {
             console.log(new Date(), 'Stopping the server.');
             await this.server.close(() => {
