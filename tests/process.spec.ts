@@ -24,7 +24,7 @@ test('process handling with coins', async () => {
     data: '#1,5,10\n2,4,10\n'
   }
 
-  const process = await system.createProcess('Handle 3 stacks of coins', sample)
+  const process = await system.createProcess('Handle 3 stacks of coins', sample, {})
   expect(await process.getConfig('VAR', 'TEST')).toBe('Configured VAR.TEST!')
   expect(process.status).toBe(ProcessStatus.INCOMPLETE)
   expect(process.state).toStrictEqual({
@@ -77,7 +77,7 @@ test('process handling with coins', async () => {
   })
 
   // Create another process.
-  const failing = await system.createProcess('Intentional crash with coins', sample)
+  const failing = await system.createProcess('Intentional crash with coins', sample, {})
   expect(failing.status).toBe(ProcessStatus.INCOMPLETE)
   expect(failing.state).toStrictEqual({
     stage: 'empty',
@@ -106,7 +106,7 @@ test('process handling with coins', async () => {
   })
 
   // And create yet one more process.
-  const process2 = await system.createProcess('Rolling back with coins', sample)
+  const process2 = await system.createProcess('Rolling back with coins', sample, {})
   expect(process2.status).toBe(ProcessStatus.INCOMPLETE)
   expect(process2.state).toStrictEqual({
     stage: 'empty',
@@ -156,7 +156,7 @@ test('process handling with coins', async () => {
     encoding: 'utf-8',
     data: 'rubbish\n'
   }
-  const failingProcess = await system.createProcess('Try bad file', badSample)
+  const failingProcess = await system.createProcess('Try bad file', badSample, {})
   expect(failingProcess.status).toBe(ProcessStatus.CRASHED)
   expect(failingProcess.error).toBeTruthy()
 

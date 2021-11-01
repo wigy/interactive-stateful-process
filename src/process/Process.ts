@@ -4,11 +4,14 @@ import { ProcessFile } from "./ProcessFile"
 import { ProcessingSystem } from "./ProcessingSystem"
 import { ProcessStep } from "./ProcessStep"
 
+export type ProcessConfig = Record<string, any>
+
 /**
  * Overall description of the process.
  */
  export interface ProcessInfo {
   name: ProcessName
+  config: ProcessConfig
   complete: boolean
   successful: boolean | undefined
   currentStep: number | undefined
@@ -25,6 +28,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
 
   id: ID
   name: ProcessName
+  config: ProcessConfig
   complete: boolean
   successful: boolean | undefined
   currentStep: number | undefined
@@ -33,10 +37,11 @@ export class Process<VendorElement, VendorState, VendorAction> {
   steps: ProcessStep<VendorElement, VendorState, VendorAction>[]
   error: string | undefined
 
-  constructor(system: ProcessingSystem<VendorElement, VendorState, VendorAction>, name: ProcessName | null) {
+  constructor(system: ProcessingSystem<VendorElement, VendorState, VendorAction>, name: ProcessName | null, config: ProcessConfig = {}) {
     this.system = system
 
     this.id = null
+    this.config = config
     this.name = name || '[no name]'
     this.complete = false
     this.successful = undefined
@@ -57,6 +62,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
   toJSON(): ProcessInfo {
     return {
       name: this.name,
+      config: this.config,
       complete: this.complete,
       successful: this.successful,
       currentStep: this.currentStep,

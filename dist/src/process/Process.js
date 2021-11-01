@@ -12,9 +12,10 @@ const ProcessStep_1 = require("./ProcessStep");
  * A complete description of the process state and steps taken.
  */
 class Process {
-    constructor(system, name) {
+    constructor(system, name, config = {}) {
         this.system = system;
         this.id = null;
+        this.config = config;
         this.name = name || '[no name]';
         this.complete = false;
         this.successful = undefined;
@@ -33,6 +34,7 @@ class Process {
     toJSON() {
         return {
             name: this.name,
+            config: this.config,
             complete: this.complete,
             successful: this.successful,
             currentStep: this.currentStep,

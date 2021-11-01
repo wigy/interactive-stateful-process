@@ -4,6 +4,7 @@ import { ProcessFile, ProcessFileData } from "./ProcessFile"
 import { ProcessStep } from "./ProcessStep"
 import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler"
 import { ProcessConnector } from "./ProcessConnector"
+import { ProcessConfig } from "."
 
 
 /**
@@ -64,9 +65,9 @@ import { ProcessConnector } from "./ProcessConnector"
    * @param file
    * @returns New process that is already in crashed state, if no handler
    */
-  async createProcess(name: ProcessName, file: ProcessFileData): Promise<Process<VendorElement, VendorState, VendorAction>> {
+  async createProcess(name: ProcessName, file: ProcessFileData, config: ProcessConfig): Promise<Process<VendorElement, VendorState, VendorAction>> {
     // Set up the process.
-    const process = new Process<VendorElement, VendorState, VendorAction>(this, name)
+    const process = new Process<VendorElement, VendorState, VendorAction>(this, name, config)
     await process.save()
     // Save the file and attach it to the process.
     const processFile = new ProcessFile(file)

@@ -2,11 +2,13 @@ import { Database, ID, ProcessName, ProcessStatus } from "..";
 import { ProcessFile } from "./ProcessFile";
 import { ProcessingSystem } from "./ProcessingSystem";
 import { ProcessStep } from "./ProcessStep";
+export declare type ProcessConfig = Record<string, any>;
 /**
  * Overall description of the process.
  */
 export interface ProcessInfo {
     name: ProcessName;
+    config: ProcessConfig;
     complete: boolean;
     successful: boolean | undefined;
     currentStep: number | undefined;
@@ -20,6 +22,7 @@ export declare class Process<VendorElement, VendorState, VendorAction> {
     system: ProcessingSystem<VendorElement, VendorState, VendorAction>;
     id: ID;
     name: ProcessName;
+    config: ProcessConfig;
     complete: boolean;
     successful: boolean | undefined;
     currentStep: number | undefined;
@@ -27,7 +30,7 @@ export declare class Process<VendorElement, VendorState, VendorAction> {
     files: ProcessFile[];
     steps: ProcessStep<VendorElement, VendorState, VendorAction>[];
     error: string | undefined;
-    constructor(system: ProcessingSystem<VendorElement, VendorState, VendorAction>, name: ProcessName | null);
+    constructor(system: ProcessingSystem<VendorElement, VendorState, VendorAction>, name: ProcessName | null, config?: ProcessConfig);
     toString(): string;
     /**
      * Get the loaded process information as JSON object.

@@ -3,6 +3,7 @@ export async function up (knex): Promise<void> {
         table.increments('id')
         table.integer('ownerId').default(null)
         table.string('name', 128).notNullable()
+        table.jsonb('config').default({})
         table.boolean('complete').notNullable().default(false)
         table.boolean('successful').default(null)
         table.integer('currentStep').default(null)
@@ -33,10 +34,10 @@ export async function up (knex): Promise<void> {
 
         table.integer('number').notNullable()
         table.string('handler', 32).notNullable()
-        table.json('directions')
-        table.json('action').default(null)
+        table.jsonb('directions')
+        table.jsonb('action').default(null)
         table.datetime('started').defaultTo(knex.fn.now())
-        table.json('state').notNullable()
+        table.jsonb('state').notNullable()
         table.datetime('finished').default(null)
 
         table.unique(['processId', 'number'])

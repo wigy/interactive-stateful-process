@@ -14,10 +14,10 @@ function router(db, configurator) {
     });
     router.post('/', async (req, res) => {
         const system = configurator(req);
-        const { files } = req.body;
+        const { files, config } = req.body;
         // TODO: Multifile support. One process per file? Or offer all to system which creates one or more processes.
         // Additional files could be offered to the existing processes created first before creating additional process.
-        const process = await system.createProcess(`Uploading ${files[0].type} file ${files[0].name}`, files[0]);
+        const process = await system.createProcess(`Uploading ${files[0].type} file ${files[0].name}`, files[0], config);
         if (process.canRun()) {
             await process.run();
         }

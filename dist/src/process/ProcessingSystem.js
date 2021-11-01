@@ -52,9 +52,9 @@ class ProcessingSystem {
      * @param file
      * @returns New process that is already in crashed state, if no handler
      */
-    async createProcess(name, file) {
+    async createProcess(name, file, config) {
         // Set up the process.
-        const process = new Process_1.Process(this, name);
+        const process = new Process_1.Process(this, name, config);
         await process.save();
         // Save the file and attach it to the process.
         const processFile = new ProcessFile_1.ProcessFile(file);

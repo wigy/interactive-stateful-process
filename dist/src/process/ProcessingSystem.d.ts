@@ -4,6 +4,7 @@ import { ProcessFileData } from "./ProcessFile";
 import { ProcessStep } from "./ProcessStep";
 import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler";
 import { ProcessConnector } from "./ProcessConnector";
+import { ProcessConfig } from ".";
 /**
  * An instance of the full processing system.
  */
@@ -36,7 +37,7 @@ export declare class ProcessingSystem<VendorElement, VendorState, VendorAction> 
      * @param file
      * @returns New process that is already in crashed state, if no handler
      */
-    createProcess(name: ProcessName, file: ProcessFileData): Promise<Process<VendorElement, VendorState, VendorAction>>;
+    createProcess(name: ProcessName, file: ProcessFileData, config: ProcessConfig): Promise<Process<VendorElement, VendorState, VendorAction>>;
     /**
      * Check if we are in the finished state and if not, find the directions forward.
      */
