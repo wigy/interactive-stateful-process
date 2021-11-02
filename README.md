@@ -20,8 +20,18 @@ execute next, in which case process continues immediately.
 The iteration continues until an error happens or the handler recognizes the state as successful (or failed)
 completion.
 
-# Version History
+## Development
 
-## v1.0.0
+Launch the demo database
+```
+docker-compose  up -d
+```
+and demo server
+```
+yarn demo
+```
 
-* Core functionality.
+Database can be accessed using
+```
+psql test:pass@localhost/test
+```
