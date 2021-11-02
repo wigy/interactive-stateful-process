@@ -13,6 +13,11 @@ export function router<VendorElement, VendorState, VendorAction>(db: Database, c
       return res.send(await api.process.getAll())
     })
 
+  router.get('/:id',
+  async (req, res) => {
+    return res.send(await api.process.get(parseInt(req.params.id)))
+  })
+
   router.post('/',
     async (req, res) => {
       const system = configurator(req)
