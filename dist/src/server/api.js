@@ -8,11 +8,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 function default_1(db) {
     return {
         process: {
-            get: async (id = null) => {
-                if (id) {
-                    return db('processes').select('*').where({ id }).first();
-                }
-                return db('processes').select('*');
+            getAll: async () => {
+                return db('processes').select('*').orderBy('created', 'desc');
+            },
+            get: async (id) => {
+                return db('processes').select('*').where({ id }).first();
             }
         }
     };

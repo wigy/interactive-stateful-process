@@ -28,8 +28,10 @@ export declare class ISPDemoServer<DemoElement, DemoState, DemoAction> {
     constructor(port: number, databaseUrl: string, handlers: ProcessHandler<DemoElement, DemoState, DemoAction>[], connector?: ProcessConnector | null);
     /**
      * Launch the demo server.
+     *
+     * @param reset If set, reset the database on boot.
      */
-    start: () => Promise<void>;
+    start: (reset?: boolean) => Promise<void>;
     /**
      * Exit the server. If an error is given, raise also that error.
      * @param err

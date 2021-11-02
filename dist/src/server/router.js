@@ -10,7 +10,10 @@ function router(db, configurator) {
     const router = express_1.default.Router();
     const api = (0, api_1.default)(db);
     router.get('/', async (req, res) => {
-        return res.send(await api.process.get());
+        return res.send(await api.process.getAll());
+    });
+    router.get('/:id', async (req, res) => {
+        return res.send(await api.process.get(parseInt(req.params.id)));
     });
     router.post('/', async (req, res) => {
         const system = configurator(req);

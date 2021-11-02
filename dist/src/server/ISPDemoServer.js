@@ -34,9 +34,13 @@ class ISPDemoServer {
         this.app = (0, express_1.default)();
         /**
          * Launch the demo server.
+         *
+         * @param reset If set, reset the database on boot.
          */
-        this.start = async () => {
-            await this.db.migrate.rollback(); // If you don't want reset between restarts, remove this.
+        this.start = async (reset = false) => {
+            if (reset) {
+                await this.db.migrate.rollback();
+            }
             await this.db.migrate.latest();
             const systemCreator = () => {
                 const system = new __1.ProcessingSystem(this.db, this.connector);
