@@ -2523,9 +2523,9 @@ inherits@2.0.3:
   integrity sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4=
 
 interactive-elements@^1.0.4:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/interactive-elements/-/interactive-elements-1.0.3.tgz#dee569deffb8c38810f9d0a941e0edbcab928f52"
-  integrity sha512-12OS4p1uZWb73zPq+RwbmN9qNMSEDHMr3hupdqSh23kls7dr2mZGGkH7LTqmbvdJsbRZxulCXgMpFzUuM4s+kw==
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/interactive-elements/-/interactive-elements-1.0.4.tgz#544f3114d751dc5a35bed29178268f5df14e8ea5"
+  integrity sha512-15vqPrFY3Sd07J1D8AlAsjBRu5lSrvvgsaBZ3bs+iNRulOyskVkV48aOj1vYkNrWYnqMWJkLz5lD0HxnDoGfMA==
 
 internal-slot@^1.0.3:
   version "1.0.3"
