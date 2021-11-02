@@ -10,7 +10,7 @@ export function router<VendorElement, VendorState, VendorAction>(db: Database, c
 
   router.get('/',
     async (req, res) => {
-      return res.send(await api.process.get())
+      return res.send(await api.process.getAll())
     })
 
   router.post('/',
