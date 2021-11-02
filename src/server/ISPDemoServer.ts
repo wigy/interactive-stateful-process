@@ -52,10 +52,14 @@ export class ISPDemoServer<DemoElement, DemoState, DemoAction> {
 
   /**
    * Launch the demo server.
+   *
+   * @param reset If set, reset the database on boot.
    */
-  public start = async (): Promise<void> => {
+  public start = async (reset = false): Promise<void> => {
 
-    await this.db.migrate.rollback() // If you don't want reset between restarts, remove this.
+    if (reset) {
+       await this.db.migrate.rollback()
+    }
     await this.db.migrate.latest()
 
     const systemCreator = () => {
