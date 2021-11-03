@@ -1,6 +1,7 @@
 import path from 'path'
 import express from 'express'
 import { Server } from 'http'
+import fs from 'fs'
 import Knex from 'knex'
 import cors from 'cors'
 import { router } from './router'
@@ -35,11 +36,18 @@ export class ISPDemoServer<DemoElement, DemoState, DemoAction> {
    */
   constructor(port: number, databaseUrl: string, handlers: ProcessHandler<DemoElement, DemoState, DemoAction>[], connector: ProcessConnector|null = null) {
     this.port = port
+    let migrationsPath = path.normalize(`${__dirname}/../../dist/migrations/01_init.js`)
+    if (!fs.existsSync(migrationsPath)) {
+      migrationsPath = path.normalize(`${__dirname}/../../../dist/migrations/01_init.js`)
+    }
+    if (!fs.existsSync(migrationsPath)) {
+      throw new Error('Cannot find migrations file 01_init.js.')
+    }
     this.db = Knex({
       client: 'pg',
       connection: databaseUrl,
       migrations: {
-        directory: path.normalize(`${__dirname}/../../dist/migrations`)
+        directory: path.dirname(migrationsPath)
       }
     })
     this.handlers = handlers

@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ISPDemoServer = void 0;
 const path_1 = __importDefault(require("path"));
 const express_1 = __importDefault(require("express"));
+const fs_1 = __importDefault(require("fs"));
 const knex_1 = __importDefault(require("knex"));
 const cors_1 = __importDefault(require("cors"));
 const router_1 = require("./router");
@@ -75,11 +76,18 @@ class ISPDemoServer {
             });
         };
         this.port = port;
+        let migrationsPath = path_1.default.normalize(`${__dirname}/../../dist/migrations/01_init.js`);
+        if (!fs_1.default.existsSync(migrationsPath)) {
+            migrationsPath = path_1.default.normalize(`${__dirname}/../../../dist/migrations/01_init.js`);
+        }
+        if (!fs_1.default.existsSync(migrationsPath)) {
+            throw new Error('Cannot find migrations file 01_init.js.');
+        }
         this.db = (0, knex_1.default)({
             client: 'pg',
             connection: databaseUrl,
             migrations: {
-                directory: path_1.default.normalize(`${__dirname}/../../dist/migrations`)
+                directory: path_1.default.dirname(migrationsPath)
             }
         });
         this.handlers = handlers;
