@@ -12,7 +12,10 @@ function default_1(db) {
                 return db('processes').select('*').orderBy('created', 'desc');
             },
             get: async (id) => {
-                return db('processes').select('*').where({ id }).first();
+                const data = await db('processes').select('*').where({ id }).first();
+                const count = await db('process_steps').count('id').where({ processId: id }).first();
+                data.maxSteps = count ? parseInt(count.count) : null;
+                return data;
             }
         }
     };

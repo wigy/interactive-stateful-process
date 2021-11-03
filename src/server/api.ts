@@ -1,4 +1,4 @@
-import { Database, ID, ProcessConfig, ProcessName, ProcessStatus } from ".."
+import { Database, ID, ProcessConfig, ProcessName, ProcessStatus } from '..'
 
 export type GetApiResponse = {
   id: ID
@@ -6,10 +6,11 @@ export type GetApiResponse = {
   name: ProcessName
   config: ProcessConfig
   complete: boolean
-  successful: boolean | undefined
-  currentStep: number | undefined
+  successful?: boolean
+  currentStep?: number
+  maxSteps?: number
   status: ProcessStatus
-  error: string | undefined
+  error?: string
   created: Date
 }
 
@@ -32,7 +33,10 @@ export default function(db: Database): ProcessApi {
         return db('processes').select('*').orderBy('created', 'desc')
       },
       get: async (id: ID): Promise<GetApiResponse> => {
-        return db('processes').select('*').where({ id }).first()
+        const data = await db('processes').select('*').where({ id }).first()
+        const count = await db('process_steps').count('id').where({ processId: id }).first()
+        data.maxSteps = count ? parseInt(count.count as string) : null
+        return data
       }
     }
   }

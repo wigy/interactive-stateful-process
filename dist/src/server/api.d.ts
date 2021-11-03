@@ -1,14 +1,15 @@
-import { Database, ID, ProcessConfig, ProcessName, ProcessStatus } from "..";
+import { Database, ID, ProcessConfig, ProcessName, ProcessStatus } from '..';
 export declare type GetApiResponse = {
     id: ID;
     ownerId: ID;
     name: ProcessName;
     config: ProcessConfig;
     complete: boolean;
-    successful: boolean | undefined;
-    currentStep: number | undefined;
+    successful?: boolean;
+    currentStep?: number;
+    maxSteps?: number;
     status: ProcessStatus;
-    error: string | undefined;
+    error?: string;
     created: Date;
 };
 export declare type ProcessApi = {
