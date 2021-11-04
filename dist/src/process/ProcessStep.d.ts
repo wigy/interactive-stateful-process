@@ -1,5 +1,6 @@
-import { Database, Directions, ID } from "..";
-import { Process } from "./Process";
+import { Database, Directions } from '..';
+import { Process } from './Process';
+import { ID } from 'interactive-elements';
 /**
  * A basic information of the processing step.
  */

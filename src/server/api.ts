@@ -1,18 +1,5 @@
-import { Database, ID, ProcessConfig, ProcessName, ProcessStatus } from '..'
-
-export type GetApiResponse = {
-  id: ID
-  ownerId: ID
-  name: ProcessName
-  config: ProcessConfig
-  complete: boolean
-  successful?: boolean
-  currentStep?: number
-  maxSteps?: number
-  status: ProcessStatus
-  error?: string
-  created: Date
-}
+import { Database } from '../common'
+import { GetApiResponse, ID } from 'interactive-elements'
 
 export type ProcessApi = {
   process: {

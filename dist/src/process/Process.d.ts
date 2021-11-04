@@ -1,8 +1,8 @@
-import { Database, ID, ProcessName, ProcessStatus } from "..";
+import { Database } from "..";
 import { ProcessFile } from "./ProcessFile";
 import { ProcessingSystem } from "./ProcessingSystem";
 import { ProcessStep } from "./ProcessStep";
-export declare type ProcessConfig = Record<string, any>;
+import { ProcessName, ProcessConfig, ProcessStatus, ID } from 'interactive-elements';
 /**
  * Overall description of the process.
  */

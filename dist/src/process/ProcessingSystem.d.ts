@@ -1,10 +1,10 @@
-import { Database, ID, ProcessName } from "..";
+import { Database } from "..";
+import { ID, ProcessName, ProcessConfig } from 'interactive-elements';
 import { Process } from "./Process";
 import { ProcessFileData } from "./ProcessFile";
 import { ProcessStep } from "./ProcessStep";
 import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler";
 import { ProcessConnector } from "./ProcessConnector";
-import { ProcessConfig } from ".";
 /**
  * An instance of the full processing system.
  */

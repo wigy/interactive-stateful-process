@@ -1,5 +1,6 @@
 import chardet from 'chardet'
-import { Database, DatabaseError, FileEncoding, ID, InvalidFile } from ".."
+import { Database, DatabaseError, InvalidFile } from ".."
+import { FileEncoding, ID } from 'interactive-elements'
 
 /**
  * A data structure containing input data for the process.

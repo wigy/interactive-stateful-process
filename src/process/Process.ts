@@ -1,10 +1,9 @@
 import clone from "clone"
-import { BadState, Database, DatabaseError, ID, InvalidArgument, ProcessName, ProcessStatus } from ".."
+import { BadState, Database, DatabaseError, InvalidArgument } from ".."
 import { ProcessFile } from "./ProcessFile"
 import { ProcessingSystem } from "./ProcessingSystem"
 import { ProcessStep } from "./ProcessStep"
-
-export type ProcessConfig = Record<string, any>
+import { ProcessName, ProcessConfig, ProcessStatus, ID } from 'interactive-elements'
 
 /**
  * Overall description of the process.

@@ -8,6 +8,7 @@ const clone_1 = __importDefault(require("clone"));
 const __1 = require("..");
 const ProcessFile_1 = require("./ProcessFile");
 const ProcessStep_1 = require("./ProcessStep");
+const interactive_elements_1 = require("interactive-elements");
 /**
  * A complete description of the process state and steps taken.
  */
@@ -22,7 +23,7 @@ class Process {
         this.files = [];
         this.steps = [];
         this.currentStep = undefined;
-        this.status = __1.ProcessStatus.INCOMPLETE;
+        this.status = interactive_elements_1.ProcessStatus.INCOMPLETE;
     }
     toString() {
         return `Process #${this.id} ${this.name}`;
@@ -166,7 +167,7 @@ class Process {
      * Check if the process can be run.
      */
     canRun() {
-        return !this.complete && (this.status === __1.ProcessStatus.INCOMPLETE || this.status === __1.ProcessStatus.WAITING);
+        return !this.complete && (this.status === interactive_elements_1.ProcessStatus.INCOMPLETE || this.status === interactive_elements_1.ProcessStatus.WAITING);
     }
     /**
      * Execute process as long as it is completed, failed or requires additional input.
@@ -225,9 +226,9 @@ class Process {
      * Resolve the status of the process and update it to the database.
      */
     async updateStatus() {
-        let status = __1.ProcessStatus.INCOMPLETE;
+        let status = interactive_elements_1.ProcessStatus.INCOMPLETE;
         if (this.error) {
-            status = __1.ProcessStatus.CRASHED;
+            status = interactive_elements_1.ProcessStatus.CRASHED;
         }
         else {
             if (this.currentStep === null || this.currentStep === undefined) {
@@ -236,12 +237,12 @@ class Process {
             const step = this.steps[this.currentStep];
             if (step.finished) {
                 if (this.successful === true)
-                    status = __1.ProcessStatus.SUCCEEDED;
+                    status = interactive_elements_1.ProcessStatus.SUCCEEDED;
                 if (this.successful === false)
-                    status = __1.ProcessStatus.FAILED;
+                    status = interactive_elements_1.ProcessStatus.FAILED;
             }
             if (step.directions) {
-                status = step.directions.isImmediate() ? __1.ProcessStatus.INCOMPLETE : __1.ProcessStatus.WAITING;
+                status = step.directions.isImmediate() ? interactive_elements_1.ProcessStatus.INCOMPLETE : interactive_elements_1.ProcessStatus.WAITING;
             }
         }
         if (this.status !== status) {

@@ -1,5 +1,6 @@
 /// <reference types="node" />
-import { Database, FileEncoding, ID } from "..";
+import { Database } from "..";
+import { FileEncoding, ID } from 'interactive-elements';
 /**
  * A data structure containing input data for the process.
  */

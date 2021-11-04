@@ -1,5 +1,6 @@
-import { Database, DatabaseError, Directions, ID } from ".."
-import { Process } from "./Process"
+import { Database, DatabaseError, Directions } from '..'
+import { Process } from './Process'
+import { ID } from 'interactive-elements'
 
 /**
  * A basic information of the processing step.

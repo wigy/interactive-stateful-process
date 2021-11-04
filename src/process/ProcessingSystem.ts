@@ -1,10 +1,10 @@
-import { Database, ID, InvalidArgument, ProcessName } from ".."
+import { Database, InvalidArgument } from ".."
+import { ID, ProcessName, ProcessConfig } from 'interactive-elements'
 import { Process } from "./Process"
 import { ProcessFile, ProcessFileData } from "./ProcessFile"
 import { ProcessStep } from "./ProcessStep"
 import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler"
 import { ProcessConnector } from "./ProcessConnector"
-import { ProcessConfig } from "."
 
 
 /**
