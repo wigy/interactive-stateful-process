@@ -1,9 +1,9 @@
 import { Database } from '../common';
-import { GetApiResponse, ID } from 'interactive-elements';
+import { GetAllProcessesApiResponse, GetOneProcessResponse, ID } from 'interactive-elements';
 export declare type ProcessApi = {
     process: {
-        getAll: () => Promise<GetApiResponse[]>;
-        get: (id: ID) => Promise<GetApiResponse>;
+        getAll: () => Promise<GetAllProcessesApiResponse>;
+        get: (id: ID) => Promise<GetOneProcessResponse>;
     };
 };
 /**

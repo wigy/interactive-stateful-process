@@ -1,10 +1,10 @@
 import { Database } from '../common'
-import { GetApiResponse, ID } from 'interactive-elements'
+import { GetAllProcessesApiResponse, GetOneProcessResponse, ID } from 'interactive-elements'
 
 export type ProcessApi = {
   process: {
-    getAll: () => Promise<GetApiResponse[]>,
-    get: (id: ID) => Promise<GetApiResponse>
+    getAll: () => Promise<GetAllProcessesApiResponse>,
+    get: (id: ID) => Promise<GetOneProcessResponse>
   }
 }
 
@@ -16,10 +16,10 @@ export type ProcessApi = {
 export default function(db: Database): ProcessApi {
   return {
     process: {
-      getAll: async (): Promise<GetApiResponse[]> => {
+      getAll: async (): Promise<GetAllProcessesApiResponse> => {
         return db('processes').select('*').orderBy('created', 'desc')
       },
-      get: async (id: ID): Promise<GetApiResponse> => {
+      get: async (id: ID): Promise<GetOneProcessResponse> => {
         const data = await db('processes').select('*').where({ id }).first()
         if (data) {
           const count = await db('process_steps').count('id').where({ processId: id }).first()
