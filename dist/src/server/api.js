@@ -13,8 +13,10 @@ function default_1(db) {
             },
             get: async (id) => {
                 const data = await db('processes').select('*').where({ id }).first();
-                const count = await db('process_steps').count('id').where({ processId: id }).first();
-                data.maxSteps = count ? parseInt(count.count) : null;
+                if (data) {
+                    const count = await db('process_steps').count('id').where({ processId: id }).first();
+                    data.steps = count ? parseInt(count.count) : null;
+                }
                 return data;
             }
         }

@@ -21,8 +21,10 @@ export default function(db: Database): ProcessApi {
       },
       get: async (id: ID): Promise<GetApiResponse> => {
         const data = await db('processes').select('*').where({ id }).first()
-        const count = await db('process_steps').count('id').where({ processId: id }).first()
-        data.maxSteps = count ? parseInt(count.count as string) : null
+        if (data) {
+          const count = await db('process_steps').count('id').where({ processId: id }).first()
+          data.steps = count ? parseInt(count.count as string) : null
+        }
         return data
       }
     }
