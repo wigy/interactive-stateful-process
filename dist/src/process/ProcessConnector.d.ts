@@ -9,7 +9,7 @@ export interface ProcessConnector {
 }
 export declare const defaultConnector: {
     initialize(): Promise<void>;
-    getConfig(): Promise<unknown>;
+    getConfig(section: string, name: string): Promise<unknown>;
     applyResult(): Promise<void>;
     success(): Promise<void>;
 };

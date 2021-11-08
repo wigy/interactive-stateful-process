@@ -6,8 +6,8 @@ exports.defaultConnector = {
     async initialize() {
         console.log(new Date(), 'Connector initialized.');
     },
-    async getConfig() {
-        throw new __1.SystemError('Cannot use processing system configuration, since it is not defined.');
+    async getConfig(section, name) {
+        throw new __1.SystemError(`Cannot use processing system configuration to fetch ${section}.${name}, since it is not defined.`);
     },
     async applyResult() {
         console.log(new Date(), 'Result received.');
