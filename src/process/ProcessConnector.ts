@@ -14,8 +14,8 @@ export const defaultConnector = {
   async initialize(): Promise<void> {
     console.log(new Date(), 'Connector initialized.')
   },
-  async getConfig(): Promise<unknown> {
-    throw new SystemError('Cannot use processing system configuration, since it is not defined.')
+  async getConfig(section: string, name: string): Promise<unknown> {
+    throw new SystemError(`Cannot use processing system configuration to fetch ${section}.${name}, since it is not defined.`)
   },
   async applyResult(): Promise<void> {
     console.log(new Date(), 'Result received.')
