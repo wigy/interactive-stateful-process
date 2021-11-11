@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProcessFile = void 0;
 const chardet_1 = __importDefault(require("chardet"));
-const __1 = require("..");
+const error_1 = require("../error");
 /**
  * An instance of input data for processing.
  */
@@ -51,7 +51,7 @@ class ProcessFile {
             this.id = (await db('process_files').insert(out).returning('id'))[0];
             if (this.id)
                 return this.id;
-            throw new __1.DatabaseError(`Saving process ${JSON.stringify(out)} failed.`);
+            throw new error_1.DatabaseError(`Saving process ${JSON.stringify(out)} failed.`);
         }
     }
     /**
@@ -85,7 +85,7 @@ class ProcessFile {
             case 'UTF-16LE':
                 return 'utf16le';
             default:
-                throw new __1.InvalidFile(`Not able to map text encoding ${encoding}.`);
+                throw new error_1.InvalidFile(`Not able to map text encoding ${encoding}.`);
         }
     }
     /**
@@ -100,12 +100,12 @@ class ProcessFile {
                 const buffer = Buffer.from(this.data, 'base64');
                 const encoding = chardet_1.default.detect(buffer);
                 if (!encoding) {
-                    throw new __1.InvalidFile(`Cannot determine encoding for '${this}'.`);
+                    throw new error_1.InvalidFile(`Cannot determine encoding for '${this}'.`);
                 }
                 this.decoded = buffer.toString(this.parseEncoding(encoding));
                 return this.decoded;
             default:
-                throw new __1.InvalidFile(`An encoding '${this.encoding}' is not yet supported.`);
+                throw new error_1.InvalidFile(`An encoding '${this.encoding}' is not yet supported.`);
         }
     }
 }
