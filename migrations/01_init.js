@@ -11,7 +11,7 @@ async function up(knex) {
         table.enum('status', ['INCOMPLETE', 'WAITING', 'SUCCEEDED', 'FAILED', 'CRASHED'], { useNative: true, enumName: 'process_status' }).notNullable().default('INCOMPLETE')
         table.datetime('created').defaultTo(knex.fn.now())
 
-        table.index(['name'])
+        table.index(['ownerId', 'created'])
     })
 
     await knex.schema.createTable('process_files', function (table) {

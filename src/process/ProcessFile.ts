@@ -1,5 +1,6 @@
 import chardet from 'chardet'
-import { Database, DatabaseError, InvalidFile } from ".."
+import { Database, } from '../common'
+import { DatabaseError, InvalidFile } from '../error'
 import { FileEncoding, ID } from 'interactive-elements'
 
 /**
