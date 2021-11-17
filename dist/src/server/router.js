@@ -26,6 +26,9 @@ function router(db, configurator) {
         }
         return res.send(await api.process.get(process.id));
     });
+    router.get('/:id/step/:number', async (req, res) => {
+        return res.send(await api.process.getStep(parseInt(req.params.id), parseInt(req.params.number)));
+    });
     return router;
 }
 exports.router = router;

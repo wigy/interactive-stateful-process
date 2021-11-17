@@ -4,6 +4,7 @@ export declare type ProcessApi = {
     process: {
         getAll: () => Promise<GetAllProcessesApiResponse>;
         get: (id: ID) => Promise<GetOneProcessResponse>;
+        getStep: (id: ID, step: number) => Promise<any>;
     };
 };
 /**

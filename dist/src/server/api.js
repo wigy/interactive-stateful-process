@@ -18,6 +18,10 @@ function default_1(db) {
                     data.steps = count ? parseInt(count.count) : null;
                 }
                 return data;
+            },
+            getStep: async (id, number) => {
+                const data = await db('process_steps').select('*').where({ processId: id, number }).first();
+                return data;
             }
         }
     };

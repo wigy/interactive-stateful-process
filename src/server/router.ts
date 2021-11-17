@@ -14,9 +14,9 @@ export function router<VendorElement, VendorState, VendorAction>(db: Database, c
     })
 
   router.get('/:id',
-  async (req, res) => {
-    return res.send(await api.process.get(parseInt(req.params.id)))
-  })
+    async (req, res) => {
+      return res.send(await api.process.get(parseInt(req.params.id)))
+    })
 
   router.post('/',
     async (req, res) => {
@@ -29,6 +29,11 @@ export function router<VendorElement, VendorState, VendorAction>(db: Database, c
         await process.run()
       }
       return res.send(await api.process.get(process.id))
+    })
+
+  router.get('/:id/step/:number',
+    async (req, res) => {
+      return res.send(await api.process.getStep(parseInt(req.params.id), parseInt(req.params.number)))
     })
 
   return router

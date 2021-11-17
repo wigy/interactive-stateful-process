@@ -5,6 +5,7 @@ export type ProcessApi = {
   process: {
     getAll: () => Promise<GetAllProcessesApiResponse>,
     get: (id: ID) => Promise<GetOneProcessResponse>
+    getStep: (id: ID, step: number) => Promise<any> // TODO: Define response
   }
 }
 
@@ -25,6 +26,10 @@ export default function(db: Database): ProcessApi {
           const count = await db('process_steps').count('id').where({ processId: id }).first()
           data.steps = count ? parseInt(count.count as string) : null
         }
+        return data
+      },
+      getStep: async (id: ID, number: number): Promise<any> => { // TODO: Define response
+        const data = await db('process_steps').select('*').where({ processId: id, number }).first()
         return data
       }
     }
