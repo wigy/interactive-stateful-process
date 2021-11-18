@@ -10,9 +10,10 @@ export declare type ImportStateText<StageType> = {
         };
     };
     segments?: Record<SegmentId, ImportSegment>;
-    results?: Record<SegmentId, any>;
+    results?: Record<SegmentId, unknown>;
 };
 /**
  * Union of all import states.
  */
 export declare type ImportState = ImportStateText<'initial'> | ImportStateText<'segmented'> | ImportStateText<'classified'> | ImportStateText<'analyzed'> | ImportStateText<'executed'>;
+export declare function isImportState(obj: unknown): obj is ImportState;

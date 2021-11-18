@@ -1,11 +1,11 @@
 import { Database } from '../common'
-import { GetAllProcessesApiResponse, GetOneProcessResponse, ID } from 'interactive-elements'
+import { GetAllProcessesApiResponse, GetOneProcessResponse, GetOneStepResponse, ID } from 'interactive-elements'
 
 export type ProcessApi = {
   process: {
     getAll: () => Promise<GetAllProcessesApiResponse>,
     get: (id: ID) => Promise<GetOneProcessResponse>
-    getStep: (id: ID, step: number) => Promise<any> // TODO: Define response
+    getStep: (id: ID, step: number) => Promise<GetOneStepResponse>
   }
 }
 
@@ -28,7 +28,7 @@ export default function(db: Database): ProcessApi {
         }
         return data
       },
-      getStep: async (id: ID, number: number): Promise<any> => { // TODO: Define response
+      getStep: async (id: ID, number: number): Promise<GetOneStepResponse> => {
         const data = await db('process_steps').select('*').where({ processId: id, number }).first()
         return data
       }

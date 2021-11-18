@@ -1,8 +1,8 @@
 import { Directions } from '../directions';
 import { ProcessFile } from '../process/ProcessFile';
 import { ProcessHandler } from '../process/ProcessHandler';
-import { ImportCSVOptions } from './ImportCSVOptions';
-import { ImportState, ImportStateText } from './ImportState';
+import { ImportCSVOptions } from 'interactive-elements';
+import { ImportState, ImportStateText } from 'interactive-elements';
 /**
  * Utility class to provide tools for implementing any text file based process handler.
  */

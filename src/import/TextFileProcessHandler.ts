@@ -3,11 +3,11 @@ import { BadState, NotImplemented } from '../error'
 import { Directions } from '../directions'
 import { ProcessFile } from '../process/ProcessFile'
 import { ProcessHandler } from '../process/ProcessHandler'
-import { ImportAction, isImportAction } from './ImportAction'
-import { ImportCSVOptions } from './ImportCSVOptions'
-import { ImportElement } from './ImportElement'
-import { ImportState, ImportStateText } from './ImportState'
-import { TextFileLine } from './TextFileLine'
+import { ImportAction, isImportAction } from 'interactive-elements'
+import { ImportCSVOptions } from 'interactive-elements'
+import { ImportElement } from 'interactive-elements'
+import { ImportState, ImportStateText } from 'interactive-elements'
+import { TextFileLine } from 'interactive-elements'
 
 /**
  * Utility class to provide tools for implementing any text file based process handler.

@@ -8,7 +8,7 @@ const csv_parse_1 = __importDefault(require("csv-parse"));
 const error_1 = require("../error");
 const directions_1 = require("../directions");
 const ProcessHandler_1 = require("../process/ProcessHandler");
-const ImportAction_1 = require("./ImportAction");
+const interactive_elements_1 = require("interactive-elements");
 /**
  * Utility class to provide tools for implementing any text file based process handler.
  */
@@ -87,7 +87,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
      * @param files
      */
     async action(action, state, files) {
-        if (!(0, ImportAction_1.isImportAction)(action)) {
+        if (!(0, interactive_elements_1.isImportAction)(action)) {
             throw new error_1.BadState(`Action is not import action ${JSON.stringify(action)}`);
         }
         switch (action.op) {
