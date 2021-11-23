@@ -14,8 +14,8 @@ function default_1(db) {
             get: async (id) => {
                 const data = await db('processes').select('*').where({ id }).first();
                 if (data) {
-                    const count = await db('process_steps').count('id').where({ processId: id }).first();
-                    data.steps = count ? parseInt(count.count) : null;
+                    const steps = await db('process_steps').select('id', 'action', 'number', 'started', 'finished').where({ processId: id }).orderBy('number');
+                    data.steps = steps ? steps : [];
                 }
                 return data;
             },
