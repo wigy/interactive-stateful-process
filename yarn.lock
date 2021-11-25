@@ -2532,10 +2532,10 @@ inherits@2.0.3:
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.3.tgz#633c2c83e3da42a502f52466022480f4208261de"
   integrity sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4=
 
-interactive-elements@^1.0.17:
-  version "1.0.17"
-  resolved "https://registry.yarnpkg.com/interactive-elements/-/interactive-elements-1.0.17.tgz#cdf8c2fe74bcfc59a7f2457170e3f7c5be3f1d8b"
-  integrity sha512-/X2ualJW4ukSyUytv/XZJ2nk12tm9FC9QU8eTdi1oYNlkkRRVBg41TcUW1Bqr+yHR4n+ZSrBsDyCQHngiZQZOQ==
+interactive-elements@^1.0.18:
+  version "1.0.18"
+  resolved "https://registry.yarnpkg.com/interactive-elements/-/interactive-elements-1.0.18.tgz#d30bfdde15f16fd4d2fe6e8a5c5d13a75c771c62"
+  integrity sha512-pRRlw9vmM5fmwWZQgfgV19Fvz1gDIthDRDA4xeqVT6OCiRErmfCQSu6V4Wc+xub53h7sxJVNtVpf6vH0mk91+w==
 
 internal-slot@^1.0.3:
   version "1.0.3"
