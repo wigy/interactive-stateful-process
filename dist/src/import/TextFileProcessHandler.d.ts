@@ -19,6 +19,30 @@ export declare class TextFileProcessHandler<VendorElement, VendorAction> extends
      */
     checkCompletion(state: ImportState): boolean | undefined;
     /**
+     * A hook to check alternative directions from initial state.
+     * @param state
+     * @returns
+     */
+    needInputForSegmentation(state: ImportState): Promise<Directions<VendorElement, VendorAction> | false>;
+    /**
+     * A hook to check alternative directions from segmented state.
+     * @param state
+     * @returns
+     */
+    needInputForClassification(state: ImportState): Promise<Directions<VendorElement, VendorAction> | false>;
+    /**
+     * A hook to check alternative directions from classified state.
+     * @param state
+     * @returns
+     */
+    needInputForAnalysis(state: ImportState): Promise<Directions<VendorElement, VendorAction> | false>;
+    /**
+     * A hook to check alternative directions from analyzed state.
+     * @param state
+     * @returns
+     */
+    needInputForExecution(state: ImportState): Promise<Directions<VendorElement, VendorAction> | false>;
+    /**
      * Run steps in order 'segmentation', 'classification', 'analysis', 'execution'.
      * @param state
      * @returns

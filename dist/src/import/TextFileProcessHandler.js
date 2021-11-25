@@ -43,32 +43,81 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
         return undefined;
     }
     /**
+     * A hook to check alternative directions from initial state.
+     * @param state
+     * @returns
+     */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async needInputForSegmentation(state) {
+        return false;
+    }
+    /**
+     * A hook to check alternative directions from segmented state.
+     * @param state
+     * @returns
+     */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async needInputForClassification(state) {
+        return false;
+    }
+    /**
+     * A hook to check alternative directions from classified state.
+     * @param state
+     * @returns
+     */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async needInputForAnalysis(state) {
+        return false;
+    }
+    /**
+     * A hook to check alternative directions from analyzed state.
+     * @param state
+     * @returns
+     */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async needInputForExecution(state) {
+        return false;
+    }
+    /**
      * Run steps in order 'segmentation', 'classification', 'analysis', 'execution'.
      * @param state
      * @returns
      */
     async getDirections(state) {
+        let input;
         let directions;
         switch (state.stage) {
             case 'initial':
+                input = await this.needInputForSegmentation(state);
+                if (input)
+                    return input;
                 directions = new directions_1.Directions({
                     type: 'action',
                     action: { op: 'segmentation' }
                 });
                 break;
             case 'segmented':
+                input = await this.needInputForClassification(state);
+                if (input)
+                    return input;
                 directions = new directions_1.Directions({
                     type: 'action',
                     action: { op: 'classification' }
                 });
                 break;
             case 'classified':
+                input = await this.needInputForAnalysis(state);
+                if (input)
+                    return input;
                 directions = new directions_1.Directions({
                     type: 'action',
                     action: { op: 'analysis' }
                 });
                 break;
             case 'analyzed':
+                input = await this.needInputForExecution(state);
+                if (input)
+                    return input;
                 directions = new directions_1.Directions({
                     type: 'action',
                     action: { op: 'execution' }
@@ -105,6 +154,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
      * @param state
      * @param files
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async segmentation(state, files) {
         throw new error_1.NotImplemented(`A class ${this.constructor.name} does not implement segmentation().`);
     }
@@ -113,6 +163,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
      * @param state
      * @param files
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async classification(state, files) {
         throw new error_1.NotImplemented(`A class ${this.constructor.name} does not implement classification().`);
     }
@@ -121,6 +172,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
      * @param state
      * @param files
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async analysis(state, files) {
         throw new error_1.NotImplemented(`A class ${this.constructor.name} does not implement analysis().`);
     }
@@ -129,6 +181,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
      * @param state
      * @param files
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async execution(state, files) {
         throw new error_1.NotImplemented(`A class ${this.constructor.name} does not implement execution().`);
     }

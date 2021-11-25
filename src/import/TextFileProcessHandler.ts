@@ -46,32 +46,81 @@ import { TextFileLine } from 'interactive-elements'
   }
 
   /**
+   * A hook to check alternative directions from initial state.
+   * @param state
+   * @returns
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async needInputForSegmentation(state: ImportState): Promise<Directions<VendorElement, VendorAction> | false> {
+    return false
+  }
+
+  /**
+   * A hook to check alternative directions from segmented state.
+   * @param state
+   * @returns
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async needInputForClassification(state: ImportState): Promise<Directions<VendorElement, VendorAction> | false> {
+    return false
+  }
+
+  /**
+   * A hook to check alternative directions from classified state.
+   * @param state
+   * @returns
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async needInputForAnalysis(state: ImportState): Promise<Directions<VendorElement, VendorAction> | false> {
+    return false
+  }
+
+  /**
+   * A hook to check alternative directions from analyzed state.
+   * @param state
+   * @returns
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async needInputForExecution(state: ImportState): Promise<Directions<VendorElement, VendorAction> | false> {
+    return false
+  }
+
+  /**
    * Run steps in order 'segmentation', 'classification', 'analysis', 'execution'.
    * @param state
    * @returns
    */
   async getDirections(state: ImportState): Promise<Directions<VendorElement, VendorAction>> {
+    let input: Directions<VendorElement, VendorAction> | false
     let directions: Directions<ImportElement, ImportAction>
     switch (state.stage) {
       case 'initial':
+        input = await this.needInputForSegmentation(state)
+        if (input) return input
         directions = new Directions<ImportElement, ImportAction>({
           type: 'action',
           action: { op: 'segmentation' }
         })
         break
       case 'segmented':
+        input = await this.needInputForClassification(state)
+        if (input) return input
         directions = new Directions<ImportElement, ImportAction>({
           type: 'action',
           action: { op: 'classification' }
         })
         break
       case 'classified':
+        input = await this.needInputForAnalysis(state)
+        if (input) return input
         directions = new Directions<ImportElement, ImportAction>({
           type: 'action',
           action: { op: 'analysis' }
         })
         break
       case 'analyzed':
+        input = await this.needInputForExecution(state)
+        if (input) return input
         directions = new Directions<ImportElement, ImportAction>({
           type: 'action',
           action: { op: 'execution' }
@@ -110,6 +159,7 @@ import { TextFileLine } from 'interactive-elements'
    * @param state
    * @param files
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async segmentation(state: ImportState, files: ProcessFile[]): Promise<ImportState> {
     throw new NotImplemented(`A class ${this.constructor.name} does not implement segmentation().`)
   }
@@ -119,6 +169,7 @@ import { TextFileLine } from 'interactive-elements'
    * @param state
    * @param files
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async classification(state: ImportState, files: ProcessFile[]): Promise<ImportState> {
     throw new NotImplemented(`A class ${this.constructor.name} does not implement classification().`)
   }
@@ -128,6 +179,7 @@ import { TextFileLine } from 'interactive-elements'
    * @param state
    * @param files
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async analysis(state: ImportState, files: ProcessFile[]): Promise<ImportState> {
     throw new NotImplemented(`A class ${this.constructor.name} does not implement analysis().`)
   }
@@ -137,6 +189,7 @@ import { TextFileLine } from 'interactive-elements'
    * @param state
    * @param files
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async execution(state: ImportState, files: ProcessFile[]): Promise<ImportState> {
     throw new NotImplemented(`A class ${this.constructor.name} does not implement execution().`)
   }
