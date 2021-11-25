@@ -23,7 +23,7 @@ export default function(db: Database): ProcessApi {
       get: async (id: ID): Promise<GetOneProcessResponse> => {
         const data = await db('processes').select('*').where({ id }).first()
         if (data) {
-          const steps = await db('process_steps').select('id', 'action', 'number', 'started', 'finished').where({ processId: id }).orderBy('number')
+          const steps = await db('process_steps').select('id', 'action', 'directions', 'number', 'started', 'finished').where({ processId: id }).orderBy('number')
           data.steps = steps ? steps : []
         }
         return data
