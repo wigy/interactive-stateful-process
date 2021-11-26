@@ -3,6 +3,7 @@ import { ProcessFile } from "./ProcessFile"
 import { ProcessStep } from "./ProcessStep"
 import { ProcessingSystem } from "./ProcessingSystem"
 import { ProcessConfigSection } from "./ProcessConnector"
+import { ProcessConfig } from "interactive-elements"
 
 /**
  * A handler taking care of moving between process states.
@@ -69,7 +70,7 @@ import { ProcessConfigSection } from "./ProcessConnector"
    * Figure out possible directions from the given state.
    * @param state
    */
-  async getDirections(state: VendorState): Promise<Directions<VendorElement, VendorAction>> {
+  async getDirections(state: VendorState, config: ProcessConfig): Promise<Directions<VendorElement, VendorAction>> {
     throw new NotImplemented(`A handler '${this.name}' for state '${JSON.stringify(state)}' does not implement getDirections()`)
   }
 

@@ -1,3 +1,4 @@
+import { ProcessConfig } from "interactive-elements"
 import { BadState, Directions, ProcessFile, ProcessHandler, ProcessStep } from ".."
 
 // We don't use elements in this dummy process.

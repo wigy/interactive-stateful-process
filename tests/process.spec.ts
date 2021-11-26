@@ -26,7 +26,7 @@ test('process handling with coins', async () => {
   }
 
   const process = await system.createProcess('Handle 3 stacks of coins', sample, {})
-  expect(await process.getConfig('settings', 'TEST')).toBe('Configured VAR.TEST!')
+  expect(await process.getConfig('settings', 'TEST')).toBe('Configured settings.TEST!')
   expect(process.status).toBe(ProcessStatus.INCOMPLETE)
   expect(process.state).toStrictEqual({
     stage: 'empty',

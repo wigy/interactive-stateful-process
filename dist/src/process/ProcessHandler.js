@@ -56,7 +56,7 @@ class ProcessHandler {
      * Figure out possible directions from the given state.
      * @param state
      */
-    async getDirections(state) {
+    async getDirections(state, config) {
         throw new __1.NotImplemented(`A handler '${this.name}' for state '${JSON.stringify(state)}' does not implement getDirections()`);
     }
     /**

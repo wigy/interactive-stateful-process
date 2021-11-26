@@ -3,7 +3,7 @@ import { BadState, NotImplemented } from '../error'
 import { Directions } from '../directions'
 import { ProcessFile } from '../process/ProcessFile'
 import { ProcessHandler } from '../process/ProcessHandler'
-import { ImportAction, isImportAction } from 'interactive-elements'
+import { ImportAction, isImportAction, ProcessConfig } from 'interactive-elements'
 import { ImportCSVOptions } from 'interactive-elements'
 import { ImportElement } from 'interactive-elements'
 import { ImportState, ImportStateText } from 'interactive-elements'
@@ -51,7 +51,7 @@ import { TextFileLine } from 'interactive-elements'
    * @returns
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async needInputForSegmentation(state: ImportState): Promise<Directions<VendorElement, VendorAction> | false> {
+  async needInputForSegmentation(state: ImportState, config: ProcessConfig): Promise<Directions<VendorElement, VendorAction> | false> {
     return false
   }
 
@@ -61,7 +61,7 @@ import { TextFileLine } from 'interactive-elements'
    * @returns
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async needInputForClassification(state: ImportState): Promise<Directions<VendorElement, VendorAction> | false> {
+  async needInputForClassification(state: ImportState, config: ProcessConfig): Promise<Directions<VendorElement, VendorAction> | false> {
     return false
   }
 
@@ -71,7 +71,7 @@ import { TextFileLine } from 'interactive-elements'
    * @returns
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async needInputForAnalysis(state: ImportState): Promise<Directions<VendorElement, VendorAction> | false> {
+  async needInputForAnalysis(state: ImportState, config: ProcessConfig): Promise<Directions<VendorElement, VendorAction> | false> {
     return false
   }
 
@@ -81,7 +81,7 @@ import { TextFileLine } from 'interactive-elements'
    * @returns
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async needInputForExecution(state: ImportState): Promise<Directions<VendorElement, VendorAction> | false> {
+  async needInputForExecution(state: ImportState, config: ProcessConfig): Promise<Directions<VendorElement, VendorAction> | false> {
     return false
   }
 
@@ -90,12 +90,12 @@ import { TextFileLine } from 'interactive-elements'
    * @param state
    * @returns
    */
-  async getDirections(state: ImportState): Promise<Directions<VendorElement, VendorAction>> {
+  async getDirections(state: ImportState, config: ProcessConfig): Promise<Directions<VendorElement, VendorAction>> {
     let input: Directions<VendorElement, VendorAction> | false
     let directions: Directions<ImportElement, ImportAction>
     switch (state.stage) {
       case 'initial':
-        input = await this.needInputForSegmentation(state)
+        input = await this.needInputForSegmentation(state, config)
         if (input) return input
         directions = new Directions<ImportElement, ImportAction>({
           type: 'action',
@@ -103,7 +103,7 @@ import { TextFileLine } from 'interactive-elements'
         })
         break
       case 'segmented':
-        input = await this.needInputForClassification(state)
+        input = await this.needInputForClassification(state, config)
         if (input) return input
         directions = new Directions<ImportElement, ImportAction>({
           type: 'action',
@@ -111,7 +111,7 @@ import { TextFileLine } from 'interactive-elements'
         })
         break
       case 'classified':
-        input = await this.needInputForAnalysis(state)
+        input = await this.needInputForAnalysis(state, config)
         if (input) return input
         directions = new Directions<ImportElement, ImportAction>({
           type: 'action',
@@ -119,7 +119,7 @@ import { TextFileLine } from 'interactive-elements'
         })
         break
       case 'analyzed':
-        input = await this.needInputForExecution(state)
+        input = await this.needInputForExecution(state, config)
         if (input) return input
         directions = new Directions<ImportElement, ImportAction>({
           type: 'action',

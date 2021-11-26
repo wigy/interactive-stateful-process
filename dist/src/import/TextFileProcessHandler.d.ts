@@ -1,6 +1,7 @@
 import { Directions } from '../directions';
 import { ProcessFile } from '../process/ProcessFile';
 import { ProcessHandler } from '../process/ProcessHandler';
+import { ProcessConfig } from 'interactive-elements';
 import { ImportCSVOptions } from 'interactive-elements';
 import { ImportState, ImportStateText } from 'interactive-elements';
 /**
@@ -23,31 +24,31 @@ export declare class TextFileProcessHandler<VendorElement, VendorAction> extends
      * @param state
      * @returns
      */
-    needInputForSegmentation(state: ImportState): Promise<Directions<VendorElement, VendorAction> | false>;
+    needInputForSegmentation(state: ImportState, config: ProcessConfig): Promise<Directions<VendorElement, VendorAction> | false>;
     /**
      * A hook to check alternative directions from segmented state.
      * @param state
      * @returns
      */
-    needInputForClassification(state: ImportState): Promise<Directions<VendorElement, VendorAction> | false>;
+    needInputForClassification(state: ImportState, config: ProcessConfig): Promise<Directions<VendorElement, VendorAction> | false>;
     /**
      * A hook to check alternative directions from classified state.
      * @param state
      * @returns
      */
-    needInputForAnalysis(state: ImportState): Promise<Directions<VendorElement, VendorAction> | false>;
+    needInputForAnalysis(state: ImportState, config: ProcessConfig): Promise<Directions<VendorElement, VendorAction> | false>;
     /**
      * A hook to check alternative directions from analyzed state.
      * @param state
      * @returns
      */
-    needInputForExecution(state: ImportState): Promise<Directions<VendorElement, VendorAction> | false>;
+    needInputForExecution(state: ImportState, config: ProcessConfig): Promise<Directions<VendorElement, VendorAction> | false>;
     /**
      * Run steps in order 'segmentation', 'classification', 'analysis', 'execution'.
      * @param state
      * @returns
      */
-    getDirections(state: ImportState): Promise<Directions<VendorElement, VendorAction>>;
+    getDirections(state: ImportState, config: ProcessConfig): Promise<Directions<VendorElement, VendorAction>>;
     /**
      * Call subclass implementation for each action.
      * @param action

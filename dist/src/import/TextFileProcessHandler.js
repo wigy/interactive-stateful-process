@@ -48,7 +48,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
      * @returns
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async needInputForSegmentation(state) {
+    async needInputForSegmentation(state, config) {
         return false;
     }
     /**
@@ -57,7 +57,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
      * @returns
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async needInputForClassification(state) {
+    async needInputForClassification(state, config) {
         return false;
     }
     /**
@@ -66,7 +66,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
      * @returns
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async needInputForAnalysis(state) {
+    async needInputForAnalysis(state, config) {
         return false;
     }
     /**
@@ -75,7 +75,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
      * @returns
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async needInputForExecution(state) {
+    async needInputForExecution(state, config) {
         return false;
     }
     /**
@@ -83,12 +83,12 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
      * @param state
      * @returns
      */
-    async getDirections(state) {
+    async getDirections(state, config) {
         let input;
         let directions;
         switch (state.stage) {
             case 'initial':
-                input = await this.needInputForSegmentation(state);
+                input = await this.needInputForSegmentation(state, config);
                 if (input)
                     return input;
                 directions = new directions_1.Directions({
@@ -97,7 +97,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
                 });
                 break;
             case 'segmented':
-                input = await this.needInputForClassification(state);
+                input = await this.needInputForClassification(state, config);
                 if (input)
                     return input;
                 directions = new directions_1.Directions({
@@ -106,7 +106,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
                 });
                 break;
             case 'classified':
-                input = await this.needInputForAnalysis(state);
+                input = await this.needInputForAnalysis(state, config);
                 if (input)
                     return input;
                 directions = new directions_1.Directions({
@@ -115,7 +115,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
                 });
                 break;
             case 'analyzed':
-                input = await this.needInputForExecution(state);
+                input = await this.needInputForExecution(state, config);
                 if (input)
                     return input;
                 directions = new directions_1.Directions({

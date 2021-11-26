@@ -133,7 +133,7 @@ import { ProcessConfigSection } from "./ProcessConnector"
     if (result === undefined) {
       let directions
       try {
-        directions = await handler.getDirections(step.state)
+        directions = await handler.getDirections(step.state, step.process.config)
       } catch(err) {
         return step.process.crashed(err)
       }

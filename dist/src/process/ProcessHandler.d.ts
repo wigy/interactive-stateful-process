@@ -3,6 +3,7 @@ import { ProcessFile } from "./ProcessFile";
 import { ProcessStep } from "./ProcessStep";
 import { ProcessingSystem } from "./ProcessingSystem";
 import { ProcessConfigSection } from "./ProcessConnector";
+import { ProcessConfig } from "interactive-elements";
 /**
  * A handler taking care of moving between process states.
  */
@@ -45,7 +46,7 @@ export declare class ProcessHandler<VendorElement, VendorState, VendorAction> {
      * Figure out possible directions from the given state.
      * @param state
      */
-    getDirections(state: VendorState): Promise<Directions<VendorElement, VendorAction>>;
+    getDirections(state: VendorState, config: ProcessConfig): Promise<Directions<VendorElement, VendorAction>>;
     /**
      * See if it is possible rollback a step.
      * @param step
