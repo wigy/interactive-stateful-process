@@ -2,6 +2,7 @@ import { Directions } from "..";
 import { ProcessFile } from "./ProcessFile";
 import { ProcessStep } from "./ProcessStep";
 import { ProcessingSystem } from "./ProcessingSystem";
+import { ProcessConfigSection } from "./ProcessConnector";
 /**
  * A handler taking care of moving between process states.
  */
@@ -17,7 +18,7 @@ export declare class ProcessHandler<VendorElement, VendorState, VendorAction> {
     /**
      * Get the value from the system configuration.
      */
-    getConfig(section: string, name: string): Promise<unknown>;
+    getConfig(section: ProcessConfigSection, name: string): Promise<unknown>;
     /**
      * Check if we are able to handle the given data.
      * @param file

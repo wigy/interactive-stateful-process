@@ -1,4 +1,4 @@
-import { ProcessingSystem, ProcessFileData, defaultConnector } from '../src'
+import { ProcessingSystem, ProcessFileData, defaultConnector, ProcessConfigSection } from '../src'
 import { ProcessStatus } from 'interactive-elements'
 import Knex from 'knex'
 import { CoinAction, CoinElement, CoinHandler, CoinState } from '../src/testing'
@@ -16,7 +16,7 @@ test('process handling with coins', async () => {
   // Set up the system.
   system.register(new CoinHandler('Coin Pile Adder'))
   system.logger.info = () => undefined
-  system.connector.getConfig = async (section: string, name: string) => `Configured ${section}.${name}!`
+  system.connector.getConfig = async (section: ProcessConfigSection, name: string) => `Configured ${section}.${name}!`
 
   // Launch the process.
   const sample: ProcessFileData = {
@@ -26,7 +26,7 @@ test('process handling with coins', async () => {
   }
 
   const process = await system.createProcess('Handle 3 stacks of coins', sample, {})
-  expect(await process.getConfig('VAR', 'TEST')).toBe('Configured VAR.TEST!')
+  expect(await process.getConfig('settings', 'TEST')).toBe('Configured VAR.TEST!')
   expect(process.status).toBe(ProcessStatus.INCOMPLETE)
   expect(process.state).toStrictEqual({
     stage: 'empty',

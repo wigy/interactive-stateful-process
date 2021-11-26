@@ -1,11 +1,13 @@
 import { SystemError } from ".."
 
+export type ProcessConfigSection = 'settings' | 'translations' | 'handler'
+
 /**
  * A connector interface for fetching configuration values and sometimes for applying results.
  */
  export interface ProcessConnector {
   initialize(server: unknown): Promise<void>
-  getConfig(section: string, name: string): Promise<unknown>
+  getConfig(section: ProcessConfigSection, name: string): Promise<unknown>
   applyResult(args: unknown): Promise<void>
   success(state: unknown): Promise<void>
 }
@@ -14,7 +16,7 @@ export const defaultConnector = {
   async initialize(): Promise<void> {
     console.log(new Date(), 'Connector initialized.')
   },
-  async getConfig(section: string, name: string): Promise<unknown> {
+  async getConfig(section: ProcessConfigSection, name: string): Promise<unknown> {
     throw new SystemError(`Cannot use processing system configuration to fetch ${section}.${name}, since it is not defined.`)
   },
   async applyResult(): Promise<void> {

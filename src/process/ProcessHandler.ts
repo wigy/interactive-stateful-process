@@ -2,6 +2,7 @@ import { Directions, NotImplemented } from ".."
 import { ProcessFile } from "./ProcessFile"
 import { ProcessStep } from "./ProcessStep"
 import { ProcessingSystem } from "./ProcessingSystem"
+import { ProcessConfigSection } from "./ProcessConnector"
 
 /**
  * A handler taking care of moving between process states.
@@ -26,7 +27,7 @@ import { ProcessingSystem } from "./ProcessingSystem"
   /**
    * Get the value from the system configuration.
    */
-  async getConfig(section: string, name: string): Promise<unknown> {
+  async getConfig(section: ProcessConfigSection, name: string): Promise<unknown> {
     return this.system.getConfig(section, name)
   }
 

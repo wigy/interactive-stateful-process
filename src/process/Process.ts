@@ -4,6 +4,7 @@ import { ProcessFile } from "./ProcessFile"
 import { ProcessingSystem } from "./ProcessingSystem"
 import { ProcessStep } from "./ProcessStep"
 import { ProcessName, ProcessConfig, ProcessStatus, ID } from 'interactive-elements'
+import { ProcessConfigSection } from "./ProcessConnector"
 
 /**
  * Overall description of the process.
@@ -73,7 +74,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
   /**
    * Get the value from the system configuration.
    */
-   async getConfig(section: string, name: string): Promise<unknown> {
+   async getConfig(section: ProcessConfigSection, name: string): Promise<unknown> {
     return this.system.getConfig(section, name)
   }
 

@@ -5,6 +5,7 @@ import { ProcessFileData } from "./ProcessFile";
 import { ProcessStep } from "./ProcessStep";
 import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler";
 import { ProcessConnector } from "./ProcessConnector";
+import { ProcessConfigSection } from "./ProcessConnector";
 /**
  * An instance of the full processing system.
  */
@@ -24,7 +25,7 @@ export declare class ProcessingSystem<VendorElement, VendorState, VendorAction> 
     /**
      * Get the value from the system configuration.
      */
-    getConfig(section: string, name: string): Promise<unknown>;
+    getConfig(section: ProcessConfigSection, name: string): Promise<unknown>;
     /**
      * Register new handler class for processing.
      * @param handler

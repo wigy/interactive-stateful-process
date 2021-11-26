@@ -5,6 +5,7 @@ import { ProcessFile, ProcessFileData } from "./ProcessFile"
 import { ProcessStep } from "./ProcessStep"
 import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler"
 import { ProcessConnector } from "./ProcessConnector"
+import { ProcessConfigSection } from "./ProcessConnector"
 
 
 /**
@@ -36,7 +37,7 @@ import { ProcessConnector } from "./ProcessConnector"
   /**
    * Get the value from the system configuration.
    */
-  async getConfig(section: string, name: string): Promise<unknown> {
+  async getConfig(section: ProcessConfigSection, name: string): Promise<unknown> {
     return this.connector.getConfig(section, name)
   }
 

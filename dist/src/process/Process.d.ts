@@ -3,6 +3,7 @@ import { ProcessFile } from "./ProcessFile";
 import { ProcessingSystem } from "./ProcessingSystem";
 import { ProcessStep } from "./ProcessStep";
 import { ProcessName, ProcessConfig, ProcessStatus, ID } from 'interactive-elements';
+import { ProcessConfigSection } from "./ProcessConnector";
 /**
  * Overall description of the process.
  */
@@ -40,7 +41,7 @@ export declare class Process<VendorElement, VendorState, VendorAction> {
     /**
      * Get the value from the system configuration.
      */
-    getConfig(section: string, name: string): Promise<unknown>;
+    getConfig(section: ProcessConfigSection, name: string): Promise<unknown>;
     /**
      * Append a file to this process and link its ID.
      * @param file
