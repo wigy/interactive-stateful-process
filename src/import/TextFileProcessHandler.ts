@@ -3,7 +3,7 @@ import { BadState, NotImplemented } from '../error'
 import { Directions } from '../directions'
 import { ProcessFile } from '../process/ProcessFile'
 import { ProcessHandler } from '../process/ProcessHandler'
-import { ImportAction, isImportAction, ProcessConfig } from 'interactive-elements'
+import { ImportAction, isImportAction, isImportActionConf, isImportActionOp, ProcessConfig } from 'interactive-elements'
 import { ImportCSVOptions } from 'interactive-elements'
 import { ImportElement } from 'interactive-elements'
 import { ImportState, ImportStateText } from 'interactive-elements'
@@ -143,15 +143,22 @@ import { TextFileLine } from 'interactive-elements'
     if (!isImportAction(action)) {
       throw new BadState(`Action is not import action ${JSON.stringify(action)}`)
     }
-    switch (action.op) {
-      case 'analysis':
-      case 'classification':
-      case 'segmentation':
-      case 'execution':
-        return this[action.op](state, files, config)
-      default:
-        throw new BadState(`Cannot parse action ${JSON.stringify(action)}`)
+    if (isImportActionOp(action)) {
+      switch (action.op) {
+        case 'analysis':
+        case 'classification':
+        case 'segmentation':
+        case 'execution':
+          return this[action.op](state, files, config)
+        default:
+          throw new BadState(`Cannot parse action ${JSON.stringify(action)}`)
+      }
     }
+    if (isImportActionConf(action)) {
+      // TODO: Got no chance to touch process.
+      console.log('TODO: Conf', action)
+    }
+    return state
   }
 
   /**

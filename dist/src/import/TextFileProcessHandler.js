@@ -139,15 +139,22 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
         if (!(0, interactive_elements_1.isImportAction)(action)) {
             throw new error_1.BadState(`Action is not import action ${JSON.stringify(action)}`);
         }
-        switch (action.op) {
-            case 'analysis':
-            case 'classification':
-            case 'segmentation':
-            case 'execution':
-                return this[action.op](state, files, config);
-            default:
-                throw new error_1.BadState(`Cannot parse action ${JSON.stringify(action)}`);
+        if ((0, interactive_elements_1.isImportActionOp)(action)) {
+            switch (action.op) {
+                case 'analysis':
+                case 'classification':
+                case 'segmentation':
+                case 'execution':
+                    return this[action.op](state, files, config);
+                default:
+                    throw new error_1.BadState(`Cannot parse action ${JSON.stringify(action)}`);
+            }
         }
+        if ((0, interactive_elements_1.isImportActionConf)(action)) {
+            // TODO: Got no chance to touch process.
+            console.log('TODO: Conf', action);
+        }
+        return state;
     }
     /**
      * This function must implement gathering of each line together that forms together one import activity.
