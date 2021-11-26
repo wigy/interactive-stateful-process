@@ -4,6 +4,7 @@ import { ProcessStep } from "./ProcessStep"
 import { ProcessingSystem } from "./ProcessingSystem"
 import { ProcessConfigSection } from "./ProcessConnector"
 import { ProcessConfig } from "interactive-elements"
+import { Process } from "./Process"
 
 /**
  * A handler taking care of moving between process states.
@@ -55,7 +56,7 @@ import { ProcessConfig } from "interactive-elements"
    * @param files
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async action(action: VendorAction, state: VendorState, files: ProcessFile[], config: ProcessConfig): Promise<VendorState> {
+  async action(process: Process<VendorElement, VendorState, VendorAction>, action: VendorAction, state: VendorState, files: ProcessFile[]): Promise<VendorState> {
     throw new NotImplemented(`A handler '${this.name}' for files ${files.map(f => `'${f}''`).join(', ')} does not implement action()`)
   }
 

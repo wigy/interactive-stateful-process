@@ -1,4 +1,4 @@
-import { BadState, Directions, ProcessFile, ProcessHandler, ProcessStep } from ".."
+import { BadState, Directions, Process, ProcessFile, ProcessHandler, ProcessStep } from ".."
 
 // We don't use elements in this dummy process.
 export type CoinElement = 'none' | 'ask'
@@ -51,7 +51,7 @@ export class CoinHandler extends ProcessHandler<CoinElement, CoinState, CoinActi
     }
   }
 
-  async action(action: CoinAction, state: CoinState, files: ProcessFile[]): Promise<CoinState> {
+  async action(process: Process<CoinElement, CoinState, CoinAction>, action: CoinAction, state: CoinState, files: ProcessFile[]): Promise<CoinState> {
     if (action.target === 'initialize') {
       files.forEach(f => {
         const [c1, c5, c10] = f.data.split('\n')[1].split(',').map(n => parseInt(n))

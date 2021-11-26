@@ -1,4 +1,4 @@
-import { Directions, ProcessFile, ProcessHandler, ProcessStep } from "..";
+import { Directions, Process, ProcessFile, ProcessHandler, ProcessStep } from "..";
 export declare type CoinElement = 'none' | 'ask';
 export interface CoinState {
     stage: 'empty' | 'initialized' | 'running';
@@ -18,7 +18,7 @@ export declare class CoinHandler extends ProcessHandler<CoinElement, CoinState, 
     canHandle(file: ProcessFile): boolean;
     startingState(): CoinState;
     getDirections(state: CoinState): Promise<Directions<CoinElement, CoinAction>>;
-    action(action: CoinAction, state: CoinState, files: ProcessFile[]): Promise<CoinState>;
+    action(process: Process<CoinElement, CoinState, CoinAction>, action: CoinAction, state: CoinState, files: ProcessFile[]): Promise<CoinState>;
     checkCompletion(state: CoinState): boolean | undefined;
     rollback(step: ProcessStep<CoinElement, CoinState, CoinAction>): Promise<boolean>;
 }

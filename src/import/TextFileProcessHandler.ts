@@ -8,6 +8,7 @@ import { ImportCSVOptions } from 'interactive-elements'
 import { ImportElement } from 'interactive-elements'
 import { ImportState, ImportStateText } from 'interactive-elements'
 import { TextFileLine } from 'interactive-elements'
+import { Process } from '../process/Process'
 
 /**
  * Utility class to provide tools for implementing any text file based process handler.
@@ -139,7 +140,7 @@ import { TextFileLine } from 'interactive-elements'
    * @param state
    * @param files
    */
-  async action(action: VendorAction, state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState> {
+  async action(process: Process<VendorElement, ImportState, VendorAction>, action: VendorAction, state: ImportState, files: ProcessFile[]): Promise<ImportState> {
     if (!isImportAction(action)) {
       throw new BadState(`Action is not import action ${JSON.stringify(action)}`)
     }
@@ -149,14 +150,14 @@ import { TextFileLine } from 'interactive-elements'
         case 'classification':
         case 'segmentation':
         case 'execution':
-          return this[action.op](state, files, config)
+          return this[action.op](state, files, process.config)
         default:
           throw new BadState(`Cannot parse action ${JSON.stringify(action)}`)
       }
     }
     if (isImportActionConf(action)) {
-      // TODO: Got no chance to touch process.
-      console.log('TODO: Conf', action)
+      Object.assign(process.config, action.configure)
+      await process.save()
     }
     return state
   }

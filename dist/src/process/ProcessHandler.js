@@ -43,7 +43,7 @@ class ProcessHandler {
      * @param files
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async action(action, state, files, config) {
+    async action(process, action, state, files) {
         throw new __1.NotImplemented(`A handler '${this.name}' for files ${files.map(f => `'${f}''`).join(', ')} does not implement action()`);
     }
     /**

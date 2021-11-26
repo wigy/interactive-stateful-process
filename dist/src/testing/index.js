@@ -32,7 +32,7 @@ class CoinHandler extends __1.ProcessHandler {
                 throw new __1.BadState(`Cannot find directions from ${JSON.stringify(state)}`);
         }
     }
-    async action(action, state, files) {
+    async action(process, action, state, files) {
         if (action.target === 'initialize') {
             files.forEach(f => {
                 const [c1, c5, c10] = f.data.split('\n')[1].split(',').map(n => parseInt(n));

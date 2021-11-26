@@ -4,6 +4,7 @@ import { ProcessHandler } from '../process/ProcessHandler';
 import { ProcessConfig } from 'interactive-elements';
 import { ImportCSVOptions } from 'interactive-elements';
 import { ImportState, ImportStateText } from 'interactive-elements';
+import { Process } from '../process/Process';
 /**
  * Utility class to provide tools for implementing any text file based process handler.
  */
@@ -55,7 +56,7 @@ export declare class TextFileProcessHandler<VendorElement, VendorAction> extends
      * @param state
      * @param files
      */
-    action(action: VendorAction, state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState>;
+    action(process: Process<VendorElement, ImportState, VendorAction>, action: VendorAction, state: ImportState, files: ProcessFile[]): Promise<ImportState>;
     /**
      * This function must implement gathering of each line together that forms together one import activity.
      * @param state

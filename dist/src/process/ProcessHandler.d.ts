@@ -4,6 +4,7 @@ import { ProcessStep } from "./ProcessStep";
 import { ProcessingSystem } from "./ProcessingSystem";
 import { ProcessConfigSection } from "./ProcessConnector";
 import { ProcessConfig } from "interactive-elements";
+import { Process } from "./Process";
 /**
  * A handler taking care of moving between process states.
  */
@@ -36,7 +37,7 @@ export declare class ProcessHandler<VendorElement, VendorState, VendorAction> {
      * @param state
      * @param files
      */
-    action(action: VendorAction, state: VendorState, files: ProcessFile[], config: ProcessConfig): Promise<VendorState>;
+    action(process: Process<VendorElement, VendorState, VendorAction>, action: VendorAction, state: VendorState, files: ProcessFile[]): Promise<VendorState>;
     /**
      * Construct intial state from the given data.
      * @param file
