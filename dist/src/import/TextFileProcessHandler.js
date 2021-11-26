@@ -135,7 +135,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
      * @param state
      * @param files
      */
-    async action(action, state, files) {
+    async action(action, state, files, config) {
         if (!(0, interactive_elements_1.isImportAction)(action)) {
             throw new error_1.BadState(`Action is not import action ${JSON.stringify(action)}`);
         }
@@ -144,7 +144,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
             case 'classification':
             case 'segmentation':
             case 'execution':
-                return this[action.op](state, files);
+                return this[action.op](state, files, config);
             default:
                 throw new error_1.BadState(`Cannot parse action ${JSON.stringify(action)}`);
         }
@@ -155,7 +155,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
      * @param files
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async segmentation(state, files) {
+    async segmentation(state, files, config) {
         throw new error_1.NotImplemented(`A class ${this.constructor.name} does not implement segmentation().`);
     }
     /**
@@ -164,7 +164,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
      * @param files
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async classification(state, files) {
+    async classification(state, files, config) {
         throw new error_1.NotImplemented(`A class ${this.constructor.name} does not implement classification().`);
     }
     /**
@@ -173,7 +173,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
      * @param files
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async analysis(state, files) {
+    async analysis(state, files, config) {
         throw new error_1.NotImplemented(`A class ${this.constructor.name} does not implement analysis().`);
     }
     /**
@@ -182,7 +182,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
      * @param files
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async execution(state, files) {
+    async execution(state, files, config) {
         throw new error_1.NotImplemented(`A class ${this.constructor.name} does not implement execution().`);
     }
     /**

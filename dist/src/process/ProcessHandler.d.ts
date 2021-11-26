@@ -36,7 +36,7 @@ export declare class ProcessHandler<VendorElement, VendorState, VendorAction> {
      * @param state
      * @param files
      */
-    action(action: VendorAction, state: VendorState, files: ProcessFile[]): Promise<VendorState>;
+    action(action: VendorAction, state: VendorState, files: ProcessFile[], config: ProcessConfig): Promise<VendorState>;
     /**
      * Construct intial state from the given data.
      * @param file

@@ -230,7 +230,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
       const action = clone(step.directions.action)
       try {
         if (action) {
-          const nextState = await handler.action(action, state, this.files)
+          const nextState = await handler.action(action, state, this.files, this.config)
           await this.proceedToState(action, nextState)
         } else {
           throw new BadState(`Process step ${step} has no action.`)
@@ -305,7 +305,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
     const handler = this.system.getHandler(step.handler)
     let nextState
     try {
-      nextState = await handler.action(action, clone(step.state), this.files)
+      nextState = await handler.action(action, clone(step.state), this.files, this.config)
     } catch(err) {
       return this.crashed(err)
     }

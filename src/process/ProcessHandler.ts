@@ -54,7 +54,8 @@ import { ProcessConfig } from "interactive-elements"
    * @param state
    * @param files
    */
-  async action(action: VendorAction, state: VendorState, files: ProcessFile[]): Promise<VendorState> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async action(action: VendorAction, state: VendorState, files: ProcessFile[], config: ProcessConfig): Promise<VendorState> {
     throw new NotImplemented(`A handler '${this.name}' for files ${files.map(f => `'${f}''`).join(', ')} does not implement action()`)
   }
 

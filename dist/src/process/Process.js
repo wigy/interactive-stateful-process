@@ -194,7 +194,7 @@ class Process {
             const action = (0, clone_1.default)(step.directions.action);
             try {
                 if (action) {
-                    const nextState = await handler.action(action, state, this.files);
+                    const nextState = await handler.action(action, state, this.files, this.config);
                     await this.proceedToState(action, nextState);
                 }
                 else {
@@ -270,7 +270,7 @@ class Process {
         const handler = this.system.getHandler(step.handler);
         let nextState;
         try {
-            nextState = await handler.action(action, (0, clone_1.default)(step.state), this.files);
+            nextState = await handler.action(action, (0, clone_1.default)(step.state), this.files, this.config);
         }
         catch (err) {
             return this.crashed(err);

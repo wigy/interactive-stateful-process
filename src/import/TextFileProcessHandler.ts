@@ -139,7 +139,7 @@ import { TextFileLine } from 'interactive-elements'
    * @param state
    * @param files
    */
-  async action(action: VendorAction, state: ImportState, files: ProcessFile[]): Promise<ImportState> {
+  async action(action: VendorAction, state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState> {
     if (!isImportAction(action)) {
       throw new BadState(`Action is not import action ${JSON.stringify(action)}`)
     }
@@ -148,7 +148,7 @@ import { TextFileLine } from 'interactive-elements'
       case 'classification':
       case 'segmentation':
       case 'execution':
-        return this[action.op](state, files)
+        return this[action.op](state, files, config)
       default:
         throw new BadState(`Cannot parse action ${JSON.stringify(action)}`)
     }
@@ -160,7 +160,7 @@ import { TextFileLine } from 'interactive-elements'
    * @param files
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async segmentation(state: ImportState, files: ProcessFile[]): Promise<ImportState> {
+  async segmentation(state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState> {
     throw new NotImplemented(`A class ${this.constructor.name} does not implement segmentation().`)
   }
 
@@ -170,7 +170,7 @@ import { TextFileLine } from 'interactive-elements'
    * @param files
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async classification(state: ImportState, files: ProcessFile[]): Promise<ImportState> {
+  async classification(state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState> {
     throw new NotImplemented(`A class ${this.constructor.name} does not implement classification().`)
   }
 
@@ -180,7 +180,7 @@ import { TextFileLine } from 'interactive-elements'
    * @param files
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async analysis(state: ImportState, files: ProcessFile[]): Promise<ImportState> {
+  async analysis(state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState> {
     throw new NotImplemented(`A class ${this.constructor.name} does not implement analysis().`)
   }
 
@@ -190,7 +190,7 @@ import { TextFileLine } from 'interactive-elements'
    * @param files
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async execution(state: ImportState, files: ProcessFile[]): Promise<ImportState> {
+  async execution(state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState> {
     throw new NotImplemented(`A class ${this.constructor.name} does not implement execution().`)
   }
 
