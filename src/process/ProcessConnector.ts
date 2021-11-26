@@ -8,6 +8,7 @@ export type ProcessConfigSection = 'settings' | 'translations' | 'handler'
  export interface ProcessConnector {
   initialize(server: unknown): Promise<void>
   getConfig(section: ProcessConfigSection, name: string): Promise<unknown>
+  getTranslation(text: string, language: string): Promise<string>
   applyResult(args: unknown): Promise<void>
   success(state: unknown): Promise<void>
 }
@@ -24,5 +25,8 @@ export const defaultConnector = {
   },
   async success(): Promise<void> {
     console.log(new Date(), 'Process completed.')
+  },
+  async getTranslation(text: string) {
+    return text
   }
 }

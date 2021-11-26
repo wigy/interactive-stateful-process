@@ -70,6 +70,7 @@ import { ProcessConfig } from "interactive-elements"
    * Figure out possible directions from the given state.
    * @param state
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getDirections(state: VendorState, config: ProcessConfig): Promise<Directions<VendorElement, VendorAction>> {
     throw new NotImplemented(`A handler '${this.name}' for state '${JSON.stringify(state)}' does not implement getDirections()`)
   }

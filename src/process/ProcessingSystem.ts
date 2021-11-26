@@ -42,6 +42,16 @@ import { ProcessConfigSection } from "./ProcessConnector"
   }
 
   /**
+   * Get the translation from the connector.
+   * @param language
+   * @param text
+   * @returns
+   */
+  async getTranslation(text: string, language: string): Promise<string> {
+    return this.connector.getTranslation(text, language)
+  }
+
+  /**
    * Register new handler class for processing.
    * @param handler
    */

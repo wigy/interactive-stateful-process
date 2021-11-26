@@ -29,6 +29,15 @@ class ProcessingSystem {
         return this.connector.getConfig(section, name);
     }
     /**
+     * Get the translation from the connector.
+     * @param language
+     * @param text
+     * @returns
+     */
+    async getTranslation(text, language) {
+        return this.connector.getTranslation(text, language);
+    }
+    /**
      * Register new handler class for processing.
      * @param handler
      */

@@ -14,5 +14,8 @@ exports.defaultConnector = {
     },
     async success() {
         console.log(new Date(), 'Process completed.');
+    },
+    async getTranslation(text) {
+        return text;
     }
 };

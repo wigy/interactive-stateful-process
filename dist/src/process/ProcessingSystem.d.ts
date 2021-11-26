@@ -27,6 +27,13 @@ export declare class ProcessingSystem<VendorElement, VendorState, VendorAction> 
      */
     getConfig(section: ProcessConfigSection, name: string): Promise<unknown>;
     /**
+     * Get the translation from the connector.
+     * @param language
+     * @param text
+     * @returns
+     */
+    getTranslation(text: string, language: string): Promise<string>;
+    /**
      * Register new handler class for processing.
      * @param handler
      */
