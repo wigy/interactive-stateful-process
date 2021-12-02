@@ -23,12 +23,6 @@ class ProcessingSystem {
         this.connector = connector;
     }
     /**
-     * Get the value from the system configuration.
-     */
-    async getConfig(section, name) {
-        return this.connector.getConfig(section, name);
-    }
-    /**
      * Get the translation from the connector.
      * @param language
      * @param text

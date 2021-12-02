@@ -35,13 +35,6 @@ import { ProcessConfigSection } from "./ProcessConnector"
   }
 
   /**
-   * Get the value from the system configuration.
-   */
-  async getConfig(section: ProcessConfigSection, name: string): Promise<unknown> {
-    return this.connector.getConfig(section, name)
-  }
-
-  /**
    * Get the translation from the connector.
    * @param language
    * @param text

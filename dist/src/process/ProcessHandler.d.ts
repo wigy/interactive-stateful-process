@@ -2,7 +2,6 @@ import { Directions } from "..";
 import { ProcessFile } from "./ProcessFile";
 import { ProcessStep } from "./ProcessStep";
 import { ProcessingSystem } from "./ProcessingSystem";
-import { ProcessConfigSection } from "./ProcessConnector";
 import { ProcessConfig } from "interactive-elements";
 import { Process } from "./Process";
 /**
@@ -17,10 +16,6 @@ export declare class ProcessHandler<VendorElement, VendorState, VendorAction> {
      * @param system
      */
     connect(system: ProcessingSystem<VendorElement, VendorState, VendorAction>): void;
-    /**
-     * Get the value from the system configuration.
-     */
-    getConfig(section: ProcessConfigSection, name: string): Promise<unknown>;
     /**
      * Check if we are able to handle the given data.
      * @param file

@@ -5,7 +5,6 @@ import { ProcessFileData } from "./ProcessFile";
 import { ProcessStep } from "./ProcessStep";
 import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler";
 import { ProcessConnector } from "./ProcessConnector";
-import { ProcessConfigSection } from "./ProcessConnector";
 /**
  * An instance of the full processing system.
  */
@@ -22,10 +21,6 @@ export declare class ProcessingSystem<VendorElement, VendorState, VendorAction> 
      * @param db
      */
     constructor(db: Database, connector: ProcessConnector);
-    /**
-     * Get the value from the system configuration.
-     */
-    getConfig(section: ProcessConfigSection, name: string): Promise<unknown>;
     /**
      * Get the translation from the connector.
      * @param language
