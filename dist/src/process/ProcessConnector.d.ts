@@ -1,4 +1,3 @@
-export declare type ProcessConfigSection = 'settings' | 'translations' | 'handler';
 /**
  * A connector interface for fetching configuration values and sometimes for applying results.
  */

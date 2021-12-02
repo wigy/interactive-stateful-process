@@ -4,7 +4,6 @@ import { ProcessFile } from "./ProcessFile"
 import { ProcessingSystem } from "./ProcessingSystem"
 import { ProcessStep } from "./ProcessStep"
 import { ProcessName, ProcessConfig, ProcessStatus, ID } from 'interactive-elements'
-import { ProcessConfigSection } from "./ProcessConnector"
 
 /**
  * Overall description of the process.

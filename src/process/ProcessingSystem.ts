@@ -5,8 +5,6 @@ import { ProcessFile, ProcessFileData } from "./ProcessFile"
 import { ProcessStep } from "./ProcessStep"
 import { ProcessHandler, ProcessHandlerMap } from "./ProcessHandler"
 import { ProcessConnector } from "./ProcessConnector"
-import { ProcessConfigSection } from "./ProcessConnector"
-
 
 /**
  * An instance of the full processing system.

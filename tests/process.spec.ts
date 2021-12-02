@@ -1,4 +1,4 @@
-import { ProcessingSystem, ProcessFileData, defaultConnector, ProcessConfigSection } from '../src'
+import { ProcessingSystem, ProcessFileData, defaultConnector } from '../src'
 import { ProcessStatus } from 'interactive-elements'
 import Knex from 'knex'
 import { CoinAction, CoinElement, CoinHandler, CoinState } from '../src/testing'

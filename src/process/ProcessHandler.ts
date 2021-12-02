@@ -2,7 +2,6 @@ import { Directions, NotImplemented } from ".."
 import { ProcessFile } from "./ProcessFile"
 import { ProcessStep } from "./ProcessStep"
 import { ProcessingSystem } from "./ProcessingSystem"
-import { ProcessConfigSection } from "./ProcessConnector"
 import { ProcessConfig } from "interactive-elements"
 import { Process } from "./Process"
 
