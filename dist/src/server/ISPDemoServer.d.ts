@@ -17,6 +17,7 @@ export declare class ISPDemoServer<DemoElement, DemoState, DemoAction> {
     private db;
     private handlers;
     private connector;
+    private configDefaults;
     /**
      * Prepare settings.
      *
@@ -25,7 +26,7 @@ export declare class ISPDemoServer<DemoElement, DemoState, DemoAction> {
      * @param handlers
      * @param connector
      */
-    constructor(port: number, databaseUrl: string, handlers: ProcessHandler<DemoElement, DemoState, DemoAction>[], connector?: ProcessConnector | null);
+    constructor(port: number, databaseUrl: string, handlers: ProcessHandler<DemoElement, DemoState, DemoAction>[], connector?: ProcessConnector | null, configDefaults?: Record<string, unknown>);
     /**
      * Launch the demo server.
      *

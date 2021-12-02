@@ -25,6 +25,7 @@ export class ISPDemoServer<DemoElement, DemoState, DemoAction> {
   private db: Database
   private handlers: ProcessHandler<DemoElement, DemoState, DemoAction>[]
   private connector: ProcessConnector
+  private configDefaults: Record<string, unknown>
 
   /**
    * Prepare settings.
@@ -34,8 +35,9 @@ export class ISPDemoServer<DemoElement, DemoState, DemoAction> {
    * @param handlers
    * @param connector
    */
-  constructor(port: number, databaseUrl: string, handlers: ProcessHandler<DemoElement, DemoState, DemoAction>[], connector: ProcessConnector|null = null) {
+  constructor(port: number, databaseUrl: string, handlers: ProcessHandler<DemoElement, DemoState, DemoAction>[], connector: ProcessConnector|null = null, configDefaults: Record<string, unknown> = {}) {
     this.port = port
+    this.configDefaults = configDefaults
     let migrationsPath = path.normalize(`${__dirname}/../../dist/migrations/01_init.js`)
     if (!fs.existsSync(migrationsPath)) {
       migrationsPath = path.normalize(`${__dirname}/../../../dist/migrations/01_init.js`)
@@ -76,6 +78,7 @@ export class ISPDemoServer<DemoElement, DemoState, DemoAction> {
       return system
     }
 
+    this.app.use((req, res, next) => { res.locals.server = this; next() })
     this.app.use((req, res, next) => { console.log(new Date(), req.method, req.url); next() })
     this.app.use(cors('*'))
     this.app.use(express.json({ limit: '1024MB' }))

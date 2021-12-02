@@ -31,7 +31,7 @@ class ISPDemoServer {
      * @param handlers
      * @param connector
      */
-    constructor(port, databaseUrl, handlers, connector = null) {
+    constructor(port, databaseUrl, handlers, connector = null, configDefaults = {}) {
         this.app = (0, express_1.default)();
         /**
          * Launch the demo server.
@@ -48,6 +48,7 @@ class ISPDemoServer {
                 this.handlers.forEach(handler => system.register(handler));
                 return system;
             };
+            this.app.use((req, res, next) => { res.locals.server = this; next(); });
             this.app.use((req, res, next) => { console.log(new Date(), req.method, req.url); next(); });
             this.app.use((0, cors_1.default)('*'));
             this.app.use(express_1.default.json({ limit: '1024MB' }));
@@ -76,6 +77,7 @@ class ISPDemoServer {
             });
         };
         this.port = port;
+        this.configDefaults = configDefaults;
         let migrationsPath = path_1.default.normalize(`${__dirname}/../../dist/migrations/01_init.js`);
         if (!fs_1.default.existsSync(migrationsPath)) {
             migrationsPath = path_1.default.normalize(`${__dirname}/../../../dist/migrations/01_init.js`);

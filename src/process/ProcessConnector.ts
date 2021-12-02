@@ -1,5 +1,3 @@
-import { SystemError } from ".."
-
 export type ProcessConfigSection = 'settings' | 'translations' | 'handler'
 
 /**
