@@ -76,7 +76,7 @@ export declare class TextFileProcessHandler<VendorElement, VendorAction> extends
      */
     analysis(state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState>;
     /**
-     * This function must implement applying the results in practice.
+     * This function must implement applying the result in practice.
      * @param state
      * @param files
      */

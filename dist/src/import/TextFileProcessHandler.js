@@ -184,7 +184,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
         throw new error_1.NotImplemented(`A class ${this.constructor.name} does not implement analysis().`);
     }
     /**
-     * This function must implement applying the results in practice.
+     * This function must implement applying the result in practice.
      * @param state
      * @param files
      */

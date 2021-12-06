@@ -1,4 +1,7 @@
 async function up(knex) {
+    if (await knex.schema.hasTable('processes')) {
+        return
+    }
     await knex.schema.createTable('processes', function (table) {
         table.increments('id')
         table.integer('ownerId').default(null)

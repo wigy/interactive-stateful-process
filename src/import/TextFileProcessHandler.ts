@@ -193,7 +193,7 @@ import { Process } from '../process/Process'
   }
 
   /**
-   * This function must implement applying the results in practice.
+   * This function must implement applying the result in practice.
    * @param state
    * @param files
    */
