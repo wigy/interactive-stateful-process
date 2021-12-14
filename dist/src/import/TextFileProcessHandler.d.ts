@@ -62,25 +62,25 @@ export declare class TextFileProcessHandler<VendorElement, VendorAction> extends
      * @param state
      * @param files
      */
-    segmentation(state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState>;
+    segmentation(process: Process<VendorElement, ImportState, VendorAction>, state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState>;
     /**
      * This function must implement gathering of each line together that forms together one import activity.
      * @param state
      * @param files
      */
-    classification(state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState>;
+    classification(process: Process<VendorElement, ImportState, VendorAction>, state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState>;
     /**
      * This function must implement conversion from classified data to the actual executable operations.
      * @param state
      * @param files
      */
-    analysis(state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState>;
+    analysis(process: Process<VendorElement, ImportState, VendorAction>, state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState>;
     /**
      * This function must implement applying the result in practice.
      * @param state
      * @param files
      */
-    execution(state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState>;
+    execution(process: Process<VendorElement, ImportState, VendorAction>, state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState>;
     /**
      * Go through each file and each line and add CSV interpretation of the content to each line.
      * @param state

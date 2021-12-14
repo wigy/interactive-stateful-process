@@ -150,7 +150,7 @@ import { Process } from '../process/Process'
         case 'classification':
         case 'segmentation':
         case 'execution':
-          return this[action.op](state, files, process.config)
+          return this[action.op](process, state, files, process.config)
         default:
           throw new BadState(`Cannot parse action ${JSON.stringify(action)}`)
       }
@@ -168,7 +168,7 @@ import { Process } from '../process/Process'
    * @param files
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async segmentation(state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState> {
+  async segmentation(process: Process<VendorElement, ImportState, VendorAction>, state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState> {
     throw new NotImplemented(`A class ${this.constructor.name} does not implement segmentation().`)
   }
 
@@ -178,7 +178,7 @@ import { Process } from '../process/Process'
    * @param files
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async classification(state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState> {
+  async classification(process: Process<VendorElement, ImportState, VendorAction>, state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState> {
     throw new NotImplemented(`A class ${this.constructor.name} does not implement classification().`)
   }
 
@@ -188,7 +188,7 @@ import { Process } from '../process/Process'
    * @param files
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async analysis(state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState> {
+  async analysis(process: Process<VendorElement, ImportState, VendorAction>, state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState> {
     throw new NotImplemented(`A class ${this.constructor.name} does not implement analysis().`)
   }
 
@@ -198,7 +198,7 @@ import { Process } from '../process/Process'
    * @param files
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async execution(state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState> {
+  async execution(process: Process<VendorElement, ImportState, VendorAction>, state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState> {
     throw new NotImplemented(`A class ${this.constructor.name} does not implement execution().`)
   }
 

@@ -145,7 +145,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
                 case 'classification':
                 case 'segmentation':
                 case 'execution':
-                    return this[action.op](state, files, process.config);
+                    return this[action.op](process, state, files, process.config);
                 default:
                     throw new error_1.BadState(`Cannot parse action ${JSON.stringify(action)}`);
             }
@@ -162,7 +162,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
      * @param files
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async segmentation(state, files, config) {
+    async segmentation(process, state, files, config) {
         throw new error_1.NotImplemented(`A class ${this.constructor.name} does not implement segmentation().`);
     }
     /**
@@ -171,7 +171,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
      * @param files
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async classification(state, files, config) {
+    async classification(process, state, files, config) {
         throw new error_1.NotImplemented(`A class ${this.constructor.name} does not implement classification().`);
     }
     /**
@@ -180,7 +180,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
      * @param files
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async analysis(state, files, config) {
+    async analysis(process, state, files, config) {
         throw new error_1.NotImplemented(`A class ${this.constructor.name} does not implement analysis().`);
     }
     /**
@@ -189,7 +189,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
      * @param files
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async execution(state, files, config) {
+    async execution(process, state, files, config) {
         throw new error_1.NotImplemented(`A class ${this.constructor.name} does not implement execution().`);
     }
     /**

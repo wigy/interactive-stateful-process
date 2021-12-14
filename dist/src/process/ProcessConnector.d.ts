@@ -1,10 +1,11 @@
+import { ID } from "interactive-elements";
 /**
  * A connector interface for querying information, applying results and running various hooks.
  */
 export interface ProcessConnector {
     initialize(server: unknown): Promise<void>;
     getTranslation(text: string, language: string): Promise<string>;
-    applyResult(args: unknown): Promise<void>;
+    applyResult(processId: ID, args: unknown): Promise<void>;
     success(state: unknown): Promise<void>;
 }
 export declare const defaultConnector: {
