@@ -1,5 +1,5 @@
 /**
- * A connector interface for fetching configuration values and sometimes for applying result.
+ * A connector interface for querying information, applying results and running various hooks.
  */
  export interface ProcessConnector {
   initialize(server: unknown): Promise<void>
