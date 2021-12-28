@@ -47,6 +47,9 @@ import { ProcessConnector } from "./ProcessConnector"
    * @param handler
    */
   register(handler: ProcessHandler<VendorElement, VendorState, VendorAction>): void {
+    if (!handler) {
+      throw new InvalidArgument(`A handler was undefined.`)
+    }
     if (!handler.name) {
       throw new InvalidArgument(`A handler without name cannot be registered.`)
     }

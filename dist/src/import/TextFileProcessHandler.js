@@ -202,7 +202,9 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
         // Helper to parse one line.
         const parseLine = async (line) => {
             return new Promise((resolve, reject) => {
-                (0, csv_parse_1.default)(line, {}, function (err, out) {
+                (0, csv_parse_1.default)(line, {
+                    delimiter: options.columnSeparator || ','
+                }, function (err, out) {
                     if (err) {
                         reject(err);
                     }

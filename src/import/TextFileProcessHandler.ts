@@ -212,7 +212,9 @@ import { Process } from '../process/Process'
     // Helper to parse one line.
     const parseLine = async (line: string): Promise<string[]> => {
       return new Promise((resolve, reject) => {
-        csvParse(line, {}, function(err, out) {
+        csvParse(line, {
+          delimiter: options.columnSeparator || ','
+        }, function(err, out) {
           if (err) {
             reject(err)
           } else {

@@ -36,6 +36,9 @@ class ProcessingSystem {
      * @param handler
      */
     register(handler) {
+        if (!handler) {
+            throw new __1.InvalidArgument(`A handler was undefined.`);
+        }
         if (!handler.name) {
             throw new __1.InvalidArgument(`A handler without name cannot be registered.`);
         }
