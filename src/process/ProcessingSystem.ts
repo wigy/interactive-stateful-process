@@ -126,7 +126,6 @@ import { ProcessConnector } from "./ProcessConnector"
    * Check if we are in the finished state and if not, find the directions forward.
    */
   async checkFinishAndFindDirections(handler: ProcessHandler<VendorElement, VendorState, VendorAction>, step: ProcessStep<VendorElement, VendorState, VendorAction>): Promise<void> {
-    let done = false
     let result
     try {
       result = handler.checkCompletion(step.state)
@@ -151,12 +150,8 @@ import { ProcessConnector } from "./ProcessConnector"
       step.process.complete = true
       step.process.successful = result
       await step.process.save()
-      done = true
     }
     await step.process.updateStatus()
-    if (done) {
-      await this.connector.success(step.state)
-    }
   }
 
   /**

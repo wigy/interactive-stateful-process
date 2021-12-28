@@ -11,6 +11,12 @@ exports.defaultConnector = {
     async success() {
         console.log(new Date(), 'Process completed.');
     },
+    async waiting() {
+        console.log(new Date(), 'Process waiting.');
+    },
+    async fail() {
+        console.error(new Date(), 'Process failed.');
+    },
     async getTranslation(text) {
         return text;
     }

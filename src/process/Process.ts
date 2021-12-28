@@ -275,6 +275,18 @@ export class Process<VendorElement, VendorState, VendorAction> {
     }
     this.status = status
     await this.db('processes').update({ status }).where({ id: this.id })
+
+    switch (status) {
+      case ProcessStatus.SUCCEEDED:
+        await this.system.connector.success(this.state)
+        break
+      case ProcessStatus.FAILED:
+        await this.system.connector.fail(this.state)
+        break
+      default:
+        const directions = this.currentStep ? this.steps[this.currentStep].directions : null
+        await this.system.connector.waiting(this.state, directions)
+    }
   }
 
   /**

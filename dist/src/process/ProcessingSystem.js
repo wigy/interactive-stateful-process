@@ -111,7 +111,6 @@ class ProcessingSystem {
      * Check if we are in the finished state and if not, find the directions forward.
      */
     async checkFinishAndFindDirections(handler, step) {
-        let done = false;
         let result;
         try {
             result = handler.checkCompletion(step.state);
@@ -138,12 +137,8 @@ class ProcessingSystem {
             step.process.complete = true;
             step.process.successful = result;
             await step.process.save();
-            done = true;
         }
         await step.process.updateStatus();
-        if (done) {
-            await this.connector.success(step.state);
-        }
     }
     /**
      * Get the named handler or throw an error if not registered.

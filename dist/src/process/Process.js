@@ -244,6 +244,17 @@ class Process {
         }
         this.status = status;
         await this.db('processes').update({ status }).where({ id: this.id });
+        switch (status) {
+            case interactive_elements_1.ProcessStatus.SUCCEEDED:
+                await this.system.connector.success(this.state);
+                break;
+            case interactive_elements_1.ProcessStatus.FAILED:
+                await this.system.connector.fail(this.state);
+                break;
+            default:
+                const directions = this.currentStep ? this.steps[this.currentStep].directions : null;
+                await this.system.connector.waiting(this.state, directions);
+        }
     }
     /**
      * Get the state of the current step of the process.
