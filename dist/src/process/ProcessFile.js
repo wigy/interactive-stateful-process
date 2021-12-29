@@ -65,6 +65,22 @@ class ProcessFile {
         return re.test(line1);
     }
     /**
+     * Check if the second line of the text file matches to the regular expression.
+     * @param re
+     */
+    secondLineMatch(re) {
+        const lines = this.decode().split('\n');
+        return lines.length > 1 && re.test(lines[1].trim());
+    }
+    /**
+     * Check if the third line of the text file matches to the regular expression.
+     * @param re
+     */
+    thirdLineMatch(re) {
+        const lines = this.decode().split('\n');
+        return lines.length > 2 && re.test(lines[2].trim());
+    }
+    /**
      * Find out if the content is binary or text.
      *
      * The mime type has to start with `text/`.

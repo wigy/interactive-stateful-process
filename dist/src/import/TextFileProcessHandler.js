@@ -216,13 +216,20 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
         };
         // Heading names per column.
         let headings = [];
+        let dropLines = options.cutFromBeginning || 0;
         // Run loop over all files.
+        let firstLine = true;
         for (const fileName of Object.keys(state.files)) {
             for (let n = 0; n < state.files[fileName].lines.length; n++) {
+                if (dropLines) {
+                    dropLines--;
+                    continue;
+                }
                 const line = { ...state.files[fileName].lines[n] };
-                const text = line.text;
+                const text = options.trimLines ? line.text.trim() : line.text;
                 // Collect or define headings on the first line.
-                if (n === 0) {
+                if (firstLine) {
+                    firstLine = false;
                     if (options.useFirstLineHeadings) {
                         headings = await parseLine(text);
                         continue;

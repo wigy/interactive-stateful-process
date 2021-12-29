@@ -39,6 +39,16 @@ export declare class ProcessFile {
      */
     firstLineMatch(re: RegExp): boolean;
     /**
+     * Check if the second line of the text file matches to the regular expression.
+     * @param re
+     */
+    secondLineMatch(re: RegExp): boolean;
+    /**
+     * Check if the third line of the text file matches to the regular expression.
+     * @param re
+     */
+    thirdLineMatch(re: RegExp): boolean;
+    /**
      * Find out if the content is binary or text.
      *
      * The mime type has to start with `text/`.
