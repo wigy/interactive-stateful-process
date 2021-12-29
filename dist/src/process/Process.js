@@ -188,8 +188,24 @@ class Process {
             const action = (0, clone_1.default)(step.directions.action);
             try {
                 if (action) {
-                    const nextState = await handler.action(this, action, state, this.files);
-                    await this.proceedToState(action, nextState);
+                    try {
+                        const nextState = await handler.action(this, action, state, this.files);
+                        await this.proceedToState(action, nextState);
+                    }
+                    catch (err) {
+                        if (err instanceof __1.AskUI) {
+                            // Postpone the action we tried. Instead, create query for UI to add more configuration for later retry.
+                            const directions = new __1.Directions({
+                                type: 'ui',
+                                element: err.element
+                            });
+                            step.directions = directions;
+                            await step.save();
+                            await this.updateStatus();
+                            return;
+                        }
+                        throw err;
+                    }
                 }
                 else {
                     throw new __1.BadState(`Process step ${step} has no action.`);

@@ -1,5 +1,5 @@
 import clone from "clone"
-import { BadState, Database, DatabaseError, InvalidArgument } from ".."
+import { AskUI, BadState, Database, DatabaseError, Directions, InvalidArgument } from ".."
 import { ProcessFile } from "./ProcessFile"
 import { ProcessingSystem } from "./ProcessingSystem"
 import { ProcessStep } from "./ProcessStep"
@@ -222,8 +222,23 @@ export class Process<VendorElement, VendorState, VendorAction> {
       const action = clone(step.directions.action)
       try {
         if (action) {
-          const nextState = await handler.action(this, action, state, this.files)
-          await this.proceedToState(action, nextState)
+          try {
+            const nextState = await handler.action(this, action, state, this.files)
+            await this.proceedToState(action, nextState)
+          } catch (err) {
+            if (err instanceof AskUI) {
+              // Postpone the action we tried. Instead, create query for UI to add more configuration for later retry.
+              const directions = new Directions<VendorElement, VendorAction>({
+                type: 'ui',
+                element: err.element as unknown as VendorElement
+              })
+              step.directions = directions
+              await step.save()
+              await this.updateStatus()
+              return
+            }
+            throw err
+          }
         } else {
           throw new BadState(`Process step ${step} has no action.`)
         }
