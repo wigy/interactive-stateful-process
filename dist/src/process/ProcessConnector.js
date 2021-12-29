@@ -11,8 +11,8 @@ exports.defaultConnector = {
     async success() {
         console.log(new Date(), 'Process completed.');
     },
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     async waiting() {
-        console.log(new Date(), 'Process waiting.');
     },
     async fail() {
         console.error(new Date(), 'Process failed.');

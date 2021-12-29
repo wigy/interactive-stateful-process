@@ -253,7 +253,8 @@ class Process {
                 break;
             default:
                 const directions = this.currentStep ? this.steps[this.currentStep].directions : null;
-                await this.system.connector.waiting(this.state, directions);
+                const state = this.currentStep ? this.steps[this.currentStep].state : null;
+                await this.system.connector.waiting(state, directions);
         }
     }
     /**
