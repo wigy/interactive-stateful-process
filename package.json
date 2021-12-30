@@ -18,7 +18,7 @@
     "test:watch": "jest --watch --forceExit --detectOpenHandles",
     "test:ci": "yarn run lint && yarn test"
   },
-  "repository": "git@github.com:wigy/react-interactive-stateful-process.git",
+  "repository": "git@github.com:wigy/interactive-stateful-process.git",
   "author": "Tommi Ronkainen <tommi.ronkainen@gmail.com>",
   "license": "GPL-3.0-only",
   "dependencies": {
