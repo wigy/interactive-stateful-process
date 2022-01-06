@@ -214,7 +214,6 @@ class Process {
                 }
             }
             catch (err) {
-                this.system.logger.error(err);
                 return this.crashed(err);
             }
         }

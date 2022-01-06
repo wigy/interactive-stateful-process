@@ -245,7 +245,6 @@ export class Process<VendorElement, VendorState, VendorAction> {
           throw new BadState(`Process step ${step} has no action.`)
         }
       } catch (err) {
-        this.system.logger.error(err)
         return this.crashed(err)
       }
     }
