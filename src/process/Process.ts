@@ -211,9 +211,11 @@ export class Process<VendorElement, VendorState, VendorAction> {
       }
       step = await this.getCurrentStep()
       if (!step.directions) {
+        this.system.logger.info(`No new directions for the process ${this}.`)
         break
       }
       if (!step.directions.isImmediate()) {
+        this.system.logger.info(`No immediate directions for the process ${this}. Waiting for more input.`)
         await this.updateStatus()
         break
       }
