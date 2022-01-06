@@ -2505,7 +2505,7 @@ inherits@2, inherits@2.0.4:
 interactive-elements@^1.0.42:
   version "1.0.42"
   resolved "https://registry.yarnpkg.com/interactive-elements/-/interactive-elements-1.0.42.tgz#fe5c1164aec0e7973aafe1141b7b3aad9c691a98"
-  integrity "sha1-/lwRZK7A55c6r+EUG3s6rZxpGpg= sha512-e/RvlMc974VfMFVC9OgVKWZn/HIPDfbfwfUMQhDVO/9Gh+KO+L8DwqEQzKcF+2u9vu2BUEBS459Nu0jxgvO8yA=="
+  integrity sha512-e/RvlMc974VfMFVC9OgVKWZn/HIPDfbfwfUMQhDVO/9Gh+KO+L8DwqEQzKcF+2u9vu2BUEBS459Nu0jxgvO8yA==
 
 internal-slot@^1.0.3:
   version "1.0.3"
