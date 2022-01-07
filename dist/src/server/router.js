@@ -31,6 +31,9 @@ function router(db, configurator) {
         const { id } = req.params;
         const process = await system.loadProcess(parseInt(id));
         await process.input(req.body);
+        if (process.canRun()) {
+            await process.run();
+        }
         res.sendStatus(204);
     });
     router.get('/:id/step/:number', async (req, res) => {

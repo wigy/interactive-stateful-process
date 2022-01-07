@@ -43,6 +43,9 @@ export function router<VendorElement, VendorState, VendorAction>(db: Database, c
       const { id } = req.params
       const process = await system.loadProcess(parseInt(id))
       await process.input(req.body)
+      if (process.canRun()) {
+        await process.run()
+      }
       res.sendStatus(204)
     }
   )

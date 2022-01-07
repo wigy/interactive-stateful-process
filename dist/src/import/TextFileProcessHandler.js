@@ -155,7 +155,17 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
             await process.save();
         }
         if ((0, interactive_elements_1.isImportAnswerAction)(action)) {
-            throw new Error('TODO: Import answers.');
+            if (!process.config.answers) {
+                process.config.answers = {};
+            }
+            const answers = process.config.answers;
+            for (const segmentId of Object.keys(action.answer)) {
+                answers[segmentId] = answers[segmentId] || {};
+                for (const variable of Object.keys(action.answer[segmentId])) {
+                    answers[segmentId][variable] = action.answer[segmentId][variable];
+                }
+            }
+            await process.save();
         }
         return state;
     }

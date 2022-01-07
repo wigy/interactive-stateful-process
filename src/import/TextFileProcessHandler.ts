@@ -3,7 +3,7 @@ import { BadState, NotImplemented } from '../error'
 import { Directions } from '../directions'
 import { ProcessFile } from '../process/ProcessFile'
 import { ProcessHandler } from '../process/ProcessHandler'
-import { ImportAction, isImportAction, isImportAnswerAction, isImportConfigureAction, isImportOpAction, ProcessConfig } from 'interactive-elements'
+import { ImportAction, isImportAction, isImportAnswerAction, isImportConfigureAction, isImportOpAction, ProcessConfig, SegmentId } from 'interactive-elements'
 import { ImportCSVOptions } from 'interactive-elements'
 import { ImportElement } from 'interactive-elements'
 import { ImportState, ImportStateText } from 'interactive-elements'
@@ -144,6 +144,7 @@ import { Process } from '../process/Process'
     if (!isImportAction(action)) {
       throw new BadState(`Action is not import action ${JSON.stringify(action)}`)
     }
+
     if (isImportOpAction(action)) {
       switch (action.op) {
         case 'analysis':
@@ -155,12 +156,24 @@ import { Process } from '../process/Process'
           throw new BadState(`Cannot parse action ${JSON.stringify(action)}`)
       }
     }
+
     if (isImportConfigureAction(action)) {
       Object.assign(process.config, action.configure)
       await process.save()
     }
+
     if (isImportAnswerAction(action)) {
-      throw new Error('TODO: Import answers.')
+      if (!process.config.answers) {
+        process.config.answers = {}
+      }
+      const answers = process.config.answers as Record<SegmentId, Record<string, unknown>>
+      for (const segmentId of Object.keys(action.answer)) {
+        answers[segmentId] = answers[segmentId] || {}
+        for (const variable of Object.keys(action.answer[segmentId])) {
+          answers[segmentId][variable] = action.answer[segmentId][variable]
+        }
+      }
+      await process.save()
     }
     return state
   }
