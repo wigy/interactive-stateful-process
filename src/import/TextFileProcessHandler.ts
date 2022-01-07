@@ -3,7 +3,7 @@ import { BadState, NotImplemented } from '../error'
 import { Directions } from '../directions'
 import { ProcessFile } from '../process/ProcessFile'
 import { ProcessHandler } from '../process/ProcessHandler'
-import { ImportAction, isImportAction, isImportActionConf, isImportActionOp, ProcessConfig } from 'interactive-elements'
+import { ImportAction, isImportAction, isImportAnswerAction, isImportConfigureAction, isImportOpAction, ProcessConfig } from 'interactive-elements'
 import { ImportCSVOptions } from 'interactive-elements'
 import { ImportElement } from 'interactive-elements'
 import { ImportState, ImportStateText } from 'interactive-elements'
@@ -144,7 +144,7 @@ import { Process } from '../process/Process'
     if (!isImportAction(action)) {
       throw new BadState(`Action is not import action ${JSON.stringify(action)}`)
     }
-    if (isImportActionOp(action)) {
+    if (isImportOpAction(action)) {
       switch (action.op) {
         case 'analysis':
         case 'classification':
@@ -155,9 +155,12 @@ import { Process } from '../process/Process'
           throw new BadState(`Cannot parse action ${JSON.stringify(action)}`)
       }
     }
-    if (isImportActionConf(action)) {
+    if (isImportConfigureAction(action)) {
       Object.assign(process.config, action.configure)
       await process.save()
+    }
+    if (isImportAnswerAction(action)) {
+      throw new Error('TODO: Import answers.')
     }
     return state
   }

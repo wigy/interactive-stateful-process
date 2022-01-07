@@ -139,7 +139,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
         if (!(0, interactive_elements_1.isImportAction)(action)) {
             throw new error_1.BadState(`Action is not import action ${JSON.stringify(action)}`);
         }
-        if ((0, interactive_elements_1.isImportActionOp)(action)) {
+        if ((0, interactive_elements_1.isImportOpAction)(action)) {
             switch (action.op) {
                 case 'analysis':
                 case 'classification':
@@ -150,9 +150,12 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
                     throw new error_1.BadState(`Cannot parse action ${JSON.stringify(action)}`);
             }
         }
-        if ((0, interactive_elements_1.isImportActionConf)(action)) {
+        if ((0, interactive_elements_1.isImportConfigureAction)(action)) {
             Object.assign(process.config, action.configure);
             await process.save();
+        }
+        if ((0, interactive_elements_1.isImportAnswerAction)(action)) {
+            throw new Error('TODO: Import answers.');
         }
         return state;
     }
