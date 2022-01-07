@@ -39,7 +39,10 @@ export function router<VendorElement, VendorState, VendorAction>(db: Database, c
 
   router.post('/:id',
     async (req, res) => {
-      console.log(req.body)
+      const system = configurator(req)
+      const { id } = req.params
+      const process = await system.loadProcess(parseInt(id))
+      await process.input(req.body)
       res.sendStatus(204)
     }
   )

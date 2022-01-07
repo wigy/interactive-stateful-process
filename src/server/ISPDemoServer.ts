@@ -6,6 +6,7 @@ import Knex from 'knex'
 import cors from 'cors'
 import { router } from './router'
 import { Database, defaultConnector, ProcessConnector, ProcessHandler, ProcessingSystem } from '..'
+import { ID } from 'interactive-elements'
 
 /**
  * Simple demo server for one or more handler.
@@ -107,5 +108,10 @@ export class ISPDemoServer<DemoElement, DemoState, DemoAction> {
         process.exit()
       }
     })
+  }
+
+  async lastProcessID(): Promise<ID> {
+    const ids = await this.db('processes').max('id').first()
+    return ids ? ids.max : null
   }
 }

@@ -1,4 +1,5 @@
 import { ProcessConnector, ProcessHandler } from '..';
+import { ID } from 'interactive-elements';
 /**
  * Simple demo server for one or more handler.
  *
@@ -38,4 +39,5 @@ export declare class ISPDemoServer<DemoElement, DemoState, DemoAction> {
      * @param err
      */
     stop: (err?: Error | undefined) => Promise<void>;
+    lastProcessID(): Promise<ID>;
 }

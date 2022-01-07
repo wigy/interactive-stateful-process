@@ -100,5 +100,9 @@ class ISPDemoServer {
             this.connector = __1.defaultConnector;
         }
     }
+    async lastProcessID() {
+        const ids = await this.db('processes').max('id').first();
+        return ids ? ids.max : null;
+    }
 }
 exports.ISPDemoServer = ISPDemoServer;
