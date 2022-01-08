@@ -296,7 +296,6 @@ export class Process<VendorElement, VendorState, VendorAction> {
       case ProcessStatus.SUCCEEDED:
         await this.system.connector.success(this.state)
         break
-      case ProcessStatus.CRASHED:
       case ProcessStatus.FAILED:
         await this.system.connector.fail(this.state)
         break
