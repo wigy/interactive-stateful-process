@@ -21,7 +21,7 @@ export declare class ProcessFile {
     type?: string;
     encoding: FileEncoding;
     data: string;
-    private decoded?;
+    _decoded?: string;
     constructor(obj: ProcessFileData);
     toString(): string;
     /**

@@ -24,7 +24,7 @@ export class ProcessFile {
   type?: string
   encoding: FileEncoding
   data: string
-  private decoded?: string
+  _decoded?: string
 
   constructor(obj: ProcessFileData) {
     this.id = null
@@ -33,7 +33,7 @@ export class ProcessFile {
     this.type = obj.type
     this.encoding = obj.encoding
     this.data = obj.data
-    this.decoded = undefined
+    this._decoded = undefined
   }
 
   toString(): string {
@@ -131,8 +131,8 @@ export class ProcessFile {
    * Try to recognize the file content and decode if it is a recognizable text format.
    */
   decode(): string {
-    if (this.decoded) {
-      return this.decoded
+    if (this._decoded) {
+      return this._decoded
     }
     switch(this.encoding) {
       case 'base64':
@@ -141,8 +141,8 @@ export class ProcessFile {
         if (!encoding) {
           throw new InvalidFile(`Cannot determine encoding for '${this}'.`)
         }
-        this.decoded = buffer.toString(this.parseEncoding(encoding))
-        return this.decoded
+        this._decoded = buffer.toString(this.parseEncoding(encoding))
+        return this._decoded
       default:
         throw new InvalidFile(`An encoding '${this.encoding}' is not yet supported.`)
     }

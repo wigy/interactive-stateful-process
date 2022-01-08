@@ -17,7 +17,7 @@ class ProcessFile {
         this.type = obj.type;
         this.encoding = obj.encoding;
         this.data = obj.data;
-        this.decoded = undefined;
+        this._decoded = undefined;
     }
     toString() {
         return `ProcessFile #${this.id} ${this.name}`;
@@ -108,8 +108,8 @@ class ProcessFile {
      * Try to recognize the file content and decode if it is a recognizable text format.
      */
     decode() {
-        if (this.decoded) {
-            return this.decoded;
+        if (this._decoded) {
+            return this._decoded;
         }
         switch (this.encoding) {
             case 'base64':
@@ -118,8 +118,8 @@ class ProcessFile {
                 if (!encoding) {
                     throw new error_1.InvalidFile(`Cannot determine encoding for '${this}'.`);
                 }
-                this.decoded = buffer.toString(this.parseEncoding(encoding));
-                return this.decoded;
+                this._decoded = buffer.toString(this.parseEncoding(encoding));
+                return this._decoded;
             default:
                 throw new error_1.InvalidFile(`An encoding '${this.encoding}' is not yet supported.`);
         }
