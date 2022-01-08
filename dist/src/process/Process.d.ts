@@ -1,7 +1,7 @@
-import { Database } from "..";
-import { ProcessFile } from "./ProcessFile";
-import { ProcessingSystem } from "./ProcessingSystem";
-import { ProcessStep } from "./ProcessStep";
+import { Database } from '../common';
+import { ProcessFile } from './ProcessFile';
+import { ProcessingSystem } from './ProcessingSystem';
+import { ProcessStep } from './ProcessStep';
 import { ProcessName, ProcessConfig, ProcessStatus, ID } from 'interactive-elements';
 /**
  * Overall description of the process.
@@ -48,7 +48,7 @@ export declare class Process<VendorElement, VendorState, VendorAction> {
      */
     addStep(step: ProcessStep<VendorElement, VendorState, VendorAction>): Promise<void>;
     /**
-     * Load the current step if necessary and return it.
+     * Load the current step if not yet loaded and return it.
      */
     getCurrentStep(): Promise<ProcessStep<VendorElement, VendorState, VendorAction>>;
     /**

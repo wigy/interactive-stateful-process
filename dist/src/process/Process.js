@@ -5,7 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Process = void 0;
 const clone_1 = __importDefault(require("clone"));
-const __1 = require("..");
+const directions_1 = require("../directions");
+const error_1 = require("../error");
 const ProcessFile_1 = require("./ProcessFile");
 const ProcessStep_1 = require("./ProcessStep");
 const interactive_elements_1 = require("interactive-elements");
@@ -61,11 +62,11 @@ class Process {
         this.steps.push(step);
     }
     /**
-     * Load the current step if necessary and return it.
+     * Load the current step if not yet loaded and return it.
      */
     async getCurrentStep() {
         if (this.currentStep === null || this.currentStep === undefined) {
-            throw new __1.BadState(`Process #${this.id} ${this.name} has invalid current step.`);
+            throw new error_1.BadState(`Process #${this.id} ${this.name} has invalid current step.`);
         }
         if (this.steps[this.currentStep]) {
             return this.steps[this.currentStep];
@@ -112,7 +113,7 @@ class Process {
             this.id = (await this.db('processes').insert(this.toJSON()).returning('id'))[0];
             if (this.id)
                 return this.id;
-            throw new __1.DatabaseError(`Saving process ${JSON.stringify(this.toJSON)} failed.`);
+            throw new error_1.DatabaseError(`Saving process ${JSON.stringify(this.toJSON)} failed.`);
         }
     }
     /**
@@ -123,7 +124,7 @@ class Process {
         // Load basic info.
         const data = await this.db('processes').select('*').where({ id }).first();
         if (!data) {
-            throw new __1.InvalidArgument(`Cannot find process #${id}`);
+            throw new error_1.InvalidArgument(`Cannot find process #${id}`);
         }
         Object.assign(this, data);
         this.id = id;
@@ -143,14 +144,14 @@ class Process {
      */
     async loadStep(number) {
         if (!this.id) {
-            throw new __1.BadState(`Cannot load steps, if the process have no ID ${JSON.stringify(this.toJSON())}.`);
+            throw new error_1.BadState(`Cannot load steps, if the process have no ID ${JSON.stringify(this.toJSON())}.`);
         }
         if (this.currentStep === undefined) {
-            throw new __1.BadState(`Cannot load any steps, since process have no current step ${JSON.stringify(this.toJSON())}.`);
+            throw new error_1.BadState(`Cannot load any steps, since process have no current step ${JSON.stringify(this.toJSON())}.`);
         }
         const data = await this.db('process_steps').where({ processId: this.id, number }).first();
         if (!data) {
-            throw new __1.BadState(`Cannot find step ${this.currentStep} for process ${JSON.stringify(this.toJSON())}.`);
+            throw new error_1.BadState(`Cannot find step ${this.currentStep} for process ${JSON.stringify(this.toJSON())}.`);
         }
         this.steps[this.currentStep] = new ProcessStep_1.ProcessStep(data);
         this.steps[this.currentStep].id = data.id;
@@ -181,7 +182,7 @@ class Process {
                 break;
             }
             if (!step.directions.isImmediate()) {
-                this.system.logger.info(`No immediate directions for the process ${this}. Waiting for more input.`);
+                this.system.logger.info(`Waiting for more input for the process ${this}.`);
                 await this.updateStatus();
                 break;
             }
@@ -190,31 +191,15 @@ class Process {
             const action = (0, clone_1.default)(step.directions.action);
             try {
                 if (action) {
-                    try {
-                        const nextState = await handler.action(this, action, state, this.files);
-                        await this.proceedToState(action, nextState);
-                    }
-                    catch (err) {
-                        if (err instanceof __1.AskUI) {
-                            // Postpone the action we tried. Instead, create query for UI to add more configuration for later retry.
-                            const directions = new __1.Directions({
-                                type: 'ui',
-                                element: err.element
-                            });
-                            step.directions = directions;
-                            await step.save();
-                            await this.updateStatus();
-                            return;
-                        }
-                        throw err;
-                    }
+                    const nextState = await handler.action(this, action, state, this.files);
+                    await this.proceedToState(action, nextState);
                 }
                 else {
-                    throw new __1.BadState(`Process step ${step} has no action.`);
+                    throw new error_1.BadState(`Process step ${step} has no action.`);
                 }
             }
             catch (err) {
-                return this.crashed(err);
+                return await this.crashed(err);
             }
         }
     }
@@ -223,6 +208,18 @@ class Process {
      * @param err
      */
     async crashed(err) {
+        if ('element' in err) {
+            // Postpone the action we tried. Instead, create query for UI to add more configuration for later retry.
+            const directions = new directions_1.Directions({
+                type: 'ui',
+                element: err['element']
+            });
+            const step = await this.getCurrentStep();
+            step.directions = directions;
+            await step.save();
+            await this.updateStatus();
+            return;
+        }
         this.system.logger.error(`Processing of ${this} failed:`, err);
         if (this.currentStep !== undefined && this.currentStep !== null) {
             const step = await this.loadStep(this.currentStep);
@@ -243,7 +240,7 @@ class Process {
         }
         else {
             if (this.currentStep === null || this.currentStep === undefined) {
-                throw new __1.BadState(`Cannot check status when there is no current step loaded for ${this}`);
+                throw new error_1.BadState(`Cannot check status when there is no current step loaded for ${this}`);
             }
             const step = this.steps[this.currentStep];
             if (step.finished) {
@@ -265,6 +262,7 @@ class Process {
             case interactive_elements_1.ProcessStatus.SUCCEEDED:
                 await this.system.connector.success(this.state);
                 break;
+            case interactive_elements_1.ProcessStatus.CRASHED:
             case interactive_elements_1.ProcessStatus.FAILED:
                 await this.system.connector.fail(this.state);
                 break;
@@ -279,7 +277,7 @@ class Process {
      */
     get state() {
         if (this.currentStep === null || this.currentStep === undefined) {
-            throw new __1.BadState(`Cannot check state when there is no current step loaded for ${this}`);
+            throw new error_1.BadState(`Cannot check state when there is no current step loaded for ${this}`);
         }
         const step = this.steps[this.currentStep];
         return step.state;
@@ -305,10 +303,10 @@ class Process {
      */
     async rollback() {
         if (this.currentStep === null || this.currentStep === undefined) {
-            throw new __1.BadState(`Cannot roll back when there is no current step.`);
+            throw new error_1.BadState(`Cannot roll back when there is no current step.`);
         }
         if (this.currentStep < 1) {
-            throw new __1.BadState(`Cannot roll back when there is only initial step in the process.`);
+            throw new error_1.BadState(`Cannot roll back when there is only initial step in the process.`);
         }
         const step = await this.getCurrentStep();
         this.system.logger.info(`Attempt of rolling back '${step}' from '${this}'.`);

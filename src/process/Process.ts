@@ -1,8 +1,10 @@
-import clone from "clone"
-import { AskUI, BadState, Database, DatabaseError, Directions, InvalidArgument } from ".."
-import { ProcessFile } from "./ProcessFile"
-import { ProcessingSystem } from "./ProcessingSystem"
-import { ProcessStep } from "./ProcessStep"
+import clone from 'clone'
+import { Database } from '../common'
+import { Directions } from '../directions'
+import { BadState, DatabaseError, InvalidArgument } from '../error'
+import { ProcessFile } from './ProcessFile'
+import { ProcessingSystem } from './ProcessingSystem'
+import { ProcessStep } from './ProcessStep'
 import { ProcessName, ProcessConfig, ProcessStatus, ID } from 'interactive-elements'
 
 /**
@@ -90,7 +92,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
   }
 
   /**
-   * Load the current step if necessary and return it.
+   * Load the current step if not yet loaded and return it.
    */
   async getCurrentStep(): Promise<ProcessStep<VendorElement, VendorState, VendorAction>> {
     if (this.currentStep === null || this.currentStep === undefined) {
@@ -215,7 +217,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
         break
       }
       if (!step.directions.isImmediate()) {
-        this.system.logger.info(`No immediate directions for the process ${this}. Waiting for more input.`)
+        this.system.logger.info(`Waiting for more input for the process ${this}.`)
         await this.updateStatus()
         break
       }
@@ -224,28 +226,13 @@ export class Process<VendorElement, VendorState, VendorAction> {
       const action = clone(step.directions.action)
       try {
         if (action) {
-          try {
-            const nextState = await handler.action(this, action, state, this.files)
-            await this.proceedToState(action, nextState)
-          } catch (err) {
-            if (err instanceof AskUI) {
-              // Postpone the action we tried. Instead, create query for UI to add more configuration for later retry.
-              const directions = new Directions<VendorElement, VendorAction>({
-                type: 'ui',
-                element: err.element as unknown as VendorElement
-              })
-              step.directions = directions
-              await step.save()
-              await this.updateStatus()
-              return
-            }
-            throw err
-          }
+          const nextState = await handler.action(this, action, state, this.files)
+          await this.proceedToState(action, nextState)
         } else {
           throw new BadState(`Process step ${step} has no action.`)
         }
       } catch (err) {
-        return this.crashed(err)
+        return await this.crashed(err)
       }
     }
   }
@@ -255,6 +242,19 @@ export class Process<VendorElement, VendorState, VendorAction> {
    * @param err
    */
   async crashed(err: Error): Promise<void> {
+    if ('element' in err) {
+      // Postpone the action we tried. Instead, create query for UI to add more configuration for later retry.
+      const directions = new Directions<VendorElement, VendorAction>({
+        type: 'ui',
+        element: err['element'] as unknown as VendorElement
+      })
+      const step = await this.getCurrentStep()
+      step.directions = directions
+      await step.save()
+      await this.updateStatus()
+      return
+    }
+
     this.system.logger.error(`Processing of ${this} failed:`, err)
     if (this.currentStep !== undefined && this.currentStep !== null) {
       const step = await this.loadStep(this.currentStep)
@@ -296,6 +296,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
       case ProcessStatus.SUCCEEDED:
         await this.system.connector.success(this.state)
         break
+      case ProcessStatus.CRASHED:
       case ProcessStatus.FAILED:
         await this.system.connector.fail(this.state)
         break
