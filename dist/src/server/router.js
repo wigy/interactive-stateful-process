@@ -42,3 +42,4 @@ function router(db, configurator) {
     return router;
 }
 exports.router = router;
+//# sourceMappingURL=router.js.map

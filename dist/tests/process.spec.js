@@ -151,3 +151,4 @@ test('process handling with coins', async () => {
     // console.log('STEPS', await db('process_steps').select('*'))
     await db.migrate.rollback();
 });
+//# sourceMappingURL=process.spec.js.map

@@ -10,3 +10,4 @@ const ISPDemoServer_1 = require("../src/server/ISPDemoServer");
     const server = new ISPDemoServer_1.ISPDemoServer(PORT, DATABASE_URL, []);
     server.start();
 })();
+//# sourceMappingURL=server.js.map

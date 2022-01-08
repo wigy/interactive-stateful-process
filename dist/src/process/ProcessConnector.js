@@ -21,3 +21,4 @@ exports.defaultConnector = {
         return text;
     }
 };
+//# sourceMappingURL=ProcessConnector.js.map

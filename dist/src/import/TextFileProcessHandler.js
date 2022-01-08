@@ -281,3 +281,4 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
     }
 }
 exports.TextFileProcessHandler = TextFileProcessHandler;
+//# sourceMappingURL=TextFileProcessHandler.js.map

@@ -78,3 +78,4 @@ class CoinHandler extends __1.ProcessHandler {
     }
 }
 exports.CoinHandler = CoinHandler;
+//# sourceMappingURL=index.js.map
