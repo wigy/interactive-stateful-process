@@ -38,7 +38,6 @@
     "@types/knex": "^0.16.1",
     "@typescript-eslint/eslint-plugin": "5.2.0",
     "@typescript-eslint/parser": "5.2.0",
-    "better-docs": "^2.3.2",
     "cors": "^2.8.5",
     "eslint": "7.32.0",
     "eslint-config-semistandard": "16.0.0",
