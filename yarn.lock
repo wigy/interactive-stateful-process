@@ -2499,10 +2499,10 @@ inherits@2, inherits@2.0.4:
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
-interactive-elements@1.0.47:
-  version "1.0.47"
-  resolved "https://registry.yarnpkg.com/interactive-elements/-/interactive-elements-1.0.47.tgz#6c6437343b373a88d2d82ba5fff4f869835fd05e"
-  integrity "sha1-bGQ3NDs3OojS2Cul//T4aYNf0F4= sha512-2M3+3/BkMlJqRe/q2g1k2AXcVvqyElsWPNCn30DI4xp8i6OtF+Wta5kvBMALRSz1SyXX3pXR8r8tlHIwpJSS0w=="
+interactive-elements@1.0.48:
+  version "1.0.48"
+  resolved "https://registry.yarnpkg.com/interactive-elements/-/interactive-elements-1.0.48.tgz#78324479ce343377921809ea14cf8e4e1baf3b10"
+  integrity "sha1-eDJEec40M3eSGAnqFM+OThuvOxA= sha512-7bpV/EqatCzKAIso7KeFL2r6rIa+Ds7bznMlXATfmZ78w+gwsdzPLPqvDT2iQXjT2mCUbwGYaZZ8lDcYxs4VSg=="
 
 internal-slot@^1.0.3:
   version "1.0.3"
@@ -4769,10 +4769,10 @@ typedarray-to-buffer@^3.1.5:
   dependencies:
     is-typedarray "^1.0.0"
 
-typedoc@^0.22.6:
-  version "0.22.10"
-  resolved "https://registry.yarnpkg.com/typedoc/-/typedoc-0.22.10.tgz#221e1a2b17bcb71817ef027dc4c4969d572e7620"
-  integrity sha512-hQYZ4WtoMZ61wDC6w10kxA42+jclWngdmztNZsDvIz7BMJg7F2xnT+uYsUa7OluyKossdFj9E9Ye4QOZKTy8SA==
+typedoc@0.22.8:
+  version "0.22.8"
+  resolved "https://registry.yarnpkg.com/typedoc/-/typedoc-0.22.8.tgz#cd488290bd31d2cd4099004e1104807895d4eb17"
+  integrity sha512-92S+YzyhospdXN5rnkYUTgirdTYqNWY7NP9vco+IqQQoiSXzVSUsawVro+tMyEEsWUS7EMaJ2YOjB9uE0CBi6A==
   dependencies:
     glob "^7.2.0"
     lunr "^2.3.9"
