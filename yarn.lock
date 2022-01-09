@@ -2258,10 +2258,10 @@ inherits@2, inherits@2.0.4:
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
-interactive-elements@1.0.48:
+interactive-elements@^1.0.48:
   version "1.0.48"
   resolved "https://registry.yarnpkg.com/interactive-elements/-/interactive-elements-1.0.48.tgz#78324479ce343377921809ea14cf8e4e1baf3b10"
-  integrity "sha1-eDJEec40M3eSGAnqFM+OThuvOxA= sha512-7bpV/EqatCzKAIso7KeFL2r6rIa+Ds7bznMlXATfmZ78w+gwsdzPLPqvDT2iQXjT2mCUbwGYaZZ8lDcYxs4VSg=="
+  integrity sha512-7bpV/EqatCzKAIso7KeFL2r6rIa+Ds7bznMlXATfmZ78w+gwsdzPLPqvDT2iQXjT2mCUbwGYaZZ8lDcYxs4VSg==
 
 internal-slot@^1.0.3:
   version "1.0.3"
