@@ -318,7 +318,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
   }
 
   /**
-   * Handle external input coming ing.
+   * Handle external input coming in.
    * @param action
    */
   async input(action: VendorAction): Promise<void> {

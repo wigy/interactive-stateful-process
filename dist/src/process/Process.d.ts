@@ -97,7 +97,7 @@ export declare class Process<VendorElement, VendorState, VendorAction> {
      */
     get state(): VendorState;
     /**
-     * Handle external input coming ing.
+     * Handle external input coming in.
      * @param action
      */
     input(action: VendorAction): Promise<void>;
