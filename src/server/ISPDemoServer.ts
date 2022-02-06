@@ -79,8 +79,8 @@ export class ISPDemoServer<DemoElement, DemoState, DemoAction> {
       return system
     }
 
-    this.app.use((req, res, next) => { res.locals.server = this; next() })
-    this.app.use((req, res, next) => { console.log(new Date(), req.method, req.url); next() })
+    this.app.use((req, res, next) => { res.locals.server = this; next() })
+    this.app.use((req, res, next) => { console.log(new Date(), req.method, req.url); next() })
     this.app.use(cors('*'))
     this.app.use(express.json({ limit: '1024MB' }))
     this.app.use('/api/isp', router(this.db, systemCreator))
