@@ -25,10 +25,10 @@
     "chardet": "^1.4.0",
     "clone": "^2.1.2",
     "csv-parse": "^4.16.3",
-    "express": "^4.17.1",
+    "express": "4.17.2",
     "interactive-elements": "^1.0.54",
-    "knex": "0.95.15",
-    "pg": "^8.7.1",
+    "knex": "1.0.3",
+    "pg": "8.7.3",
     "ts-opaque": "^3.0.1"
   },
   "devDependencies": {
