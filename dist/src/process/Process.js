@@ -110,7 +110,7 @@ class Process {
             return this.id;
         }
         else {
-            this.id = (await this.db('processes').insert(this.toJSON()).returning('id'))[0];
+            this.id = (await this.db('processes').insert(this.toJSON()).returning('id'))[0].id;
             if (this.id)
                 return this.id;
             throw new error_1.DatabaseError(`Saving process ${JSON.stringify(this.toJSON)} failed.`);

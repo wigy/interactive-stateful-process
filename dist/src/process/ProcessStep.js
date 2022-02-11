@@ -35,7 +35,7 @@ class ProcessStep {
         }
         else {
             this.started = new Date();
-            this.id = (await this.db('process_steps').insert(this.toJSON()).returning('id'))[0];
+            this.id = (await this.db('process_steps').insert(this.toJSON()).returning('id'))[0].id;
             if (this.id)
                 return this.id;
             throw new __1.DatabaseError(`Saving process ${JSON.stringify(this.toJSON)} failed.`);

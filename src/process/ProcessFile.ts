@@ -66,7 +66,7 @@ export class ProcessFile {
       await db('process_files').update(out).where({ id: this.id })
       return this.id
     } else {
-      this.id = (await db('process_files').insert(out).returning('id'))[0]
+      this.id = (await db('process_files').insert(out).returning('id'))[0].id
       if (this.id) return this.id
       throw new DatabaseError(`Saving process ${JSON.stringify(out)} failed.`)
     }

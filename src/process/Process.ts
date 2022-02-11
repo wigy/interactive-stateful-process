@@ -142,7 +142,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
       await this.db('processes').update(this.toJSON()).where({ id: this.id })
       return this.id
     } else {
-      this.id = (await this.db('processes').insert(this.toJSON()).returning('id'))[0]
+      this.id = (await this.db('processes').insert(this.toJSON()).returning('id'))[0].id
       if (this.id) return this.id
       throw new DatabaseError(`Saving process ${JSON.stringify(this.toJSON)} failed.`)
     }
