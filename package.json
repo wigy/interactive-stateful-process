@@ -12,11 +12,10 @@
     "build": "rm -rf dist/* && tsc && cp -r migrations dist/",
     "doc": "rm -fr doc/* && typedoc --out doc src/index.ts",
     "doc:watch": "typedoc --watch --out doc src/index.ts",
-    "test": "jest --forceExit --detectOpenHandles",
     "lint": "eslint src/*.ts tests/*.ts",
     "lint:fix": "eslint --fix src/*.ts tests/*.ts",
-    "test:watch": "jest --watch --forceExit --detectOpenHandles",
-    "test:ci": "yarn run lint && yarn test"
+    "test:unit": "jest --forceExit --detectOpenHandles",
+    "test:watch": "jest --watch --forceExit --detectOpenHandles"
   },
   "repository": "git@github.com:wigy/interactive-stateful-process.git",
   "author": "Tommi Ronkainen <tommi.ronkainen@gmail.com>",
@@ -26,7 +25,7 @@
     "clone": "^2.1.2",
     "csv-parse": "^4.16.3",
     "express": "4.17.2",
-    "interactive-elements": "^1.0.54",
+    "interactive-elements": "1.0.55",
     "knex": "1.0.3",
     "pg": "8.7.3",
     "ts-opaque": "^3.0.1"
