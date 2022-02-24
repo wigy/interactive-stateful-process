@@ -50,7 +50,7 @@ class ISPDemoServer {
             };
             this.app.use((req, res, next) => { res.locals.server = this; next(); });
             this.app.use((req, res, next) => { console.log(new Date(), req.method, req.url); next(); });
-            this.app.use((0, cors_1.default)('*'));
+            this.app.use((0, cors_1.default)());
             this.app.use(express_1.default.json({ limit: '1024MB' }));
             this.app.use('/api/isp', (0, router_1.router)(this.db, systemCreator));
             this.server = this.app.listen(this.port, () => {
