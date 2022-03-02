@@ -8,7 +8,7 @@
  *
  * @module interactive-stateful-process
  */
-/** @hidden */
+/** @hidden Dummy definition to force inclusion of this file to documentation */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const __interactive_stateful_process = null;
 //# sourceMappingURL=doccer.js.map
