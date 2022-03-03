@@ -2296,7 +2296,7 @@ inherits@2, inherits@2.0.4:
 interactive-elements@1.0.63:
   version "1.0.63"
   resolved "https://registry.yarnpkg.com/interactive-elements/-/interactive-elements-1.0.63.tgz#ec7c1ee6e5600ad336aeb6e022e94b075fa8eba0"
-  integrity "sha1-7Hwe5uVgCtM2rrbgIulLB1+o66A= sha512-Ugt4rnU+JUO9Ex+h8TP/ct7nEo9yLvSOr0pwl3ESW/tfwbeY9DcB5ixBLfQUd1lObNhCYp5rrLXaeqirbmFsng=="
+  integrity sha512-Ugt4rnU+JUO9Ex+h8TP/ct7nEo9yLvSOr0pwl3ESW/tfwbeY9DcB5ixBLfQUd1lObNhCYp5rrLXaeqirbmFsng==
 
 internal-slot@^1.0.3:
   version "1.0.3"
