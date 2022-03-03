@@ -1,4 +1,4 @@
-import { Directions } from '../directions';
+import { Directions } from '..';
 import { ProcessFile } from '../process/ProcessFile';
 import { ProcessHandler } from '../process/ProcessHandler';
 import { ProcessConfig } from 'interactive-elements';

@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Process = void 0;
 const clone_1 = __importDefault(require("clone"));
-const directions_1 = require("../directions");
+const directions_1 = require("./directions");
 const error_1 = require("../error");
 const ProcessFile_1 = require("./ProcessFile");
 const ProcessStep_1 = require("./ProcessStep");

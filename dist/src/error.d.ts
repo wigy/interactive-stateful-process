@@ -1,6 +1,7 @@
 /**
  * Error types for processing and an exception used to ask more information from UI.
- * @module
+ *
+ * @module interactive-stateful-process/src/error
  */
 import { InteractiveElement } from 'interactive-elements';
 export declare class ProcessingError extends Error {

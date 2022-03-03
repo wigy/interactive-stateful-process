@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TextFileProcessHandler = void 0;
 const csv_parse_1 = __importDefault(require("csv-parse"));
 const error_1 = require("../error");
-const directions_1 = require("../directions");
+const __1 = require("..");
 const ProcessHandler_1 = require("../process/ProcessHandler");
 const interactive_elements_1 = require("interactive-elements");
 /**
@@ -91,7 +91,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
                 input = await this.needInputForSegmentation(state, config);
                 if (input)
                     return input;
-                directions = new directions_1.Directions({
+                directions = new __1.Directions({
                     type: 'action',
                     action: { op: 'segmentation' }
                 });
@@ -100,7 +100,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
                 input = await this.needInputForClassification(state, config);
                 if (input)
                     return input;
-                directions = new directions_1.Directions({
+                directions = new __1.Directions({
                     type: 'action',
                     action: { op: 'classification' }
                 });
@@ -109,7 +109,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
                 input = await this.needInputForAnalysis(state, config);
                 if (input)
                     return input;
-                directions = new directions_1.Directions({
+                directions = new __1.Directions({
                     type: 'action',
                     action: { op: 'analysis' }
                 });
@@ -118,7 +118,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
                 input = await this.needInputForExecution(state, config);
                 if (input)
                     return input;
-                directions = new directions_1.Directions({
+                directions = new __1.Directions({
                     type: 'action',
                     action: { op: 'execution' }
                 });
