@@ -1,6 +1,6 @@
 import clone from 'clone'
 import { Database } from '../common'
-import { Directions } from '../directions'
+import { Directions } from './directions'
 import { BadState, DatabaseError, InvalidArgument } from '../error'
 import { ProcessFile } from './ProcessFile'
 import { ProcessingSystem } from './ProcessingSystem'

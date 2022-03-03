@@ -1,6 +1,6 @@
 import csvParse from 'csv-parse'
 import { BadState, NotImplemented } from '../error'
-import { Directions } from '../directions'
+import { Directions } from '..'
 import { ProcessFile } from '../process/ProcessFile'
 import { ProcessHandler } from '../process/ProcessHandler'
 import { ImportAction, isImportAction, isImportAnswerAction, isImportConfigureAction, isImportOpAction, ProcessConfig, SegmentId } from 'interactive-elements'
