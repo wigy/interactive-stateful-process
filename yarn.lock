@@ -2293,10 +2293,10 @@ inherits@2, inherits@2.0.4:
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
-interactive-elements@1.0.63:
-  version "1.0.63"
-  resolved "https://registry.yarnpkg.com/interactive-elements/-/interactive-elements-1.0.63.tgz#ec7c1ee6e5600ad336aeb6e022e94b075fa8eba0"
-  integrity sha512-Ugt4rnU+JUO9Ex+h8TP/ct7nEo9yLvSOr0pwl3ESW/tfwbeY9DcB5ixBLfQUd1lObNhCYp5rrLXaeqirbmFsng==
+interactive-elements@1.0.64:
+  version "1.0.64"
+  resolved "https://registry.yarnpkg.com/interactive-elements/-/interactive-elements-1.0.64.tgz#4cb120ccbbd6c5e2469332f8ef43d820c8ecde4f"
+  integrity sha512-591DqgSdNLd0bbvGaUqbawuYCVkU/kaARb/WWexWR9e4vTvGObSPZX5/cFwsLaoGI5gNpCACnfcYux3v7V0heA==
 
 internal-slot@^1.0.3:
   version "1.0.3"
@@ -4282,10 +4282,10 @@ typedoc@0.22.11:
     minimatch "^3.0.4"
     shiki "^0.10.0"
 
-typescript@4.5.3:
-  version "4.5.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.5.3.tgz#afaa858e68c7103317d89eb90c5d8906268d353c"
-  integrity sha512-eVYaEHALSt+s9LbvgEv4Ef+Tdq7hBiIZgii12xXJnukryt3pMgJf6aKhoCZ3FWQsu6sydEnkg11fYXLzhLBjeQ==
+typescript@4.5.5:
+  version "4.5.5"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.5.5.tgz#d8c953832d28924a9e3d37c73d729c846c5896f3"
+  integrity sha512-TCTIul70LyWe6IJWT8QSYeA54WQe8EjQFU4wY52Fasj5UKx88LNYKCgBEHcOMOrFF1rKGbD8v/xcNWVUq9SymA==
 
 unbox-primitive@^1.0.1:
   version "1.0.1"
