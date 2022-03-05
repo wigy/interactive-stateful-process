@@ -11,11 +11,14 @@ test('process handling with coins', async () => {
   // Set up test database.
   const db = Knex(DATABASE_URL)
   await db.migrate.latest()
+  defaultConnector.success = async () => undefined
+  defaultConnector.fail = async () => undefined
   const system = new ProcessingSystem<CoinElement, CoinState, CoinAction>(db, defaultConnector)
 
   // Set up the system.
   system.register(new CoinHandler('Coin Pile Adder'))
   system.logger.info = () => undefined
+  system.logger.error = () => undefined
 
   // Launch the process.
   const sample: ProcessFileData = {
@@ -94,7 +97,6 @@ test('process handling with coins', async () => {
   })
 
   // Make it crash.
-  system.logger.error = () => undefined
   await failing.input({ target: 'trigger error' })
   expect(failing.status).toBe(ProcessStatus.CRASHED)
   expect(failing.state).toStrictEqual({

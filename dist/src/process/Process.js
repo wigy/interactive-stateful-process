@@ -262,6 +262,9 @@ class Process {
             case interactive_elements_1.ProcessStatus.SUCCEEDED:
                 await this.system.connector.success(this.state);
                 break;
+            case interactive_elements_1.ProcessStatus.CRASHED:
+                await this.system.connector.fail(this.error);
+                break;
             case interactive_elements_1.ProcessStatus.FAILED:
                 await this.system.connector.fail(this.state);
                 break;
