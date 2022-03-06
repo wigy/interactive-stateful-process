@@ -8,5 +8,4 @@ import { Knex } from "knex"
 /**
  * A Knex database.
  */
-// TODO: Isn't this defined also in elements?
 export type Database = Knex
