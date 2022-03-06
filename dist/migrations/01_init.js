@@ -1,5 +1,6 @@
 async function up(knex) {
     if (await knex.schema.hasTable('processes')) {
+        console.log('Found processes table. Skipping migrations.')
         return
     }
     await knex.schema.createTable('processes', function (table) {
