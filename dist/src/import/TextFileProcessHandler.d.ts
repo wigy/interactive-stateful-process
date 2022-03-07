@@ -82,6 +82,13 @@ export declare class TextFileProcessHandler<VendorElement, VendorAction> extends
      */
     execution(process: Process<VendorElement, ImportState, VendorAction>, state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState>;
     /**
+     * Parse a single line of CSV.
+     * @param line
+     * @param options
+     * @returns
+     */
+    parseLine(line: string, options?: ImportCSVOptions): Promise<string[]>;
+    /**
      * Go through each file and each line and add CSV interpretation of the content to each line.
      * @param state
      * @param options

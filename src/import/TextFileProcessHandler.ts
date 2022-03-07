@@ -219,26 +219,33 @@ import { Process } from '../process/Process'
   }
 
   /**
+   * Parse a single line of CSV.
+   * @param line
+   * @param options
+   * @returns
+   */
+  async parseLine(line: string, options: ImportCSVOptions = {}): Promise<string[]> {
+    return new Promise((resolve, reject) => {
+      csvParse(line, {
+        delimiter: options.columnSeparator || ',',
+        skip_lines_with_error: !!options.skipErrors
+      }, function(err, out) {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(out[0])
+        }
+      })
+    })
+  }
+
+  /**
    * Go through each file and each line and add CSV interpretation of the content to each line.
    * @param state
    * @param options
    * @returns The original state that has been modified by adding CSV parsed field `columns`.
    */
   async parseCSV(state: ImportStateText<'initial'>, options: ImportCSVOptions = {}): Promise<ImportStateText<'segmented'>> {
-    // Helper to parse one line.
-    const parseLine = async (line: string): Promise<string[]> => {
-      return new Promise((resolve, reject) => {
-        csvParse(line, {
-          delimiter: options.columnSeparator || ','
-        }, function(err, out) {
-          if (err) {
-            reject(err)
-          } else {
-            resolve(out[0])
-          }
-        })
-      })
-    }
 
     // Heading names per column.
     let headings: string[] = []
@@ -258,10 +265,10 @@ import { Process } from '../process/Process'
         if (firstLine) {
           firstLine = false
           if (options.useFirstLineHeadings) {
-            headings = await parseLine(text)
+            headings = await this.parseLine(text, options)
             continue
           } else {
-            const size = (await parseLine(text)).length
+            const size = (await this.parseLine(text, options)).length
             for (let i = 0; i < size; i++) {
               headings.push(`${i}`)
             }
@@ -269,7 +276,7 @@ import { Process } from '../process/Process'
         }
         // Map each column to its heading name.
         const columns: Record<string, string> = {}
-        const pieces = text.trim() !== '' ? await parseLine(text) : null
+        const pieces = text.trim() !== '' ? await this.parseLine(text, options) : null
         if (pieces) {
           pieces.forEach((column, index) => {
             if (index < headings.length) {

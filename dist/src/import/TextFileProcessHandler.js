@@ -206,27 +206,33 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
         throw new error_1.NotImplemented(`A class ${this.constructor.name} does not implement execution().`);
     }
     /**
+     * Parse a single line of CSV.
+     * @param line
+     * @param options
+     * @returns
+     */
+    async parseLine(line, options = {}) {
+        return new Promise((resolve, reject) => {
+            (0, csv_parse_1.default)(line, {
+                delimiter: options.columnSeparator || ',',
+                skip_lines_with_error: !!options.skipErrors
+            }, function (err, out) {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(out[0]);
+                }
+            });
+        });
+    }
+    /**
      * Go through each file and each line and add CSV interpretation of the content to each line.
      * @param state
      * @param options
      * @returns The original state that has been modified by adding CSV parsed field `columns`.
      */
     async parseCSV(state, options = {}) {
-        // Helper to parse one line.
-        const parseLine = async (line) => {
-            return new Promise((resolve, reject) => {
-                (0, csv_parse_1.default)(line, {
-                    delimiter: options.columnSeparator || ','
-                }, function (err, out) {
-                    if (err) {
-                        reject(err);
-                    }
-                    else {
-                        resolve(out[0]);
-                    }
-                });
-            });
-        };
         // Heading names per column.
         let headings = [];
         let dropLines = options.cutFromBeginning || 0;
@@ -244,11 +250,11 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
                 if (firstLine) {
                     firstLine = false;
                     if (options.useFirstLineHeadings) {
-                        headings = await parseLine(text);
+                        headings = await this.parseLine(text, options);
                         continue;
                     }
                     else {
-                        const size = (await parseLine(text)).length;
+                        const size = (await this.parseLine(text, options)).length;
                         for (let i = 0; i < size; i++) {
                             headings.push(`${i}`);
                         }
@@ -256,7 +262,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
                 }
                 // Map each column to its heading name.
                 const columns = {};
-                const pieces = text.trim() !== '' ? await parseLine(text) : null;
+                const pieces = text.trim() !== '' ? await this.parseLine(text, options) : null;
                 if (pieces) {
                     pieces.forEach((column, index) => {
                         if (index < headings.length) {
