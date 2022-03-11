@@ -7,6 +7,7 @@ exports.defaultConnector = {
     },
     async applyResult() {
         console.log(new Date(), 'Result received.');
+        return {};
     },
     async success() {
         console.log(new Date(), 'Process completed.');

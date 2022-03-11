@@ -6,7 +6,7 @@ import { ID } from "interactive-elements"
  export interface ProcessConnector {
   initialize(server: unknown): Promise<void>
   getTranslation(text: string, language: string): Promise<string>
-  applyResult(processId: ID, args: unknown): Promise<Record<string, unknown> | undefined>
+  applyResult(processId: ID, args: unknown): Promise<Record<string, unknown>>
   success(state: unknown): Promise<void>
   waiting(state: unknown, directions): Promise<void>
   fail(state: unknown): Promise<void>
@@ -16,8 +16,9 @@ export const defaultConnector = {
   async initialize(): Promise<void> {
     console.log(new Date(), 'Connector initialized.')
   },
-  async applyResult(): Promise<void> {
+  async applyResult(): Promise<Record<string, unknown>> {
     console.log(new Date(), 'Result received.')
+    return {}
   },
   async success(): Promise<void> {
     console.log(new Date(), 'Process completed.')
