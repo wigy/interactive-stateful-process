@@ -3,7 +3,7 @@ import { ProcessModelData, ProcessModelDetailedData, ProcessStepModelData, ID } 
 
 export type ProcessApi = {
   process: {
-    getAll: () => Promise<ProcessModelData>,
+    getAll: () => Promise<ProcessModelData[]>,
     get: (id: ID) => Promise<ProcessModelDetailedData>
     getStep: (id: ID, step: number) => Promise<ProcessStepModelData>
   }
@@ -17,7 +17,7 @@ export type ProcessApi = {
 export default function(db: Database): ProcessApi {
   return {
     process: {
-      getAll: async (): Promise<ProcessModelData> => {
+      getAll: async (): Promise<ProcessModelData[]> => {
         return db('processes').select('*').orderBy('created', 'desc')
       },
       get: async (id: ID): Promise<ProcessModelDetailedData> => {
