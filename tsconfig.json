@@ -15,5 +15,8 @@
         "src/**/*",
         "tests/**/*",
         "migrations/**/*"
+    ],
+    "exclude": [
+        "node_modules"
     ]
 }
