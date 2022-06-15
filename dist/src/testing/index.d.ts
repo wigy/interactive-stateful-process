@@ -16,6 +16,7 @@ export declare type CoinAction = {
 };
 export declare class CoinHandler extends ProcessHandler<CoinElement, CoinState, CoinAction> {
     canHandle(file: ProcessFile): boolean;
+    canAppend(file: ProcessFile): boolean;
     startingState(): CoinState;
     getDirections(state: CoinState): Promise<Directions<CoinElement, CoinAction>>;
     action(process: Process<CoinElement, CoinState, CoinAction>, action: CoinAction, state: CoinState, files: ProcessFile[]): Promise<CoinState>;

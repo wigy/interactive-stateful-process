@@ -70,14 +70,23 @@ import { ProcessConnector } from "./ProcessConnector"
    * @param file
    * @returns New process that is already in crashed state, if no handler
    */
-  async createProcess(name: ProcessName, file: ProcessFileData, config: ProcessConfig): Promise<Process<VendorElement, VendorState, VendorAction>> {
+  async createProcess(name: ProcessName, files: ProcessFileData[], config: ProcessConfig): Promise<Process<VendorElement, VendorState, VendorAction>> {
     // Set up the process.
     const process = new Process<VendorElement, VendorState, VendorAction>(this, name, config)
     await process.save()
-    // Save the file and attach it to the process.
+
+    // Check if we have files.
+    if (files.length < 1) {
+      await process.crashed(new InvalidArgument(`No files given to create a process.`))
+      return process
+    }
+
+    // Save the first file and attach it to the process.
+    const file = files[0]
     const processFile = new ProcessFile(file)
     process.addFile(processFile)
     await processFile.save(this.db)
+
     // Find the handler.
     let selectedHandler : ProcessHandler<VendorElement, VendorState, VendorAction> | null = null
     for (const handler of Object.values(this.handlers)) {
@@ -95,6 +104,19 @@ import { ProcessConnector } from "./ProcessConnector"
       await process.crashed(new InvalidArgument(`No handler found for the file ${file.name} of type ${file.type}.`))
       return process
     }
+
+    // Check if the handler accepts the rest of the files.
+    for (let i = 1; i < files.length; i++) {
+      const processFile = new ProcessFile(files[i])
+      // await processFile.save(this.db)
+      if (!selectedHandler.canAppend(processFile)) {
+        await process.crashed(new InvalidArgument(`The file ${files[i].name} of type ${files[i].type} cannot be appended to handler.`))
+        return process
+      }
+      process.addFile(processFile)
+      await processFile.save(this.db)
+    }
+
     // Create initial step using the handler.
     let state
     try {

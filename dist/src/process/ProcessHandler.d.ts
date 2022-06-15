@@ -17,10 +17,15 @@ export declare class ProcessHandler<VendorElement, VendorState, VendorAction> {
      */
     connect(system: ProcessingSystem<VendorElement, VendorState, VendorAction>): void;
     /**
-     * Check if we are able to handle the given data.
+     * Check if we are able to handle the given file.
      * @param file
      */
     canHandle(file: ProcessFile): boolean;
+    /**
+     * Check if we are able to append the given file to the process.
+     * @param file
+     */
+    canAppend(file: ProcessFile): boolean;
     /**
      * Check if the state is either successful `true` or failed `false` or not yet complete `undefined`.
      * @param state

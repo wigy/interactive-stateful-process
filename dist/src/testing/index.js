@@ -7,6 +7,9 @@ class CoinHandler extends __1.ProcessHandler {
     canHandle(file) {
         return /^#1,5,10/.test(file.data);
     }
+    canAppend(file) {
+        return this.canHandle(file);
+    }
     startingState() {
         return {
             stage: 'empty',

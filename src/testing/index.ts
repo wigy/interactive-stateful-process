@@ -24,6 +24,10 @@ export class CoinHandler extends ProcessHandler<CoinElement, CoinState, CoinActi
     return /^#1,5,10/.test(file.data)
   }
 
+  canAppend(file: ProcessFile): boolean {
+    return this.canHandle(file)
+  }
+
   startingState(): CoinState {
     return {
       stage: 'empty',

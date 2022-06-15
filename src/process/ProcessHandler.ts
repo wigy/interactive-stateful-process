@@ -26,11 +26,19 @@ import { Process } from "./Process"
   }
 
   /**
-   * Check if we are able to handle the given data.
+   * Check if we are able to handle the given file.
    * @param file
    */
   canHandle(file: ProcessFile): boolean {
     throw new NotImplemented(`A handler '${this.name}' cannot check file '${file.name}', since canHandle() is not implemented.`)
+  }
+
+  /**
+   * Check if we are able to append the given file to the process.
+   * @param file
+   */
+   canAppend(file: ProcessFile): boolean {
+    throw new NotImplemented(`A handler '${this.name}' cannot append file '${file.name}', since canAppend() is not implemented.`)
   }
 
   /**

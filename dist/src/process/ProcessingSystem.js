@@ -58,11 +58,17 @@ class ProcessingSystem {
      * @param file
      * @returns New process that is already in crashed state, if no handler
      */
-    async createProcess(name, file, config) {
+    async createProcess(name, files, config) {
         // Set up the process.
         const process = new Process_1.Process(this, name, config);
         await process.save();
-        // Save the file and attach it to the process.
+        // Check if we have files.
+        if (files.length < 1) {
+            await process.crashed(new __1.InvalidArgument(`No files given to create a process.`));
+            return process;
+        }
+        // Save the first file and attach it to the process.
+        const file = files[0];
         const processFile = new ProcessFile_1.ProcessFile(file);
         process.addFile(processFile);
         await processFile.save(this.db);
@@ -83,6 +89,17 @@ class ProcessingSystem {
         if (!selectedHandler) {
             await process.crashed(new __1.InvalidArgument(`No handler found for the file ${file.name} of type ${file.type}.`));
             return process;
+        }
+        // Check if the handler accepts the rest of the files.
+        for (let i = 1; i < files.length; i++) {
+            const processFile = new ProcessFile_1.ProcessFile(files[i]);
+            // await processFile.save(this.db)
+            if (!selectedHandler.canAppend(processFile)) {
+                await process.crashed(new __1.InvalidArgument(`The file ${files[i].name} of type ${files[i].type} cannot be appended to handler.`));
+                return process;
+            }
+            process.addFile(processFile);
+            await processFile.save(this.db);
         }
         // Create initial step using the handler.
         let state;
