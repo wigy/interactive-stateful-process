@@ -3,7 +3,7 @@ import { BadState, NotImplemented } from '../error'
 import { Directions } from '..'
 import { ProcessFile } from '../process/ProcessFile'
 import { ProcessHandler } from '../process/ProcessHandler'
-import { ImportAction, isImportAction, isImportAnswerAction, isImportConfigureAction, isImportOpAction, ProcessConfig, SegmentId } from 'interactive-elements'
+import { ImportAction, InteractiveElement, isImportAction, isImportAnswerAction, isImportConfigureAction, isImportOpAction, ProcessConfig, SegmentId } from 'interactive-elements'
 import { ImportCSVOptions } from 'interactive-elements'
 import { ImportElement } from 'interactive-elements'
 import { ImportState, ImportStateText } from 'interactive-elements'
@@ -13,7 +13,7 @@ import { Process } from '../process/Process'
 /**
  * Utility class to provide tools for implementing any text file based process handler.
  */
- export class TextFileProcessHandler<VendorElement, VendorAction> extends ProcessHandler<VendorElement, ImportState, VendorAction> {
+ export class TextFileProcessHandler<VendorElement extends InteractiveElement> extends ProcessHandler<VendorElement, ImportState, ImportAction> {
 
   /**
    * Split the file to lines and keep line numbers with the lines. Mark state type as initial state.
@@ -52,7 +52,7 @@ import { Process } from '../process/Process'
    * @returns
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async needInputForSegmentation(state: ImportState, config: ProcessConfig): Promise<Directions<VendorElement, VendorAction> | false> {
+  async needInputForSegmentation(state: ImportState, config: ProcessConfig): Promise<Directions<VendorElement, ImportAction> | false> {
     return false
   }
 
@@ -62,7 +62,7 @@ import { Process } from '../process/Process'
    * @returns
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async needInputForClassification(state: ImportState, config: ProcessConfig): Promise<Directions<VendorElement, VendorAction> | false> {
+  async needInputForClassification(state: ImportState, config: ProcessConfig): Promise<Directions<VendorElement, ImportAction> | false> {
     return false
   }
 
@@ -72,7 +72,7 @@ import { Process } from '../process/Process'
    * @returns
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async needInputForAnalysis(state: ImportState, config: ProcessConfig): Promise<Directions<VendorElement, VendorAction> | false> {
+  async needInputForAnalysis(state: ImportState, config: ProcessConfig): Promise<Directions<VendorElement, ImportAction> | false> {
     return false
   }
 
@@ -82,7 +82,7 @@ import { Process } from '../process/Process'
    * @returns
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async needInputForExecution(state: ImportState, config: ProcessConfig): Promise<Directions<VendorElement, VendorAction> | false> {
+  async needInputForExecution(state: ImportState, config: ProcessConfig): Promise<Directions<VendorElement, ImportAction> | false> {
     return false
   }
 
@@ -91,8 +91,8 @@ import { Process } from '../process/Process'
    * @param state
    * @returns
    */
-  async getDirections(state: ImportState, config: ProcessConfig): Promise<Directions<VendorElement, VendorAction>> {
-    let input: Directions<VendorElement, VendorAction> | false
+  async getDirections(state: ImportState, config: ProcessConfig): Promise<Directions<VendorElement, ImportAction>> {
+    let input: Directions<VendorElement, ImportAction> | false
     let directions: Directions<ImportElement, ImportAction>
     switch (state.stage) {
       case 'initial':
@@ -130,8 +130,7 @@ import { Process } from '../process/Process'
       default:
         throw new BadState('Cannot find directions from the current state.')
     }
-    // TODO: Hmm. Something wrong with the structures here. This should not be forced.
-    return directions as unknown as Directions<VendorElement, VendorAction>
+    return directions as Directions<VendorElement, ImportAction>
   }
 
   /**
@@ -140,7 +139,7 @@ import { Process } from '../process/Process'
    * @param state
    * @param files
    */
-  async action(process: Process<VendorElement, ImportState, VendorAction>, action: VendorAction, state: ImportState, files: ProcessFile[]): Promise<ImportState> {
+  async action(process: Process<VendorElement, ImportState, ImportAction>, action: ImportAction, state: ImportState, files: ProcessFile[]): Promise<ImportState> {
     if (!isImportAction(action)) {
       throw new BadState(`Action is not import action ${JSON.stringify(action)}`)
     }
@@ -184,7 +183,7 @@ import { Process } from '../process/Process'
    * @param files
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async segmentation(process: Process<VendorElement, ImportState, VendorAction>, state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState> {
+  async segmentation(process: Process<VendorElement, ImportState, ImportAction>, state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState> {
     throw new NotImplemented(`A class ${this.constructor.name} does not implement segmentation().`)
   }
 
@@ -194,7 +193,7 @@ import { Process } from '../process/Process'
    * @param files
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async classification(process: Process<VendorElement, ImportState, VendorAction>, state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState> {
+  async classification(process: Process<VendorElement, ImportState, ImportAction>, state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState> {
     throw new NotImplemented(`A class ${this.constructor.name} does not implement classification().`)
   }
 
@@ -204,7 +203,7 @@ import { Process } from '../process/Process'
    * @param files
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async analysis(process: Process<VendorElement, ImportState, VendorAction>, state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState> {
+  async analysis(process: Process<VendorElement, ImportState, ImportAction>, state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState> {
     throw new NotImplemented(`A class ${this.constructor.name} does not implement analysis().`)
   }
 
@@ -214,7 +213,7 @@ import { Process } from '../process/Process'
    * @param files
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async execution(process: Process<VendorElement, ImportState, VendorAction>, state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState> {
+  async execution(process: Process<VendorElement, ImportState, ImportAction>, state: ImportState, files: ProcessFile[], config: ProcessConfig): Promise<ImportState> {
     throw new NotImplemented(`A class ${this.constructor.name} does not implement execution().`)
   }
 
