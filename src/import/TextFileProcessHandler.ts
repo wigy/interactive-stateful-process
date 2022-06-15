@@ -132,7 +132,6 @@ import { Process } from '../process/Process'
       default:
         throw new BadState('Cannot find directions from the current state.')
     }
-    // TODO: Hmm. Something wrong with the structures here. This should not be forced.
     return directions as unknown as Directions<VendorElement, VendorAction>
   }
 
