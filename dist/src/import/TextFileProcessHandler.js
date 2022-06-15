@@ -128,6 +128,7 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
             default:
                 throw new error_1.BadState('Cannot find directions from the current state.');
         }
+        // TODO: Hmm. Something wrong with the structures here. This should not be forced.
         return directions;
     }
     /**
