@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProcessFile = void 0;
 const chardet_1 = __importDefault(require("chardet"));
+const clone_1 = __importDefault(require("clone"));
 const error_1 = require("../error");
 /**
  * An instance of input data for processing.
@@ -119,6 +120,9 @@ class ProcessFile {
                     throw new error_1.InvalidFile(`Cannot determine encoding for '${this}'.`);
                 }
                 this._decoded = buffer.toString(this.parseEncoding(encoding));
+                return this._decoded;
+            case 'utf-8':
+                this._decoded = (0, clone_1.default)(this.data);
                 return this._decoded;
             default:
                 throw new error_1.InvalidFile(`An encoding '${this.encoding}' is not yet supported.`);

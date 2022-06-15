@@ -29,12 +29,13 @@ export class CoinHandler extends ProcessHandler<CoinElement, CoinState, CoinActi
   }
 
   startingState(): CoinState {
-    return {
+    const state: CoinState = {
       stage: 'empty',
       coin1: 0,
       coin5: 0,
       coin10: 0,
     }
+    return state
   }
 
   async getDirections(state: CoinState): Promise<Directions<CoinElement, CoinAction>> {

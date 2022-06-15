@@ -104,7 +104,7 @@ class ProcessingSystem {
         // Create initial step using the handler.
         let state;
         try {
-            state = selectedHandler.startingState(processFile);
+            state = selectedHandler.startingState(process.files);
         }
         catch (err) {
             await process.crashed(err);

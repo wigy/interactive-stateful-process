@@ -26,7 +26,7 @@ test('process handling with coins', async () => {
     encoding: 'utf-8',
     data: '#1,5,10\n2,4,10\n'
   }
-/*
+
   const process = await system.createProcess('Handle 3 stacks of coins', [sample], {})
   expect(process.status).toBe(ProcessStatus.INCOMPLETE)
   expect(process.state).toStrictEqual({
@@ -160,9 +160,24 @@ test('process handling with coins', async () => {
   const failingProcess = await system.createProcess('Try bad file', [badSample], {})
   expect(failingProcess.status).toBe(ProcessStatus.CRASHED)
   expect(failingProcess.error).toBeTruthy()
-*/
+
   // Multiple files.
-  const process3 = await system.createProcess('Rolling back with coins', [sample, sample], {})
+  const process3 = await system.createProcess('Multiple files', [sample, sample], {})
+  expect(process3.status).toBe(ProcessStatus.INCOMPLETE)
+  expect(process3.state).toStrictEqual({
+    stage: 'empty',
+    coin1: 0,
+    coin5: 0,
+    coin10: 0,
+  })
+  await process3.run()
+  expect(process3.status).toBe(ProcessStatus.WAITING)
+  expect(process3.state).toStrictEqual({
+    stage: 'initialized',
+    coin1: 4,
+    coin5: 8,
+    coin10: 20,
+  })
 
   // console.log('PROCESSES', await db('processes').select('*'))
   // console.log('FILES', await db('process_files').select('*'))

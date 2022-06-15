@@ -11,12 +11,13 @@ class CoinHandler extends __1.ProcessHandler {
         return this.canHandle(file);
     }
     startingState() {
-        return {
+        const state = {
             stage: 'empty',
             coin1: 0,
             coin5: 0,
             coin10: 0,
         };
+        return state;
     }
     async getDirections(state) {
         switch (state.stage) {

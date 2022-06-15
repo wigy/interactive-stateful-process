@@ -20,18 +20,20 @@ import { Process } from '../process/Process'
    * @param file
    * @returns
    */
-  startingState(file: ProcessFile): ImportStateText<'initial'> {
+  startingState(processFiles: ProcessFile[]): ImportStateText<'initial'> {
+    const files: Record<string, { lines: TextFileLine[] }> = {}
+    for (const processFile of processFiles) {
+      files[processFile.name] = {
+        lines: processFile.decode().replace(/\n+$/, '').split('\n').map((text, line) => ({
+          text,
+          line,
+          columns: {}
+        }))
+      }
+    }
     return {
       stage: 'initial',
-      files: {
-        [file.name]: {
-          lines: file.decode().replace(/\n+$/, '').split('\n').map((text, line) => ({
-            text,
-            line,
-            columns: {}
-          }))
-        }
-      }
+      files
     }
   }
 

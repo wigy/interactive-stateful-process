@@ -42,7 +42,7 @@ export declare class ProcessHandler<VendorElement, VendorState, VendorAction> {
      * Construct intial state from the given data.
      * @param file
      */
-    startingState(file: ProcessFile): VendorState;
+    startingState(files: ProcessFile[]): VendorState;
     /**
      * Figure out possible directions from the given state.
      * @param state

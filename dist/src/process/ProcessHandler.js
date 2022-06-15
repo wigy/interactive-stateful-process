@@ -51,8 +51,8 @@ class ProcessHandler {
      * Construct intial state from the given data.
      * @param file
      */
-    startingState(file) {
-        throw new __1.NotImplemented(`A handler '${this.name}' for file '${file.name}' does not implement startingState()`);
+    startingState(files) {
+        throw new __1.NotImplemented(`A handler '${this.name}' for file ${files.map(f => `'${f}''`).join(', ')} does not implement startingState()`);
     }
     /**
      * Figure out possible directions from the given state.

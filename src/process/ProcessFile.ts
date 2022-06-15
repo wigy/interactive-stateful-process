@@ -1,4 +1,5 @@
 import chardet from 'chardet'
+import clone from 'clone'
 import { Database, } from '../common'
 import { DatabaseError, InvalidFile } from '../error'
 import { FileEncoding, ID } from 'interactive-elements'
@@ -142,6 +143,9 @@ export class ProcessFile {
           throw new InvalidFile(`Cannot determine encoding for '${this}'.`)
         }
         this._decoded = buffer.toString(this.parseEncoding(encoding))
+        return this._decoded
+      case 'utf-8':
+        this._decoded = clone(this.data)
         return this._decoded
       default:
         throw new InvalidFile(`An encoding '${this.encoding}' is not yet supported.`)

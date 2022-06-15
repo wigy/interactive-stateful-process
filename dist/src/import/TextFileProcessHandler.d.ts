@@ -14,7 +14,7 @@ export declare class TextFileProcessHandler<VendorElement extends InteractiveEle
      * @param file
      * @returns
      */
-    startingState(file: ProcessFile): ImportStateText<'initial'>;
+    startingState(processFiles: ProcessFile[]): ImportStateText<'initial'>;
     /**
      * Check the state type is matching to 'complete'.
      * @param state

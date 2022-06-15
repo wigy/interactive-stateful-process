@@ -18,18 +18,20 @@ class TextFileProcessHandler extends ProcessHandler_1.ProcessHandler {
      * @param file
      * @returns
      */
-    startingState(file) {
+    startingState(processFiles) {
+        const files = {};
+        for (const processFile of processFiles) {
+            files[processFile.name] = {
+                lines: processFile.decode().replace(/\n+$/, '').split('\n').map((text, line) => ({
+                    text,
+                    line,
+                    columns: {}
+                }))
+            };
+        }
         return {
             stage: 'initial',
-            files: {
-                [file.name]: {
-                    lines: file.decode().replace(/\n+$/, '').split('\n').map((text, line) => ({
-                        text,
-                        line,
-                        columns: {}
-                    }))
-                }
-            }
+            files
         };
     }
     /**
