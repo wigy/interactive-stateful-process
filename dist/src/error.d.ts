@@ -23,7 +23,7 @@ export declare class SystemError extends ProcessingError {
 /**
  * Special exception to halt processing in order to require more configuration information from UI.
  */
-export declare class AskUI extends Error {
-    element: InteractiveElement;
-    constructor(element: InteractiveElement);
+export declare class AskUI<ElementType = InteractiveElement> extends Error {
+    element: ElementType;
+    constructor(element: ElementType);
 }

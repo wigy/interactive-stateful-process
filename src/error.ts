@@ -17,10 +17,10 @@ export class SystemError extends ProcessingError {}
 /**
  * Special exception to halt processing in order to require more configuration information from UI.
  */
-export class AskUI extends Error {
-  public element: InteractiveElement
+export class AskUI<ElementType = InteractiveElement>  extends Error {
+  public element: ElementType
 
-  constructor(element: InteractiveElement) {
+  constructor(element: ElementType) {
     super('Need more information from UI.')
     this.element = element
   }
