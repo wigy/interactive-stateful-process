@@ -267,6 +267,14 @@ import { Process } from '../process/Process'
           firstLine = false
           if (options.useFirstLineHeadings) {
             headings = await this.parseLine(text, options)
+            const headCount = {}
+            for (let i = 0; i < headings.length; i++) {
+              headCount[headings[i]] = headCount[headings[i]] || 0
+              headCount[headings[i]]++
+              if (headCount[headings[i]] > 1) {
+                headings[i] = `${headings[i]}${headCount[headings[i]]}`
+              }
+            }
             continue
           } else {
             const size = (await this.parseLine(text, options)).length
