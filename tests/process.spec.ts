@@ -1,5 +1,4 @@
 import { ProcessingSystem, ProcessFileData, defaultConnector, Database } from '../src'
-import { ProcessStatus } from 'interactive-elements'
 import Knex from 'knex'
 import { CoinAction, CoinElement, CoinHandler, CoinState } from '../src/testing'
 
@@ -28,7 +27,7 @@ test('process handling with coins', async () => {
   }
 
   const process = await system.createProcess('Handle 3 stacks of coins', [sample], {})
-  expect(process.status).toBe(ProcessStatus.INCOMPLETE)
+  expect(process.status).toBe('INCOMPLETE')
   expect(process.state).toStrictEqual({
     stage: 'empty',
     coin1: 0,
@@ -38,7 +37,7 @@ test('process handling with coins', async () => {
 
   // Let it run a bit.
   await process.run()
-  expect(process.status).toBe(ProcessStatus.WAITING)
+  expect(process.status).toBe('WAITING')
   expect(process.state).toStrictEqual({
     stage: 'initialized',
     coin1: 2,
@@ -50,7 +49,7 @@ test('process handling with coins', async () => {
   await process.input({ target: 'coin1', count: +4 })
   await process.input({ target: 'coin5', count: +0 })
   await process.input({ target: 'coin10', count: -8 })
-  expect(process.status).toBe(ProcessStatus.WAITING)
+  expect(process.status).toBe('WAITING')
   expect(process.state).toStrictEqual({
     stage: 'running',
     coin1: 6,
@@ -60,7 +59,7 @@ test('process handling with coins', async () => {
 
   // Reload the process from the disk.
   const copy = await system.loadProcess(process.id)
-  expect(copy.status).toBe(ProcessStatus.WAITING)
+  expect(copy.status).toBe('WAITING')
   expect(copy.state).toStrictEqual({
     stage: 'running',
     coin1: 6,
@@ -70,7 +69,7 @@ test('process handling with coins', async () => {
 
   // Pump it to the finish.
   await copy.input({ target: 'coin1', count: +5 })
-  expect(copy.status).toBe(ProcessStatus.SUCCEEDED)
+  expect(copy.status).toBe('SUCCEEDED')
   expect(copy.state).toStrictEqual({
     stage: 'running',
     coin1: 11,
@@ -80,7 +79,7 @@ test('process handling with coins', async () => {
 
   // Create another process.
   const failing = await system.createProcess('Intentional crash with coins', [sample], {})
-  expect(failing.status).toBe(ProcessStatus.INCOMPLETE)
+  expect(failing.status).toBe('INCOMPLETE')
   expect(failing.state).toStrictEqual({
     stage: 'empty',
     coin1: 0,
@@ -88,7 +87,7 @@ test('process handling with coins', async () => {
     coin10: 0,
   })
   await failing.run()
-  expect(failing.status).toBe(ProcessStatus.WAITING)
+  expect(failing.status).toBe('WAITING')
   expect(failing.state).toStrictEqual({
     stage: 'initialized',
     coin1: 2,
@@ -98,7 +97,7 @@ test('process handling with coins', async () => {
 
   // Make it crash.
   await failing.input({ target: 'trigger error' })
-  expect(failing.status).toBe(ProcessStatus.CRASHED)
+  expect(failing.status).toBe('CRASHED')
   expect(failing.state).toStrictEqual({
     stage: 'initialized',
     coin1: 2,
@@ -108,7 +107,7 @@ test('process handling with coins', async () => {
 
   // And create yet one more process.
   const process2 = await system.createProcess('Rolling back with coins', [sample], {})
-  expect(process2.status).toBe(ProcessStatus.INCOMPLETE)
+  expect(process2.status).toBe('INCOMPLETE')
   expect(process2.state).toStrictEqual({
     stage: 'empty',
     coin1: 0,
@@ -116,7 +115,7 @@ test('process handling with coins', async () => {
     coin10: 0,
   })
   await process2.run()
-  expect(process2.status).toBe(ProcessStatus.WAITING)
+  expect(process2.status).toBe('WAITING')
   expect(process2.state).toStrictEqual({
     stage: 'initialized',
     coin1: 2,
@@ -124,7 +123,7 @@ test('process handling with coins', async () => {
     coin10: 10,
   })
   await process2.input({ target: 'coin5', count: +6 })
-  expect(process2.status).toBe(ProcessStatus.WAITING)
+  expect(process2.status).toBe('WAITING')
   expect(process2.state).toStrictEqual({
     stage: 'running',
     coin1: 2,
@@ -134,7 +133,7 @@ test('process handling with coins', async () => {
 
   // Now roll back steps.
   await process2.rollback()
-  expect(process2.status).toBe(ProcessStatus.WAITING)
+  expect(process2.status).toBe('WAITING')
   expect(process2.state).toStrictEqual({
     stage: 'initialized',
     coin1: 2,
@@ -143,7 +142,7 @@ test('process handling with coins', async () => {
   })
 
   await process2.rollback()
-  expect(process2.status).toBe(ProcessStatus.INCOMPLETE)
+  expect(process2.status).toBe('INCOMPLETE')
   expect(process2.state).toStrictEqual({
     stage: 'empty',
     coin1: 0,
@@ -158,12 +157,12 @@ test('process handling with coins', async () => {
     data: 'rubbish\n'
   }
   const failingProcess = await system.createProcess('Try bad file', [badSample], {})
-  expect(failingProcess.status).toBe(ProcessStatus.CRASHED)
+  expect(failingProcess.status).toBe('CRASHED')
   expect(failingProcess.error).toBeTruthy()
 
   // Multiple files.
   const process3 = await system.createProcess('Multiple files', [sample, sample], {})
-  expect(process3.status).toBe(ProcessStatus.INCOMPLETE)
+  expect(process3.status).toBe('INCOMPLETE')
   expect(process3.state).toStrictEqual({
     stage: 'empty',
     coin1: 0,
@@ -171,7 +170,7 @@ test('process handling with coins', async () => {
     coin10: 0,
   })
   await process3.run()
-  expect(process3.status).toBe(ProcessStatus.WAITING)
+  expect(process3.status).toBe('WAITING')
   expect(process3.state).toStrictEqual({
     stage: 'initialized',
     coin1: 4,

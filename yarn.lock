@@ -2232,10 +2232,10 @@ inherits@2, inherits@2.0.4:
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
-interactive-elements@1.0.85:
-  version "1.0.85"
-  resolved "https://registry.yarnpkg.com/interactive-elements/-/interactive-elements-1.0.85.tgz#56aa3e7ef2f81ddb32afc48eae769bd86a36a64f"
-  integrity sha512-I+kDhP7mnb0wYqKimqinchjIne+ZIwgHS714603PopEuhRH8gR/+FZ3FvE1ZoTHZE6OHvrJ8WcOcaqkIuqL/Iw==
+interactive-elements@1.0.86:
+  version "1.0.86"
+  resolved "https://registry.yarnpkg.com/interactive-elements/-/interactive-elements-1.0.86.tgz#bb98c985d1fa3a051b2de56f484a93de7b9a033f"
+  integrity sha512-MHvNFoz9h8Yf6e5WBWf3UK6RPqInCmNREca4ss2QSLAQBLsZ6aWVZG03bjtb+z6hV0HvsOLTCBCe5jg5fT+Cxw==
 
 internal-slot@^1.0.3:
   version "1.0.3"

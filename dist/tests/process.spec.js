@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const src_1 = require("../src");
-const interactive_elements_1 = require("interactive-elements");
 const knex_1 = __importDefault(require("knex"));
 const testing_1 = require("../src/testing");
 const DATABASE_URL = process.env.DATABASE_URL || 'postgres://user:pass@localhost/test';
@@ -26,7 +25,7 @@ test('process handling with coins', async () => {
         data: '#1,5,10\n2,4,10\n'
     };
     const process = await system.createProcess('Handle 3 stacks of coins', [sample], {});
-    expect(process.status).toBe(interactive_elements_1.ProcessStatus.INCOMPLETE);
+    expect(process.status).toBe('INCOMPLETE');
     expect(process.state).toStrictEqual({
         stage: 'empty',
         coin1: 0,
@@ -35,7 +34,7 @@ test('process handling with coins', async () => {
     });
     // Let it run a bit.
     await process.run();
-    expect(process.status).toBe(interactive_elements_1.ProcessStatus.WAITING);
+    expect(process.status).toBe('WAITING');
     expect(process.state).toStrictEqual({
         stage: 'initialized',
         coin1: 2,
@@ -46,7 +45,7 @@ test('process handling with coins', async () => {
     await process.input({ target: 'coin1', count: +4 });
     await process.input({ target: 'coin5', count: +0 });
     await process.input({ target: 'coin10', count: -8 });
-    expect(process.status).toBe(interactive_elements_1.ProcessStatus.WAITING);
+    expect(process.status).toBe('WAITING');
     expect(process.state).toStrictEqual({
         stage: 'running',
         coin1: 6,
@@ -55,7 +54,7 @@ test('process handling with coins', async () => {
     });
     // Reload the process from the disk.
     const copy = await system.loadProcess(process.id);
-    expect(copy.status).toBe(interactive_elements_1.ProcessStatus.WAITING);
+    expect(copy.status).toBe('WAITING');
     expect(copy.state).toStrictEqual({
         stage: 'running',
         coin1: 6,
@@ -64,7 +63,7 @@ test('process handling with coins', async () => {
     });
     // Pump it to the finish.
     await copy.input({ target: 'coin1', count: +5 });
-    expect(copy.status).toBe(interactive_elements_1.ProcessStatus.SUCCEEDED);
+    expect(copy.status).toBe('SUCCEEDED');
     expect(copy.state).toStrictEqual({
         stage: 'running',
         coin1: 11,
@@ -73,7 +72,7 @@ test('process handling with coins', async () => {
     });
     // Create another process.
     const failing = await system.createProcess('Intentional crash with coins', [sample], {});
-    expect(failing.status).toBe(interactive_elements_1.ProcessStatus.INCOMPLETE);
+    expect(failing.status).toBe('INCOMPLETE');
     expect(failing.state).toStrictEqual({
         stage: 'empty',
         coin1: 0,
@@ -81,7 +80,7 @@ test('process handling with coins', async () => {
         coin10: 0,
     });
     await failing.run();
-    expect(failing.status).toBe(interactive_elements_1.ProcessStatus.WAITING);
+    expect(failing.status).toBe('WAITING');
     expect(failing.state).toStrictEqual({
         stage: 'initialized',
         coin1: 2,
@@ -90,7 +89,7 @@ test('process handling with coins', async () => {
     });
     // Make it crash.
     await failing.input({ target: 'trigger error' });
-    expect(failing.status).toBe(interactive_elements_1.ProcessStatus.CRASHED);
+    expect(failing.status).toBe('CRASHED');
     expect(failing.state).toStrictEqual({
         stage: 'initialized',
         coin1: 2,
@@ -99,7 +98,7 @@ test('process handling with coins', async () => {
     });
     // And create yet one more process.
     const process2 = await system.createProcess('Rolling back with coins', [sample], {});
-    expect(process2.status).toBe(interactive_elements_1.ProcessStatus.INCOMPLETE);
+    expect(process2.status).toBe('INCOMPLETE');
     expect(process2.state).toStrictEqual({
         stage: 'empty',
         coin1: 0,
@@ -107,7 +106,7 @@ test('process handling with coins', async () => {
         coin10: 0,
     });
     await process2.run();
-    expect(process2.status).toBe(interactive_elements_1.ProcessStatus.WAITING);
+    expect(process2.status).toBe('WAITING');
     expect(process2.state).toStrictEqual({
         stage: 'initialized',
         coin1: 2,
@@ -115,7 +114,7 @@ test('process handling with coins', async () => {
         coin10: 10,
     });
     await process2.input({ target: 'coin5', count: +6 });
-    expect(process2.status).toBe(interactive_elements_1.ProcessStatus.WAITING);
+    expect(process2.status).toBe('WAITING');
     expect(process2.state).toStrictEqual({
         stage: 'running',
         coin1: 2,
@@ -124,7 +123,7 @@ test('process handling with coins', async () => {
     });
     // Now roll back steps.
     await process2.rollback();
-    expect(process2.status).toBe(interactive_elements_1.ProcessStatus.WAITING);
+    expect(process2.status).toBe('WAITING');
     expect(process2.state).toStrictEqual({
         stage: 'initialized',
         coin1: 2,
@@ -132,7 +131,7 @@ test('process handling with coins', async () => {
         coin10: 10,
     });
     await process2.rollback();
-    expect(process2.status).toBe(interactive_elements_1.ProcessStatus.INCOMPLETE);
+    expect(process2.status).toBe('INCOMPLETE');
     expect(process2.state).toStrictEqual({
         stage: 'empty',
         coin1: 0,
@@ -146,11 +145,11 @@ test('process handling with coins', async () => {
         data: 'rubbish\n'
     };
     const failingProcess = await system.createProcess('Try bad file', [badSample], {});
-    expect(failingProcess.status).toBe(interactive_elements_1.ProcessStatus.CRASHED);
+    expect(failingProcess.status).toBe('CRASHED');
     expect(failingProcess.error).toBeTruthy();
     // Multiple files.
     const process3 = await system.createProcess('Multiple files', [sample, sample], {});
-    expect(process3.status).toBe(interactive_elements_1.ProcessStatus.INCOMPLETE);
+    expect(process3.status).toBe('INCOMPLETE');
     expect(process3.state).toStrictEqual({
         stage: 'empty',
         coin1: 0,
@@ -158,7 +157,7 @@ test('process handling with coins', async () => {
         coin10: 0,
     });
     await process3.run();
-    expect(process3.status).toBe(interactive_elements_1.ProcessStatus.WAITING);
+    expect(process3.status).toBe('WAITING');
     expect(process3.state).toStrictEqual({
         stage: 'initialized',
         coin1: 4,

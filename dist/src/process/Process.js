@@ -9,7 +9,6 @@ const directions_1 = require("./directions");
 const error_1 = require("../error");
 const ProcessFile_1 = require("./ProcessFile");
 const ProcessStep_1 = require("./ProcessStep");
-const interactive_elements_1 = require("interactive-elements");
 /**
  * A complete description of the process state and steps taken.
  */
@@ -24,7 +23,7 @@ class Process {
         this.files = [];
         this.steps = [];
         this.currentStep = undefined;
-        this.status = interactive_elements_1.ProcessStatus.INCOMPLETE;
+        this.status = 'INCOMPLETE';
     }
     toString() {
         return `Process #${this.id} ${this.name}`;
@@ -162,7 +161,7 @@ class Process {
      * Check if the process can be run.
      */
     canRun() {
-        return !this.complete && (this.status === interactive_elements_1.ProcessStatus.INCOMPLETE || this.status === interactive_elements_1.ProcessStatus.WAITING);
+        return !this.complete && (this.status === 'INCOMPLETE' || this.status === 'WAITING');
     }
     /**
      * Execute process as long as it is completed, failed or requires additional input.
@@ -234,9 +233,9 @@ class Process {
      * Resolve the status of the process and update it to the database.
      */
     async updateStatus() {
-        let status = interactive_elements_1.ProcessStatus.INCOMPLETE;
+        let status = 'INCOMPLETE';
         if (this.error) {
-            status = interactive_elements_1.ProcessStatus.CRASHED;
+            status = 'CRASHED';
         }
         else {
             if (this.currentStep === null || this.currentStep === undefined) {
@@ -245,12 +244,12 @@ class Process {
             const step = this.steps[this.currentStep];
             if (step.finished) {
                 if (this.successful === true)
-                    status = interactive_elements_1.ProcessStatus.SUCCEEDED;
+                    status = 'SUCCEEDED';
                 if (this.successful === false)
-                    status = interactive_elements_1.ProcessStatus.FAILED;
+                    status = 'FAILED';
             }
             if (step.directions) {
-                status = step.directions.isImmediate() ? interactive_elements_1.ProcessStatus.INCOMPLETE : interactive_elements_1.ProcessStatus.WAITING;
+                status = step.directions.isImmediate() ? 'INCOMPLETE' : 'WAITING';
             }
         }
         if (this.status !== status) {
@@ -259,13 +258,13 @@ class Process {
         this.status = status;
         await this.db('processes').update({ status }).where({ id: this.id });
         switch (status) {
-            case interactive_elements_1.ProcessStatus.SUCCEEDED:
+            case 'SUCCEEDED':
                 await this.system.connector.success(this.state);
                 break;
-            case interactive_elements_1.ProcessStatus.CRASHED:
+            case 'CRASHED':
                 await this.system.connector.fail(this.error);
                 break;
-            case interactive_elements_1.ProcessStatus.FAILED:
+            case 'FAILED':
                 await this.system.connector.fail(this.state);
                 break;
             default:

@@ -49,7 +49,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
     this.files = []
     this.steps = []
     this.currentStep = undefined
-    this.status = ProcessStatus.INCOMPLETE
+    this.status = 'INCOMPLETE' as ProcessStatus
   }
 
   toString(): string {
@@ -196,7 +196,7 @@ export class Process<VendorElement, VendorState, VendorAction> {
    * Check if the process can be run.
    */
   canRun(): boolean {
-    return !this.complete && (this.status === ProcessStatus.INCOMPLETE || this.status === ProcessStatus.WAITING)
+    return !this.complete && (this.status === 'INCOMPLETE' || this.status === 'WAITING')
   }
 
   /**
@@ -270,36 +270,36 @@ export class Process<VendorElement, VendorState, VendorAction> {
    * Resolve the status of the process and update it to the database.
    */
   async updateStatus(): Promise<void> {
-    let status = ProcessStatus.INCOMPLETE
+    let status = 'INCOMPLETE'
     if (this.error) {
-      status = ProcessStatus.CRASHED
+      status = 'CRASHED'
     } else {
       if (this.currentStep === null || this.currentStep === undefined) {
         throw new BadState(`Cannot check status when there is no current step loaded for ${this}`)
       }
       const step = this.steps[this.currentStep]
       if (step.finished) {
-        if (this.successful === true) status = ProcessStatus.SUCCEEDED
-        if (this.successful === false) status = ProcessStatus.FAILED
+        if (this.successful === true) status = 'SUCCEEDED'
+        if (this.successful === false) status = 'FAILED'
       }
       if (step.directions) {
-        status = step.directions.isImmediate() ? ProcessStatus.INCOMPLETE : ProcessStatus.WAITING
+        status = step.directions.isImmediate() ? 'INCOMPLETE' : 'WAITING'
       }
     }
     if (this.status !== status) {
       this.system.logger.info(`Process ${this} is now ${status}`)
     }
-    this.status = status
+    this.status = status as ProcessStatus
     await this.db('processes').update({ status }).where({ id: this.id })
 
     switch (status) {
-      case ProcessStatus.SUCCEEDED:
+      case 'SUCCEEDED':
         await this.system.connector.success(this.state)
         break
-      case ProcessStatus.CRASHED:
+      case 'CRASHED':
         await this.system.connector.fail(this.error)
         break
-      case ProcessStatus.FAILED:
+      case 'FAILED':
         await this.system.connector.fail(this.state)
         break
       default:
