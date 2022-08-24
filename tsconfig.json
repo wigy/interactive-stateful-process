@@ -1,17 +1,18 @@
 {
     "compilerOptions": {
-        "target": "es2020",
-        "module": "commonjs",
-        "esModuleInterop": true,
-        "strictNullChecks": true,
-        "moduleResolution": "node",
         "declaration": true,
-        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "module": "commonjs",
+        "moduleResolution": "node",
         "outDir": "./dist",
-        "sourceMap": true
+        "skipLibCheck": true,
+        "sourceMap": true,
+        "strictNullChecks": true,
+        "target": "es2020"
     },
     "include": [
-        "src/**/*",
+        "src/index.ts",
+        "src/doccer.ts"
     ],
     "exclude": [
         "node_modules"
