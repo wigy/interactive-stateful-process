@@ -11,10 +11,7 @@
         "sourceMap": true
     },
     "include": [
-        "example/**/*",
         "src/**/*",
-        "tests/**/*",
-        "migrations/**/*"
     ],
     "exclude": [
         "node_modules"

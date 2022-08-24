@@ -6,7 +6,7 @@ async function run() {
   await require('esbuild').build({
     entryPoints: ['src/index.ts'],
     bundle: true,
-    minify: !isDev,
+    minify: true,
     incremental: isDev,
     platform: 'node',
     sourcemap: 'external',

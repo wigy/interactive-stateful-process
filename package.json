@@ -1,15 +1,15 @@
 {
   "name": "interactive-stateful-process",
   "version": "1.2.123",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "/dist"
   ],
   "scripts": {
     "demo": "ts-node-dev example/server.ts",
     "dev": "./make.js --dev",
-    "build": "rm -rf dist/* && ./make.js && tsc --emitDeclarationOnly&& cp -r migrations dist/",
+    "build": "rm -rf dist/* && ./make.js && tsc --emitDeclarationOnly && cp -r migrations dist/",
     "doc": "rm -fr doc/* && typedoc --out doc src/index.ts",
     "doc:watch": "typedoc --watch --out doc src/index.ts",
     "lint": "eslint src/*.ts tests/*.ts",
@@ -34,7 +34,7 @@
     "eslint-plugin-react": "^7.30.0",
     "eslint-plugin-standard": "^5.0.0",
     "express": "4.17.2",
-    "interactive-elements": "1.0.87",
+    "interactive-elements": "1.0.88",
     "knex": "2.0.0",
     "pg": "8.7.3",
     "ts-opaque": "^3.0.1"
