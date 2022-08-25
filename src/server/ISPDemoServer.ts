@@ -39,12 +39,16 @@ export class ISPDemoServer<DemoElement, DemoState, DemoAction> {
   constructor(port: number, databaseUrl: string, handlers: ProcessHandler<DemoElement, DemoState, DemoAction>[], connector: ProcessConnector|null = null, configDefaults: Record<string, unknown> = {}) {
     this.port = port
     this.configDefaults = configDefaults
-    let migrationsPath = path.normalize(`${__dirname}/../../dist/migrations/01_init.js`)
+    let migrationsPath = path.normalize(`${__dirname}/migrations/01_init.js`)
+    if (!fs.existsSync(migrationsPath)) {
+      migrationsPath = path.normalize(`${__dirname}/../../dist/migrations/01_init.js`)
+    }
     if (!fs.existsSync(migrationsPath)) {
       migrationsPath = path.normalize(`${__dirname}/../../../dist/migrations/01_init.js`)
     }
     if (!fs.existsSync(migrationsPath)) {
-      throw new Error(`Cannot find migrations file '${migrationsPath}'.`)
+      console.log(__dirname)
+      throw new Error(`Cannot XXX find migrations file '${migrationsPath}'.`)
     }
     this.db = Knex({
       client: 'pg',
