@@ -44,7 +44,7 @@ export class ISPDemoServer<DemoElement, DemoState, DemoAction> {
       migrationsPath = path.normalize(`${__dirname}/../../../dist/migrations/01_init.js`)
     }
     if (!fs.existsSync(migrationsPath)) {
-      throw new Error('Cannot find migrations file 01_init.js.')
+      throw new Error(`Cannot find migrations file '${migrationsPath}'.`)
     }
     this.db = Knex({
       client: 'pg',
