@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /* eslint-disable @typescript-eslint/no-var-requires */
 const isDev = process.argv.filter(a => a === '--dev').length > 0
-const pkg = JSON.parse(require('fs').readFileSync("./package.json"))
+const isBrowser = process.argv.filter(a => a === '--browser').length > 0
+const pkg = JSON.parse(require('fs').readFileSync('./package.json'))
 
 async function run() {
   await require('esbuild').build({
@@ -11,7 +12,7 @@ async function run() {
     incremental: isDev,
     minify: true,
     outfile: 'dist/index.js',
-    platform: 'node',
+    platform: isBrowser ? 'browser' : 'node',
     sourcemap: 'external',
     watch: isDev && {
       onRebuild(error, result) {
@@ -19,7 +20,7 @@ async function run() {
         else console.log('Watch build succeeded:', result)
       },
     },
-  }).catch((err) => { console.error(err); process.exit(1)})
+  }).catch((err) => { console.error(err); process.exit(1) })
 }
 
 run()
