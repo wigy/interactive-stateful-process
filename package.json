@@ -1,6 +1,6 @@
 {
   "name": "interactive-stateful-process",
-  "version": "1.2.129",
+  "version": "1.2.130",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
