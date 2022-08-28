@@ -34,8 +34,9 @@
     "eslint-plugin-react": "^7.30.0",
     "eslint-plugin-standard": "^5.0.0",
     "express": "4.17.2",
-    "interactive-elements": "1.0.92",
+    "interactive-elements": "1.0.93",
     "knex": "2.0.0",
+    "node-stdlib-browser": "^1.2.0",
     "pg": "8.7.3",
     "ts-opaque": "^3.0.1"
   },
