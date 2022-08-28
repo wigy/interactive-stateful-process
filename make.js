@@ -1,7 +1,14 @@
 #!/usr/bin/env node
+/**
+ * Requires:
+ *
+ * * esbuild
+ * * node-stdlib-browser
+ */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const isDev = process.argv.filter(a => a === '--dev').length > 0
 const isBrowser = process.argv.filter(a => a === '--browser').length > 0
+const isMinify = process.argv.filter(a => a === '--minify').length > 0
 
 const pkg = JSON.parse(require('fs').readFileSync('./package.json'))
 
@@ -17,7 +24,7 @@ async function run() {
     external: [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.peerDependencies || {})],
     incremental: isDev,
     inject: [require.resolve('node-stdlib-browser/helpers/esbuild/shim')],
-    minify: true,
+    minify: isMinify,
     outfile: 'dist/index.js',
     platform: isBrowser ? 'browser' : 'node',
     plugins: isBrowser
