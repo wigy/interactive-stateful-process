@@ -2663,10 +2663,10 @@ inherits@2, inherits@2.0.4, inherits@^2.0.1, inherits@^2.0.3, inherits@^2.0.4, i
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
-interactive-elements@^1.0.94:
-  version "1.0.94"
-  resolved "https://registry.yarnpkg.com/interactive-elements/-/interactive-elements-1.0.94.tgz#1bf3484d5fe9750673ef0734153c4f0f3317df4c"
-  integrity sha512-Gssxg/FSJfNfHT3UVGfTTm1olEpTwhtSwrZvcC2CKHIm4AZUsP/PBjpz8FXI9iakHO/hJ97IkVCa+JxQ+pg0pg==
+interactive-elements@1.0.95:
+  version "1.0.95"
+  resolved "https://registry.yarnpkg.com/interactive-elements/-/interactive-elements-1.0.95.tgz#3e6f91dbc1d9eaf014567ef421441617c03b6eee"
+  integrity sha512-WvcjnjyAtxehtM0rxp4AXIjKbNdiKM4BhQDFDgUimkBKk1bGM3Am1bWyeZOL7wDGdDRPpZ5Jer/QtfOHb6Dm5w==
   dependencies:
     node-stdlib-browser "^1.2.0"
 

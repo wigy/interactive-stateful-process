@@ -1,9 +1,1479 @@
-var Pe=Object.create;var j=Object.defineProperty;var Ve=Object.getOwnPropertyDescriptor;var Ae=Object.getOwnPropertyNames;var De=Object.getPrototypeOf,ve=Object.prototype.hasOwnProperty;var be=(n,e)=>()=>(n&&(e=n(n=0)),e);var W=(n,e)=>()=>(e||n((e={exports:{}}).exports,e),e.exports),Ee=(n,e)=>{for(var t in e)j(n,t,{get:e[t],enumerable:!0})},se=(n,e,t,r)=>{if(e&&typeof e=="object"||typeof e=="function")for(let s of Ae(e))!ve.call(n,s)&&s!==t&&j(n,s,{get:()=>e[s],enumerable:!(r=Ve(e,s))||r.enumerable});return n};var E=(n,e,t)=>(t=n!=null?Pe(De(n)):{},se(e||!n||!n.__esModule?j(t,"default",{value:n,enumerable:!0}):t,n)),Ie=n=>se(j({},"__esModule",{value:!0}),n);var h,u,Te,c=be(()=>{h=require("buffer"),u=E(require("process")),Te=function(n){function e(){var r=this||self;return delete n.prototype.__magic__,r}if(typeof globalThis=="object")return globalThis;if(this)return e();n.defineProperty(n.prototype,"__magic__",{configurable:!0,get:e});var t=__magic__;return t}(Object)});var me=W((xt,le)=>{"use strict";c();var de=Object.getOwnPropertySymbols,xe=Object.prototype.hasOwnProperty,Ce=Object.prototype.propertyIsEnumerable;function $e(n){if(n==null)throw new TypeError("Object.assign cannot be called with null or undefined");return Object(n)}function ke(){try{if(!Object.assign)return!1;var n=new String("abc");if(n[5]="de",Object.getOwnPropertyNames(n)[0]==="5")return!1;for(var e={},t=0;t<10;t++)e["_"+String.fromCharCode(t)]=t;var r=Object.getOwnPropertyNames(e).map(function(o){return e[o]});if(r.join("")!=="0123456789")return!1;var s={};return"abcdefghijklmnopqrst".split("").forEach(function(o){s[o]=o}),Object.keys(Object.assign({},s)).join("")==="abcdefghijklmnopqrst"}catch{return!1}}le.exports=ke()?Object.assign:function(n,e){for(var t,r=$e(n),s,o=1;o<arguments.length;o++){t=Object(arguments[o]);for(var d in t)xe.call(t,d)&&(r[d]=t[d]);if(de){s=de(t);for(var l=0;l<s.length;l++)Ce.call(t,s[l])&&(r[s[l]]=t[s[l]])}}return r}});var ue=W((Ct,q)=>{"use strict";c();q.exports=Fe;q.exports.append=he;var Oe=/^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/;function he(n,e){if(typeof n!="string")throw new TypeError("header argument is required");if(!e)throw new TypeError("field argument is required");for(var t=Array.isArray(e)?e:pe(String(e)),r=0;r<t.length;r++)if(!Oe.test(t[r]))throw new TypeError("field argument contains an invalid header name");if(n==="*")return n;var s=n,o=pe(n.toLowerCase());if(t.indexOf("*")!==-1||o.indexOf("*")!==-1)return"*";for(var d=0;d<t.length;d++){var l=t[d].toLowerCase();o.indexOf(l)===-1&&(o.push(l),s=s?s+", "+t[d]:t[d])}return s}function pe(n){for(var e=0,t=[],r=0,s=0,o=n.length;s<o;s++)switch(n.charCodeAt(s)){case 32:r===e&&(r=e=s+1);break;case 44:t.push(n.substring(r,e)),r=e=s+1;break;default:e=s+1;break}return t.push(n.substring(r,e)),t}function Fe(n,e){if(!n||!n.getHeader||!n.setHeader)throw new TypeError("res argument is required");var t=n.getHeader("Vary")||"",r=Array.isArray(t)?t.join(", "):String(t);(t=he(r,e))&&n.setHeader("Vary",t)}});var ge=W(($t,fe)=>{c();(function(){"use strict";var n=me(),e=ue(),t={origin:"*",methods:"GET,HEAD,PUT,PATCH,POST,DELETE",preflightContinue:!1,optionsSuccessStatus:204};function r(i){return typeof i=="string"||i instanceof String}function s(i,a){if(Array.isArray(a)){for(var m=0;m<a.length;++m)if(s(i,a[m]))return!0;return!1}else return r(a)?i===a:a instanceof RegExp?a.test(i):!!a}function o(i,a){var m=a.headers.origin,g=[],p;return!i.origin||i.origin==="*"?g.push([{key:"Access-Control-Allow-Origin",value:"*"}]):r(i.origin)?(g.push([{key:"Access-Control-Allow-Origin",value:i.origin}]),g.push([{key:"Vary",value:"Origin"}])):(p=s(m,i.origin),g.push([{key:"Access-Control-Allow-Origin",value:p?m:!1}]),g.push([{key:"Vary",value:"Origin"}])),g}function d(i){var a=i.methods;return a.join&&(a=i.methods.join(",")),{key:"Access-Control-Allow-Methods",value:a}}function l(i){return i.credentials===!0?{key:"Access-Control-Allow-Credentials",value:"true"}:null}function V(i,a){var m=i.allowedHeaders||i.headers,g=[];return m?m.join&&(m=m.join(",")):(m=a.headers["access-control-request-headers"],g.push([{key:"Vary",value:"Access-Control-Request-Headers"}])),m&&m.length&&g.push([{key:"Access-Control-Allow-Headers",value:m}]),g}function D(i){var a=i.exposedHeaders;if(a)a.join&&(a=a.join(","));else return null;return a&&a.length?{key:"Access-Control-Expose-Headers",value:a}:null}function f(i){var a=(typeof i.maxAge=="number"||i.maxAge)&&i.maxAge.toString();return a&&a.length?{key:"Access-Control-Max-Age",value:a}:null}function S(i,a){for(var m=0,g=i.length;m<g;m++){var p=i[m];p&&(Array.isArray(p)?S(p,a):p.key==="Vary"&&p.value?e(a,p.value):p.value&&a.setHeader(p.key,p.value))}}function M(i,a,m,g){var p=[],_=a.method&&a.method.toUpperCase&&a.method.toUpperCase();_==="OPTIONS"?(p.push(o(i,a)),p.push(l(i,a)),p.push(d(i,a)),p.push(V(i,a)),p.push(f(i,a)),p.push(D(i,a)),S(p,m),i.preflightContinue?g():(m.statusCode=i.optionsSuccessStatus,m.setHeader("Content-Length","0"),m.end())):(p.push(o(i,a)),p.push(l(i,a)),p.push(D(i,a)),S(p,m),g())}function v(i){var a=null;return typeof i=="function"?a=i:a=function(m,g){g(null,i)},function(g,p,_){a(g,function(re,ye){if(re)_(re);else{var O=n({},t,ye),J=null;O.origin&&typeof O.origin=="function"?J=O.origin:O.origin&&(J=function(B,L){L(null,O.origin)}),J?J(g.headers.origin,function(B,L){B||!L?_(B):(O.origin=L,M(O,g,p,_))}):_()}})}}fe.exports=v})()});var _e={};Ee(_e,{AskUI:()=>K,BadState:()=>y,DatabaseError:()=>x,Directions:()=>b,ISPDemoServer:()=>te,InvalidArgument:()=>A,InvalidFile:()=>F,NotFound:()=>X,NotImplemented:()=>P,Process:()=>N,ProcessFile:()=>$,ProcessHandler:()=>T,ProcessStep:()=>k,ProcessingError:()=>I,ProcessingSystem:()=>H,SystemError:()=>G,TextFileProcessHandler:()=>Z,defaultConnector:()=>Q,router:()=>Y});module.exports=Ie(_e);c();c();c();var I=class extends Error{},F=class extends I{},A=class extends I{},y=class extends I{},P=class extends I{},X=class extends I{},x=class extends I{},G=class extends I{},K=class extends Error{constructor(t){super("Need more information from UI.");this.element=t}};c();c();var ne=E(require("csv-parse"));c();var T=class{constructor(e){this.name=e}connect(e){this.system=e}canHandle(e){throw new P(`A handler '${this.name}' cannot check file '${e.name}', since canHandle() is not implemented.`)}canAppend(e){throw new P(`A handler '${this.name}' cannot append file '${e.name}', since canAppend() is not implemented.`)}checkCompletion(e){throw new P(`A handler '${this.name}' cannot check state '${JSON.stringify(e)}', since checkCompletion() is not implemented.`)}async action(e,t,r,s){throw new P(`A handler '${this.name}' for files ${s.map(o=>`'${o}''`).join(", ")} does not implement action()`)}startingState(e){throw new P(`A handler '${this.name}' for file ${e.map(t=>`'${t}''`).join(", ")} does not implement startingState()`)}async getDirections(e,t){throw new P(`A handler '${this.name}' for state '${JSON.stringify(e)}' does not implement getDirections()`)}async rollback(e){throw new P(`A handler '${this.name}' for step '${e}' does not implement rollback()`)}};var C=require("interactive-elements"),Z=class extends T{startingState(e){let t={};for(let r of e)t[r.name]={lines:r.decode().replace(/\n+$/,"").split(`
-`).map((s,o)=>({text:s,line:o,columns:{}}))};return{stage:"initial",files:t}}checkCompletion(e){if(e.stage==="executed")return!0}async needInputForSegmentation(e,t){return!1}async needInputForClassification(e,t){return!1}async needInputForAnalysis(e,t){return!1}async needInputForExecution(e,t){return!1}async getDirections(e,t){let r,s;switch(e.stage){case"initial":if(r=await this.needInputForSegmentation(e,t),r)return r;s=new b({type:"action",action:{op:"segmentation"}});break;case"segmented":if(r=await this.needInputForClassification(e,t),r)return r;s=new b({type:"action",action:{op:"classification"}});break;case"classified":if(r=await this.needInputForAnalysis(e,t),r)return r;s=new b({type:"action",action:{op:"analysis"}});break;case"analyzed":if(r=await this.needInputForExecution(e,t),r)return r;s=new b({type:"action",action:{op:"execution"}});break;default:throw new y("Cannot find directions from the current state.")}return s}async action(e,t,r,s){if(!(0,C.isImportAction)(t))throw new y(`Action is not import action ${JSON.stringify(t)}`);if((0,C.isImportOpAction)(t))switch(t.op){case"analysis":case"classification":case"segmentation":case"execution":return this[t.op](e,r,s,e.config);default:throw new y(`Cannot parse action ${JSON.stringify(t)}`)}if((0,C.isImportConfigureAction)(t)&&(Object.assign(e.config,t.configure),await e.save()),(0,C.isImportAnswerAction)(t)){e.config.answers||(e.config.answers={});let o=e.config.answers;for(let d of Object.keys(t.answer)){o[d]=o[d]||{};for(let l of Object.keys(t.answer[d]))o[d][l]=t.answer[d][l]}await e.save()}return r}async segmentation(e,t,r,s){throw new P(`A class ${this.constructor.name} does not implement segmentation().`)}async classification(e,t,r,s){throw new P(`A class ${this.constructor.name} does not implement classification().`)}async analysis(e,t,r,s){throw new P(`A class ${this.constructor.name} does not implement analysis().`)}async execution(e,t,r,s){throw new P(`A class ${this.constructor.name} does not implement execution().`)}async parseLine(e,t={}){return new Promise((r,s)=>{(0,ne.default)(e,{delimiter:t.columnSeparator||",",skip_lines_with_error:!!t.skipErrors},function(o,d){o?s(o):r(d[0])})})}async parseCSV(e,t={}){let r=[],s=t.cutFromBeginning||0,o=!0;for(let l of Object.keys(e.files))for(let V=0;V<e.files[l].lines.length;V++){if(s){s--;continue}let D={...e.files[l].lines[V]},f=t.trimLines?D.text.trim():D.text;if(o)if(o=!1,t.useFirstLineHeadings){r=await this.parseLine(f,t);let v={};for(let i=0;i<r.length;i++)v[r[i]]=v[r[i]]||0,v[r[i]]++,v[r[i]]>1&&(r[i]=`${r[i]}${v[r[i]]}`);continue}else{let v=(await this.parseLine(f,t)).length;for(let i=0;i<v;i++)r.push(`${i}`)}let S={},M=f.trim()!==""?await this.parseLine(f,t):null;M&&(M.forEach((v,i)=>{i<r.length?S[r[i]]=v:(S["+"]=S["+"]||"",S["+"]+=v+`
-`)}),D.columns=S,e.files[l].lines[V]=D)}return{...e,stage:"segmented"}}};c();c();var b=class{constructor(e){this.type=e.type,this.element=e.element,this.action=e.action}toJSON(){let e={type:this.type};return this.element&&(e.element=this.element),this.action&&(e.action=this.action),e}isImmediate(){return this.type==="action"}isComplete(){return this.type==="complete"}};c();var U=E(require("clone"));c();var oe=E(require("chardet")),ie=E(require("clone"));var $=class{constructor(e){this.id=null,this.processId=e.processId||null,this.name=e.name,this.type=e.type,this.encoding=e.encoding,this.data=e.data,this._decoded=void 0}toString(){return`ProcessFile #${this.id} ${this.name}`}toJSON(){return{processId:this.processId,name:this.name,type:this.type,encoding:this.encoding,data:this.data}}async save(e){let t=this.toJSON();if(this.encoding==="json"&&(t.data=JSON.stringify(t.data)),this.id)return await e("process_files").update(t).where({id:this.id}),this.id;if(this.id=(await e("process_files").insert(t).returning("id"))[0].id,this.id)return this.id;throw new x(`Saving process ${JSON.stringify(t)} failed.`)}firstLineMatch(e){let t=this.decode(),r=t.indexOf(`
-`),s=r<0?t:t.substr(0,r).trim();return e.test(s)}secondLineMatch(e){let t=this.decode().split(`
-`);return t.length>1&&e.test(t[1].trim())}thirdLineMatch(e){let t=this.decode().split(`
-`);return t.length>2&&e.test(t[2].trim())}isTextFile(){return this.type?.startsWith("text/")||!1}parseEncoding(e){switch(e.toUpperCase()){case"UTF-8":return"utf-8";case"ISO-8859-1":return"latin1";case"UTF-16LE":return"utf16le";default:throw new F(`Not able to map text encoding ${e}.`)}}decode(){if(this._decoded)return this._decoded;switch(this.encoding){case"base64":let e=h.Buffer.from(this.data,"base64"),t=oe.default.detect(e);if(!t)throw new F(`Cannot determine encoding for '${this}'.`);return this._decoded=e.toString(this.parseEncoding(t)),this._decoded;case"utf-8":return this._decoded=(0,ie.default)(this.data),this._decoded;default:throw new F(`An encoding '${this.encoding}' is not yet supported.`)}}};c();var k=class{constructor(e){this.processId=e.processId||null,this.number=e.number,this.state=e.state,this.handler=e.handler,this.directions=e.directions?new b(e.directions):void 0,this.action=e.action,this.started=e.started,this.finished=e.finished}toString(){return`ProcessStep ${this.number} of Process #${this.processId}`}get db(){return this.process.db}async save(){if(this.id)return await this.db("process_steps").update(this.toJSON()).where({id:this.id}),this.id;if(this.started=new Date,this.id=(await this.db("process_steps").insert(this.toJSON()).returning("id"))[0].id,this.id)return this.id;throw new x(`Saving process ${JSON.stringify(this.toJSON)} failed.`)}toJSON(){return{processId:this.processId,number:this.number,state:this.state,directions:this.directions,handler:this.handler,action:this.action,started:this.started,finished:this.finished}}async setDirections(e,t){this.directions=t,await e("process_steps").update({directions:t.toJSON()}).where({id:this.id})}};var N=class{constructor(e,t,r={}){this.system=e,this.id=null,this.config=r,this.name=t||"[no name]",this.complete=!1,this.successful=void 0,this.files=[],this.steps=[],this.currentStep=void 0,this.status="INCOMPLETE"}toString(){return`Process #${this.id} ${this.name}`}toJSON(){return{name:this.name,config:this.config,complete:this.complete,successful:this.successful,currentStep:this.currentStep,status:this.status,error:this.error}}addFile(e){e.processId=this.id,this.files.push(e)}async addStep(e){e.processId=this.id,e.process=this,this.steps.push(e)}async getCurrentStep(){if(this.currentStep===null||this.currentStep===void 0)throw new y(`Process #${this.id} ${this.name} has invalid current step.`);return this.steps[this.currentStep]?this.steps[this.currentStep]:this.loadStep(this.currentStep)}async proceedToState(e,t){let r=await this.getCurrentStep(),s=this.system.getHandler(r.handler);r.action=e,r.finished=new Date,r.save();let o=new k({number:r.number+1,state:t,handler:s.name});this.addStep(o),this.currentStep=(this.currentStep||0)+1,this.system.logger.info(`Proceeding ${this} to new step ${this.currentStep}.`),this.save(),await o.save(),await this.system.checkFinishAndFindDirections(s,o)}get db(){return this.system.db}async save(){if(this.id)return await this.db("processes").update(this.toJSON()).where({id:this.id}),this.id;if(this.id=(await this.db("processes").insert(this.toJSON()).returning("id"))[0].id,this.id)return this.id;throw new x(`Saving process ${JSON.stringify(this.toJSON)} failed.`)}async load(e){let t=await this.db("processes").select("*").where({id:e}).first();if(!t)throw new A(`Cannot find process #${e}`);Object.assign(this,t),this.id=e,this.files=(await this.db("process_files").select("*").where({processId:this.id})).map(r=>{let s=new $(r);return s.id=r.id,s}),await this.getCurrentStep()}async loadStep(e){if(!this.id)throw new y(`Cannot load steps, if the process have no ID ${JSON.stringify(this.toJSON())}.`);if(this.currentStep===void 0)throw new y(`Cannot load any steps, since process have no current step ${JSON.stringify(this.toJSON())}.`);let t=await this.db("process_steps").where({processId:this.id,number:e}).first();if(!t)throw new y(`Cannot find step ${this.currentStep} for process ${JSON.stringify(this.toJSON())}.`);return this.steps[this.currentStep]=new k(t),this.steps[this.currentStep].id=t.id,this.steps[this.currentStep].process=this,this.steps[this.currentStep]}canRun(){return!this.complete&&(this.status==="INCOMPLETE"||this.status==="WAITING")}async run(){let e,t=100;for(;;){if(t--,t<0){this.system.logger.error(`Maximum number of executions reached for the process ${this}.`);break}if(e=await this.getCurrentStep(),!e.directions){this.system.logger.info(`No new directions for the process ${this}.`);break}if(!e.directions.isImmediate()){this.system.logger.info(`Waiting for more input for the process ${this}.`),await this.updateStatus();break}let r=this.system.getHandler(e.handler),s=(0,U.default)(e.state),o=(0,U.default)(e.directions.action);try{if(o){let d=await r.action(this,o,s,this.files);await this.proceedToState(o,d)}else throw new y(`Process step ${e} has no action.`)}catch(d){return await this.crashed(d)}}}async crashed(e){if("element"in e){let t=new b({type:"ui",element:e.element}),r=await this.getCurrentStep();r.directions=t,await r.save(),await this.updateStatus();return}if(this.system.logger.error(`Processing of ${this} failed:`,e),this.currentStep!==void 0&&this.currentStep!==null){let t=await this.loadStep(this.currentStep);t.finished=new Date,await t.save()}this.error=e.stack?e.stack:`${e.name}: ${e.message}`,await this.save(),await this.updateStatus()}async updateStatus(){let e="INCOMPLETE";if(this.error)e="CRASHED";else{if(this.currentStep===null||this.currentStep===void 0)throw new y(`Cannot check status when there is no current step loaded for ${this}`);let t=this.steps[this.currentStep];t.finished&&(this.successful===!0&&(e="SUCCEEDED"),this.successful===!1&&(e="FAILED")),t.directions&&(e=t.directions.isImmediate()?"INCOMPLETE":"WAITING")}switch(this.status!==e&&this.system.logger.info(`Process ${this} is now ${e}`),this.status=e,await this.db("processes").update({status:e}).where({id:this.id}),e){case"SUCCEEDED":await this.system.connector.success(this.state);break;case"CRASHED":await this.system.connector.fail(this.error);break;case"FAILED":await this.system.connector.fail(this.state);break;default:let t=this.currentStep?this.steps[this.currentStep].directions:null,r=this.currentStep?this.steps[this.currentStep].state:null;await this.system.connector.waiting(r,t)}}get state(){if(this.currentStep===null||this.currentStep===void 0)throw new y(`Cannot check state when there is no current step loaded for ${this}`);return this.steps[this.currentStep].state}async input(e){let t=await this.getCurrentStep(),r=this.system.getHandler(t.handler),s;try{s=await r.action(this,e,(0,U.default)(t.state),this.files)}catch(o){return this.crashed(o)}await this.proceedToState(e,s)}async rollback(){if(this.currentStep===null||this.currentStep===void 0)throw new y("Cannot roll back when there is no current step.");if(this.currentStep<1)throw new y("Cannot roll back when there is only initial step in the process.");let e=await this.getCurrentStep();if(this.system.logger.info(`Attempt of rolling back '${e}' from '${this}'.`),await this.system.getHandler(e.handler).rollback(e)){this.error&&(this.error=void 0),await this.db("process_steps").delete().where({id:e.id}),this.currentStep--,await this.save();let s=await this.getCurrentStep();return s.finished=void 0,await s.save(),await this.updateStatus(),this.system.logger.info(`Roll back of '${this}' to '${s}' successful.`),!0}return this.system.logger.info(`Not able to roll back '${this}'.`),!1}};c();var Q={async initialize(){console.log(new Date,"Connector initialized.")},async applyResult(){return console.log(new Date,"Result received."),{}},async success(){console.log(new Date,"Process completed.")},async waiting(){},async fail(){console.error(new Date,"Process failed.")},async getTranslation(n){return n}};c();var H=class{constructor(e,t){this.handlers={};this.db=e,this.logger={info:(...r)=>console.log(new Date,...r),error:(...r)=>console.error(new Date,...r)},this.connector=t}async getTranslation(e,t){return this.connector.getTranslation(e,t)}register(e){if(!e)throw new A("A handler was undefined.");if(!e.name)throw new A("A handler without name cannot be registered.");if(e.name in this.handlers)throw new A(`The handler '${e.name}' is already defined.`);if(e.name.length>32)throw new A(`The handler name '${e.name}' is too long.`);e.system=this,this.handlers[e.name]=e}async createProcess(e,t,r){let s=new N(this,e,r);if(await s.save(),t.length<1)return await s.crashed(new A("No files given to create a process.")),s;let o=t[0],d=new $(o);s.addFile(d),await d.save(this.db);let l=null;for(let f of Object.values(this.handlers))try{if(f.canHandle(d)){l=f;break}}catch(S){return await s.crashed(S),s}if(!l)return await s.crashed(new A(`No handler found for the file ${o.name} of type ${o.type}.`)),s;for(let f=1;f<t.length;f++){let S=new $(t[f]);if(!l.canAppend(S))return await s.crashed(new A(`The file ${t[f].name} of type ${t[f].type} cannot be appended to handler.`)),s;s.addFile(S),await S.save(this.db)}let V;try{V=l.startingState(s.files)}catch(f){return await s.crashed(f),s}let D=new k({number:0,handler:l.name,state:V});return s.addStep(D),await D.save(),s.currentStep=0,await s.save(),this.logger.info(`Created process ${s}.`),await this.checkFinishAndFindDirections(l,D),s}async checkFinishAndFindDirections(e,t){let r;try{r=e.checkCompletion(t.state)}catch(s){return t.process.crashed(s)}if(r===void 0){let s;try{s=await e.getDirections(t.state,t.process.config)}catch(o){return t.process.crashed(o)}await t.setDirections(this.db,s)}else t.directions=void 0,t.action=void 0,t.finished=new Date,await t.save(),t.process.complete=!0,t.process.successful=r,await t.process.save();await t.process.updateStatus()}getHandler(e){if(!(e in this.handlers))throw new A(`There is no handler for '${e}'.`);return this.handlers[e]}async loadProcess(e){let t=new N(this,null);return await t.load(e),t}};c();c();var ce=E(require("express"));c();function ae(n){return{process:{getAll:async()=>n("processes").select("*").orderBy("created","desc"),get:async e=>{let t=await n("processes").select("*").where({id:e}).first();if(t){let r=await n("process_steps").select("id","action","directions","number","started","finished").where({processId:e}).orderBy("number");t.steps=r||[]}return t},getStep:async(e,t)=>await n("process_steps").select("*").where({processId:e,number:t}).first()}}}function Y(n,e){let t=ce.default.Router(),r=ae(n);return t.get("/",async(s,o)=>o.send(await r.process.getAll())),t.get("/:id",async(s,o)=>o.send(await r.process.get(parseInt(s.params.id)))),t.post("/",async(s,o)=>{let d=e(s),{files:l,config:V}=s.body,D=l.map(S=>S.name),f=await d.createProcess(`Uploading files ${D.join(", ")}`,l,{...o.locals.server.configDefaults,...V});return f.canRun()&&await f.run(),o.send(await r.process.get(f.id))}),t.post("/:id",async(s,o)=>{let d=e(s),{id:l}=s.params,V=await d.loadProcess(parseInt(l));await V.input(s.body),V.canRun()&&await V.run(),o.sendStatus(204)}),t.get("/:id/step/:number",async(s,o)=>o.send(await r.process.getStep(parseInt(s.params.id),parseInt(s.params.number)))),t}c();c();var R=E(require("path")),ee=E(require("express")),z=E(require("fs")),we=E(require("knex")),Se=E(ge());var te=class{constructor(e,t,r,s=null,o={}){this.app=(0,ee.default)();this.start=async(e=!1)=>{e&&await this.db.migrate.rollback(),await this.db.migrate.latest();let t=()=>{let r=new H(this.db,this.connector);return this.handlers.forEach(s=>r.register(s)),r};this.app.use((r,s,o)=>{s.locals.server=this,o()}),this.app.use((r,s,o)=>{console.log(new Date,r.method,r.url),o()}),this.app.use((0,Se.default)()),this.app.use(ee.default.json({limit:"1024MB"})),this.app.use("/api/isp",Y(this.db,t)),this.server=this.app.listen(this.port,()=>{console.log(new Date,`Server started on port ${this.port}.`),this.connector.initialize(this)}),this.server.on("error",r=>{console.error(new Date,r)})};this.stop=async(e=void 0)=>{console.log(new Date,"Stopping the server."),await this.server.close(()=>{if(e)throw e;u.default.exit()})};this.port=e,this.configDefaults=o;let d=R.default.normalize(`${__dirname}/migrations/01_init.js`);if(z.default.existsSync(d)||(d=R.default.normalize(`${__dirname}/../../dist/migrations/01_init.js`)),z.default.existsSync(d)||(d=R.default.normalize(`${__dirname}/../../../dist/migrations/01_init.js`)),!z.default.existsSync(d))throw console.log(__dirname),new Error(`Cannot XXX find migrations file '${d}'.`);this.db=(0,we.default)({client:"pg",connection:t,migrations:{directory:R.default.dirname(d)}}),this.handlers=r,s?this.connector=s:this.connector=Q}async lastProcessID(){let e=await this.db("processes").max("id").first();return e?e.max:null}};0&&(module.exports={AskUI,BadState,DatabaseError,Directions,ISPDemoServer,InvalidArgument,InvalidFile,NotFound,NotImplemented,Process,ProcessFile,ProcessHandler,ProcessStep,ProcessingError,ProcessingSystem,SystemError,TextFileProcessHandler,defaultConnector,router});
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __esm = (fn, res) => function __init() {
+  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+};
+var __commonJS = (cb, mod) => function __require() {
+  return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+};
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// node_modules/node-stdlib-browser/helpers/esbuild/shim.js
+var import_buffer, import_process, _globalThis;
+var init_shim = __esm({
+  "node_modules/node-stdlib-browser/helpers/esbuild/shim.js"() {
+    import_buffer = require("buffer");
+    import_process = __toESM(require("process"));
+    _globalThis = function(Object2) {
+      function get() {
+        var _global3 = this || self;
+        delete Object2.prototype.__magic__;
+        return _global3;
+      }
+      if (typeof globalThis === "object") {
+        return globalThis;
+      }
+      if (this) {
+        return get();
+      } else {
+        Object2.defineProperty(Object2.prototype, "__magic__", {
+          configurable: true,
+          get
+        });
+        var _global2 = __magic__;
+        return _global2;
+      }
+    }(Object);
+  }
+});
+
+// node_modules/object-assign/index.js
+var require_object_assign = __commonJS({
+  "node_modules/object-assign/index.js"(exports, module2) {
+    "use strict";
+    init_shim();
+    var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+    var hasOwnProperty = Object.prototype.hasOwnProperty;
+    var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+    function toObject(val) {
+      if (val === null || val === void 0) {
+        throw new TypeError("Object.assign cannot be called with null or undefined");
+      }
+      return Object(val);
+    }
+    function shouldUseNative() {
+      try {
+        if (!Object.assign) {
+          return false;
+        }
+        var test1 = new String("abc");
+        test1[5] = "de";
+        if (Object.getOwnPropertyNames(test1)[0] === "5") {
+          return false;
+        }
+        var test2 = {};
+        for (var i = 0; i < 10; i++) {
+          test2["_" + String.fromCharCode(i)] = i;
+        }
+        var order2 = Object.getOwnPropertyNames(test2).map(function(n) {
+          return test2[n];
+        });
+        if (order2.join("") !== "0123456789") {
+          return false;
+        }
+        var test3 = {};
+        "abcdefghijklmnopqrst".split("").forEach(function(letter) {
+          test3[letter] = letter;
+        });
+        if (Object.keys(Object.assign({}, test3)).join("") !== "abcdefghijklmnopqrst") {
+          return false;
+        }
+        return true;
+      } catch (err) {
+        return false;
+      }
+    }
+    module2.exports = shouldUseNative() ? Object.assign : function(target, source) {
+      var from;
+      var to = toObject(target);
+      var symbols;
+      for (var s = 1; s < arguments.length; s++) {
+        from = Object(arguments[s]);
+        for (var key in from) {
+          if (hasOwnProperty.call(from, key)) {
+            to[key] = from[key];
+          }
+        }
+        if (getOwnPropertySymbols) {
+          symbols = getOwnPropertySymbols(from);
+          for (var i = 0; i < symbols.length; i++) {
+            if (propIsEnumerable.call(from, symbols[i])) {
+              to[symbols[i]] = from[symbols[i]];
+            }
+          }
+        }
+      }
+      return to;
+    };
+  }
+});
+
+// node_modules/vary/index.js
+var require_vary = __commonJS({
+  "node_modules/vary/index.js"(exports, module2) {
+    "use strict";
+    init_shim();
+    module2.exports = vary;
+    module2.exports.append = append;
+    var FIELD_NAME_REGEXP = /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/;
+    function append(header, field) {
+      if (typeof header !== "string") {
+        throw new TypeError("header argument is required");
+      }
+      if (!field) {
+        throw new TypeError("field argument is required");
+      }
+      var fields = !Array.isArray(field) ? parse(String(field)) : field;
+      for (var j = 0; j < fields.length; j++) {
+        if (!FIELD_NAME_REGEXP.test(fields[j])) {
+          throw new TypeError("field argument contains an invalid header name");
+        }
+      }
+      if (header === "*") {
+        return header;
+      }
+      var val = header;
+      var vals = parse(header.toLowerCase());
+      if (fields.indexOf("*") !== -1 || vals.indexOf("*") !== -1) {
+        return "*";
+      }
+      for (var i = 0; i < fields.length; i++) {
+        var fld = fields[i].toLowerCase();
+        if (vals.indexOf(fld) === -1) {
+          vals.push(fld);
+          val = val ? val + ", " + fields[i] : fields[i];
+        }
+      }
+      return val;
+    }
+    function parse(header) {
+      var end = 0;
+      var list = [];
+      var start = 0;
+      for (var i = 0, len = header.length; i < len; i++) {
+        switch (header.charCodeAt(i)) {
+          case 32:
+            if (start === end) {
+              start = end = i + 1;
+            }
+            break;
+          case 44:
+            list.push(header.substring(start, end));
+            start = end = i + 1;
+            break;
+          default:
+            end = i + 1;
+            break;
+        }
+      }
+      list.push(header.substring(start, end));
+      return list;
+    }
+    function vary(res, field) {
+      if (!res || !res.getHeader || !res.setHeader) {
+        throw new TypeError("res argument is required");
+      }
+      var val = res.getHeader("Vary") || "";
+      var header = Array.isArray(val) ? val.join(", ") : String(val);
+      if (val = append(header, field)) {
+        res.setHeader("Vary", val);
+      }
+    }
+  }
+});
+
+// node_modules/cors/lib/index.js
+var require_lib = __commonJS({
+  "node_modules/cors/lib/index.js"(exports, module2) {
+    init_shim();
+    (function() {
+      "use strict";
+      var assign = require_object_assign();
+      var vary = require_vary();
+      var defaults = {
+        origin: "*",
+        methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+        preflightContinue: false,
+        optionsSuccessStatus: 204
+      };
+      function isString(s) {
+        return typeof s === "string" || s instanceof String;
+      }
+      function isOriginAllowed(origin, allowedOrigin) {
+        if (Array.isArray(allowedOrigin)) {
+          for (var i = 0; i < allowedOrigin.length; ++i) {
+            if (isOriginAllowed(origin, allowedOrigin[i])) {
+              return true;
+            }
+          }
+          return false;
+        } else if (isString(allowedOrigin)) {
+          return origin === allowedOrigin;
+        } else if (allowedOrigin instanceof RegExp) {
+          return allowedOrigin.test(origin);
+        } else {
+          return !!allowedOrigin;
+        }
+      }
+      function configureOrigin(options, req) {
+        var requestOrigin = req.headers.origin, headers = [], isAllowed;
+        if (!options.origin || options.origin === "*") {
+          headers.push([{
+            key: "Access-Control-Allow-Origin",
+            value: "*"
+          }]);
+        } else if (isString(options.origin)) {
+          headers.push([{
+            key: "Access-Control-Allow-Origin",
+            value: options.origin
+          }]);
+          headers.push([{
+            key: "Vary",
+            value: "Origin"
+          }]);
+        } else {
+          isAllowed = isOriginAllowed(requestOrigin, options.origin);
+          headers.push([{
+            key: "Access-Control-Allow-Origin",
+            value: isAllowed ? requestOrigin : false
+          }]);
+          headers.push([{
+            key: "Vary",
+            value: "Origin"
+          }]);
+        }
+        return headers;
+      }
+      function configureMethods(options) {
+        var methods = options.methods;
+        if (methods.join) {
+          methods = options.methods.join(",");
+        }
+        return {
+          key: "Access-Control-Allow-Methods",
+          value: methods
+        };
+      }
+      function configureCredentials(options) {
+        if (options.credentials === true) {
+          return {
+            key: "Access-Control-Allow-Credentials",
+            value: "true"
+          };
+        }
+        return null;
+      }
+      function configureAllowedHeaders(options, req) {
+        var allowedHeaders = options.allowedHeaders || options.headers;
+        var headers = [];
+        if (!allowedHeaders) {
+          allowedHeaders = req.headers["access-control-request-headers"];
+          headers.push([{
+            key: "Vary",
+            value: "Access-Control-Request-Headers"
+          }]);
+        } else if (allowedHeaders.join) {
+          allowedHeaders = allowedHeaders.join(",");
+        }
+        if (allowedHeaders && allowedHeaders.length) {
+          headers.push([{
+            key: "Access-Control-Allow-Headers",
+            value: allowedHeaders
+          }]);
+        }
+        return headers;
+      }
+      function configureExposedHeaders(options) {
+        var headers = options.exposedHeaders;
+        if (!headers) {
+          return null;
+        } else if (headers.join) {
+          headers = headers.join(",");
+        }
+        if (headers && headers.length) {
+          return {
+            key: "Access-Control-Expose-Headers",
+            value: headers
+          };
+        }
+        return null;
+      }
+      function configureMaxAge(options) {
+        var maxAge = (typeof options.maxAge === "number" || options.maxAge) && options.maxAge.toString();
+        if (maxAge && maxAge.length) {
+          return {
+            key: "Access-Control-Max-Age",
+            value: maxAge
+          };
+        }
+        return null;
+      }
+      function applyHeaders(headers, res) {
+        for (var i = 0, n = headers.length; i < n; i++) {
+          var header = headers[i];
+          if (header) {
+            if (Array.isArray(header)) {
+              applyHeaders(header, res);
+            } else if (header.key === "Vary" && header.value) {
+              vary(res, header.value);
+            } else if (header.value) {
+              res.setHeader(header.key, header.value);
+            }
+          }
+        }
+      }
+      function cors2(options, req, res, next) {
+        var headers = [], method = req.method && req.method.toUpperCase && req.method.toUpperCase();
+        if (method === "OPTIONS") {
+          headers.push(configureOrigin(options, req));
+          headers.push(configureCredentials(options, req));
+          headers.push(configureMethods(options, req));
+          headers.push(configureAllowedHeaders(options, req));
+          headers.push(configureMaxAge(options, req));
+          headers.push(configureExposedHeaders(options, req));
+          applyHeaders(headers, res);
+          if (options.preflightContinue) {
+            next();
+          } else {
+            res.statusCode = options.optionsSuccessStatus;
+            res.setHeader("Content-Length", "0");
+            res.end();
+          }
+        } else {
+          headers.push(configureOrigin(options, req));
+          headers.push(configureCredentials(options, req));
+          headers.push(configureExposedHeaders(options, req));
+          applyHeaders(headers, res);
+          next();
+        }
+      }
+      function middlewareWrapper(o) {
+        var optionsCallback = null;
+        if (typeof o === "function") {
+          optionsCallback = o;
+        } else {
+          optionsCallback = function(req, cb) {
+            cb(null, o);
+          };
+        }
+        return function corsMiddleware(req, res, next) {
+          optionsCallback(req, function(err, options) {
+            if (err) {
+              next(err);
+            } else {
+              var corsOptions = assign({}, defaults, options);
+              var originCallback = null;
+              if (corsOptions.origin && typeof corsOptions.origin === "function") {
+                originCallback = corsOptions.origin;
+              } else if (corsOptions.origin) {
+                originCallback = function(origin, cb) {
+                  cb(null, corsOptions.origin);
+                };
+              }
+              if (originCallback) {
+                originCallback(req.headers.origin, function(err2, origin) {
+                  if (err2 || !origin) {
+                    next(err2);
+                  } else {
+                    corsOptions.origin = origin;
+                    cors2(corsOptions, req, res, next);
+                  }
+                });
+              } else {
+                next();
+              }
+            }
+          });
+        };
+      }
+      module2.exports = middlewareWrapper;
+    })();
+  }
+});
+
+// src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  AskUI: () => AskUI,
+  BadState: () => BadState,
+  DatabaseError: () => DatabaseError,
+  Directions: () => Directions2,
+  ISPDemoServer: () => ISPDemoServer,
+  InvalidArgument: () => InvalidArgument,
+  InvalidFile: () => InvalidFile,
+  NotFound: () => NotFound,
+  NotImplemented: () => NotImplemented,
+  Process: () => Process,
+  ProcessFile: () => ProcessFile,
+  ProcessHandler: () => ProcessHandler,
+  ProcessStep: () => ProcessStep,
+  ProcessingError: () => ProcessingError,
+  ProcessingSystem: () => ProcessingSystem,
+  SystemError: () => SystemError,
+  TextFileProcessHandler: () => TextFileProcessHandler,
+  defaultConnector: () => defaultConnector,
+  router: () => router
+});
+module.exports = __toCommonJS(src_exports);
+init_shim();
+
+// src/common.ts
+init_shim();
+
+// src/error.ts
+init_shim();
+var ProcessingError = class extends Error {
+};
+var InvalidFile = class extends ProcessingError {
+};
+var InvalidArgument = class extends ProcessingError {
+};
+var BadState = class extends ProcessingError {
+};
+var NotImplemented = class extends ProcessingError {
+};
+var NotFound = class extends ProcessingError {
+};
+var DatabaseError = class extends ProcessingError {
+};
+var SystemError = class extends ProcessingError {
+};
+var AskUI = class extends Error {
+  constructor(element) {
+    super("Need more information from UI.");
+    this.element = element;
+  }
+};
+
+// src/import/index.ts
+init_shim();
+
+// src/import/TextFileProcessHandler.ts
+init_shim();
+var import_csv_parse = __toESM(require("csv-parse"));
+
+// src/process/ProcessHandler.ts
+init_shim();
+var ProcessHandler = class {
+  constructor(name) {
+    this.name = name;
+  }
+  connect(system) {
+    this.system = system;
+  }
+  canHandle(file) {
+    throw new NotImplemented(`A handler '${this.name}' cannot check file '${file.name}', since canHandle() is not implemented.`);
+  }
+  canAppend(file) {
+    throw new NotImplemented(`A handler '${this.name}' cannot append file '${file.name}', since canAppend() is not implemented.`);
+  }
+  checkCompletion(state) {
+    throw new NotImplemented(`A handler '${this.name}' cannot check state '${JSON.stringify(state)}', since checkCompletion() is not implemented.`);
+  }
+  async action(process2, action, state, files) {
+    throw new NotImplemented(`A handler '${this.name}' for files ${files.map((f) => `'${f}''`).join(", ")} does not implement action()`);
+  }
+  startingState(files) {
+    throw new NotImplemented(`A handler '${this.name}' for file ${files.map((f) => `'${f}''`).join(", ")} does not implement startingState()`);
+  }
+  async getDirections(state, config) {
+    throw new NotImplemented(`A handler '${this.name}' for state '${JSON.stringify(state)}' does not implement getDirections()`);
+  }
+  async rollback(step) {
+    throw new NotImplemented(`A handler '${this.name}' for step '${step}' does not implement rollback()`);
+  }
+};
+
+// src/import/TextFileProcessHandler.ts
+var import_interactive_elements = require("interactive-elements");
+var TextFileProcessHandler = class extends ProcessHandler {
+  startingState(processFiles) {
+    const files = {};
+    for (const processFile of processFiles) {
+      files[processFile.name] = {
+        lines: processFile.decode().replace(/\n+$/, "").split("\n").map((text, line) => ({
+          text,
+          line,
+          columns: {}
+        }))
+      };
+    }
+    return {
+      stage: "initial",
+      files
+    };
+  }
+  checkCompletion(state) {
+    if (state.stage === "executed") {
+      return true;
+    }
+    return void 0;
+  }
+  async needInputForSegmentation(state, config) {
+    return false;
+  }
+  async needInputForClassification(state, config) {
+    return false;
+  }
+  async needInputForAnalysis(state, config) {
+    return false;
+  }
+  async needInputForExecution(state, config) {
+    return false;
+  }
+  async getDirections(state, config) {
+    let input;
+    let directions;
+    switch (state.stage) {
+      case "initial":
+        input = await this.needInputForSegmentation(state, config);
+        if (input)
+          return input;
+        directions = new Directions2({
+          type: "action",
+          action: { op: "segmentation" }
+        });
+        break;
+      case "segmented":
+        input = await this.needInputForClassification(state, config);
+        if (input)
+          return input;
+        directions = new Directions2({
+          type: "action",
+          action: { op: "classification" }
+        });
+        break;
+      case "classified":
+        input = await this.needInputForAnalysis(state, config);
+        if (input)
+          return input;
+        directions = new Directions2({
+          type: "action",
+          action: { op: "analysis" }
+        });
+        break;
+      case "analyzed":
+        input = await this.needInputForExecution(state, config);
+        if (input)
+          return input;
+        directions = new Directions2({
+          type: "action",
+          action: { op: "execution" }
+        });
+        break;
+      default:
+        throw new BadState("Cannot find directions from the current state.");
+    }
+    return directions;
+  }
+  async action(process2, action, state, files) {
+    if (!(0, import_interactive_elements.isImportAction)(action)) {
+      throw new BadState(`Action is not import action ${JSON.stringify(action)}`);
+    }
+    if ((0, import_interactive_elements.isImportOpAction)(action)) {
+      switch (action.op) {
+        case "analysis":
+        case "classification":
+        case "segmentation":
+        case "execution":
+          return this[action.op](process2, state, files, process2.config);
+        default:
+          throw new BadState(`Cannot parse action ${JSON.stringify(action)}`);
+      }
+    }
+    if ((0, import_interactive_elements.isImportConfigureAction)(action)) {
+      Object.assign(process2.config, action.configure);
+      await process2.save();
+    }
+    if ((0, import_interactive_elements.isImportAnswerAction)(action)) {
+      if (!process2.config.answers) {
+        process2.config.answers = {};
+      }
+      const answers = process2.config.answers;
+      for (const segmentId of Object.keys(action.answer)) {
+        answers[segmentId] = answers[segmentId] || {};
+        for (const variable of Object.keys(action.answer[segmentId])) {
+          answers[segmentId][variable] = action.answer[segmentId][variable];
+        }
+      }
+      await process2.save();
+    }
+    return state;
+  }
+  async segmentation(process2, state, files, config) {
+    throw new NotImplemented(`A class ${this.constructor.name} does not implement segmentation().`);
+  }
+  async classification(process2, state, files, config) {
+    throw new NotImplemented(`A class ${this.constructor.name} does not implement classification().`);
+  }
+  async analysis(process2, state, files, config) {
+    throw new NotImplemented(`A class ${this.constructor.name} does not implement analysis().`);
+  }
+  async execution(process2, state, files, config) {
+    throw new NotImplemented(`A class ${this.constructor.name} does not implement execution().`);
+  }
+  async parseLine(line, options = {}) {
+    return new Promise((resolve, reject) => {
+      (0, import_csv_parse.default)(line, {
+        delimiter: options.columnSeparator || ",",
+        skip_lines_with_error: !!options.skipErrors
+      }, function(err, out) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(out[0]);
+        }
+      });
+    });
+  }
+  async parseCSV(state, options = {}) {
+    let headings = [];
+    let dropLines = options.cutFromBeginning || 0;
+    let firstLine = true;
+    for (const fileName of Object.keys(state.files)) {
+      for (let n = 0; n < state.files[fileName].lines.length; n++) {
+        if (dropLines) {
+          dropLines--;
+          continue;
+        }
+        const line = { ...state.files[fileName].lines[n] };
+        const text = options.trimLines ? line.text.trim() : line.text;
+        if (firstLine) {
+          firstLine = false;
+          if (options.useFirstLineHeadings) {
+            headings = await this.parseLine(text, options);
+            const headCount = {};
+            for (let i = 0; i < headings.length; i++) {
+              headCount[headings[i]] = headCount[headings[i]] || 0;
+              headCount[headings[i]]++;
+              if (headCount[headings[i]] > 1) {
+                headings[i] = `${headings[i]}${headCount[headings[i]]}`;
+              }
+            }
+            continue;
+          } else {
+            const size = (await this.parseLine(text, options)).length;
+            for (let i = 0; i < size; i++) {
+              headings.push(`${i}`);
+            }
+          }
+        }
+        const columns = {};
+        const pieces = text.trim() !== "" ? await this.parseLine(text, options) : null;
+        if (pieces) {
+          pieces.forEach((column, index) => {
+            if (index < headings.length) {
+              columns[headings[index]] = column;
+            } else {
+              columns["+"] = columns["+"] || "";
+              columns["+"] += column + "\n";
+            }
+          });
+          line.columns = columns;
+          state.files[fileName].lines[n] = line;
+        }
+      }
+    }
+    const newState = {
+      ...state,
+      stage: "segmented"
+    };
+    return newState;
+  }
+};
+
+// src/process/index.ts
+init_shim();
+
+// src/process/directions.ts
+init_shim();
+var Directions2 = class {
+  constructor(obj) {
+    this.type = obj.type;
+    this.element = obj.element;
+    this.action = obj.action;
+  }
+  toJSON() {
+    const ret = {
+      type: this.type
+    };
+    if (this.element) {
+      ret.element = this.element;
+    }
+    if (this.action) {
+      ret.action = this.action;
+    }
+    return ret;
+  }
+  isImmediate() {
+    return this.type === "action";
+  }
+  isComplete() {
+    return this.type === "complete";
+  }
+};
+
+// src/process/Process.ts
+init_shim();
+var import_clone2 = __toESM(require("clone"));
+
+// src/process/ProcessFile.ts
+init_shim();
+var import_chardet = __toESM(require("chardet"));
+var import_clone = __toESM(require("clone"));
+var ProcessFile = class {
+  constructor(obj) {
+    this.id = null;
+    this.processId = obj.processId || null;
+    this.name = obj.name;
+    this.type = obj.type;
+    this.encoding = obj.encoding;
+    this.data = obj.data;
+    this._decoded = void 0;
+  }
+  toString() {
+    return `ProcessFile #${this.id} ${this.name}`;
+  }
+  toJSON() {
+    return {
+      processId: this.processId,
+      name: this.name,
+      type: this.type,
+      encoding: this.encoding,
+      data: this.data
+    };
+  }
+  async save(db) {
+    const out = this.toJSON();
+    if (this.encoding === "json") {
+      out.data = JSON.stringify(out.data);
+    }
+    if (this.id) {
+      await db("process_files").update(out).where({ id: this.id });
+      return this.id;
+    } else {
+      this.id = (await db("process_files").insert(out).returning("id"))[0].id;
+      if (this.id)
+        return this.id;
+      throw new DatabaseError(`Saving process ${JSON.stringify(out)} failed.`);
+    }
+  }
+  firstLineMatch(re) {
+    const str = this.decode();
+    const n = str.indexOf("\n");
+    const line1 = n < 0 ? str : str.substr(0, n).trim();
+    return re.test(line1);
+  }
+  secondLineMatch(re) {
+    const lines = this.decode().split("\n");
+    return lines.length > 1 && re.test(lines[1].trim());
+  }
+  thirdLineMatch(re) {
+    const lines = this.decode().split("\n");
+    return lines.length > 2 && re.test(lines[2].trim());
+  }
+  isTextFile() {
+    return this.type?.startsWith("text/") || false;
+  }
+  parseEncoding(encoding) {
+    switch (encoding.toUpperCase()) {
+      case "UTF-8":
+        return "utf-8";
+      case "ISO-8859-1":
+        return "latin1";
+      case "UTF-16LE":
+        return "utf16le";
+      default:
+        throw new InvalidFile(`Not able to map text encoding ${encoding}.`);
+    }
+  }
+  decode() {
+    if (this._decoded) {
+      return this._decoded;
+    }
+    switch (this.encoding) {
+      case "base64":
+        const buffer = import_buffer.Buffer.from(this.data, "base64");
+        const encoding = import_chardet.default.detect(buffer);
+        if (!encoding) {
+          throw new InvalidFile(`Cannot determine encoding for '${this}'.`);
+        }
+        this._decoded = buffer.toString(this.parseEncoding(encoding));
+        return this._decoded;
+      case "utf-8":
+        this._decoded = (0, import_clone.default)(this.data);
+        return this._decoded;
+      default:
+        throw new InvalidFile(`An encoding '${this.encoding}' is not yet supported.`);
+    }
+  }
+};
+
+// src/process/ProcessStep.ts
+init_shim();
+var ProcessStep = class {
+  constructor(obj) {
+    this.processId = obj.processId || null;
+    this.number = obj.number;
+    this.state = obj.state;
+    this.handler = obj.handler;
+    this.directions = obj.directions ? new Directions2(obj.directions) : void 0;
+    this.action = obj.action;
+    this.started = obj.started;
+    this.finished = obj.finished;
+  }
+  toString() {
+    return `ProcessStep ${this.number} of Process #${this.processId}`;
+  }
+  get db() {
+    return this.process.db;
+  }
+  async save() {
+    if (this.id) {
+      await this.db("process_steps").update(this.toJSON()).where({ id: this.id });
+      return this.id;
+    } else {
+      this.started = new Date();
+      this.id = (await this.db("process_steps").insert(this.toJSON()).returning("id"))[0].id;
+      if (this.id)
+        return this.id;
+      throw new DatabaseError(`Saving process ${JSON.stringify(this.toJSON)} failed.`);
+    }
+  }
+  toJSON() {
+    return {
+      processId: this.processId,
+      number: this.number,
+      state: this.state,
+      directions: this.directions,
+      handler: this.handler,
+      action: this.action,
+      started: this.started,
+      finished: this.finished
+    };
+  }
+  async setDirections(db, directions) {
+    this.directions = directions;
+    await db("process_steps").update({ directions: directions.toJSON() }).where({ id: this.id });
+  }
+};
+
+// src/process/Process.ts
+var Process = class {
+  constructor(system, name, config = {}) {
+    this.system = system;
+    this.id = null;
+    this.config = config;
+    this.name = name || "[no name]";
+    this.complete = false;
+    this.successful = void 0;
+    this.files = [];
+    this.steps = [];
+    this.currentStep = void 0;
+    this.status = "INCOMPLETE";
+  }
+  toString() {
+    return `Process #${this.id} ${this.name}`;
+  }
+  toJSON() {
+    return {
+      name: this.name,
+      config: this.config,
+      complete: this.complete,
+      successful: this.successful,
+      currentStep: this.currentStep,
+      status: this.status,
+      error: this.error
+    };
+  }
+  addFile(file) {
+    file.processId = this.id;
+    this.files.push(file);
+  }
+  async addStep(step) {
+    step.processId = this.id;
+    step.process = this;
+    this.steps.push(step);
+  }
+  async getCurrentStep() {
+    if (this.currentStep === null || this.currentStep === void 0) {
+      throw new BadState(`Process #${this.id} ${this.name} has invalid current step.`);
+    }
+    if (this.steps[this.currentStep]) {
+      return this.steps[this.currentStep];
+    }
+    return this.loadStep(this.currentStep);
+  }
+  async proceedToState(action, state) {
+    const current = await this.getCurrentStep();
+    const handler = this.system.getHandler(current.handler);
+    current.action = action;
+    current.finished = new Date();
+    current.save();
+    const nextStep = new ProcessStep({
+      number: current.number + 1,
+      state,
+      handler: handler.name
+    });
+    this.addStep(nextStep);
+    this.currentStep = (this.currentStep || 0) + 1;
+    this.system.logger.info(`Proceeding ${this} to new step ${this.currentStep}.`);
+    this.save();
+    await nextStep.save();
+    await this.system.checkFinishAndFindDirections(handler, nextStep);
+  }
+  get db() {
+    return this.system.db;
+  }
+  async save() {
+    if (this.id) {
+      await this.db("processes").update(this.toJSON()).where({ id: this.id });
+      return this.id;
+    } else {
+      this.id = (await this.db("processes").insert(this.toJSON()).returning("id"))[0].id;
+      if (this.id)
+        return this.id;
+      throw new DatabaseError(`Saving process ${JSON.stringify(this.toJSON)} failed.`);
+    }
+  }
+  async load(id) {
+    const data = await this.db("processes").select("*").where({ id }).first();
+    if (!data) {
+      throw new InvalidArgument(`Cannot find process #${id}`);
+    }
+    Object.assign(this, data);
+    this.id = id;
+    this.files = (await this.db("process_files").select("*").where({ processId: this.id })).map((fileData) => {
+      const file = new ProcessFile(fileData);
+      file.id = fileData.id;
+      return file;
+    });
+    await this.getCurrentStep();
+  }
+  async loadStep(number) {
+    if (!this.id) {
+      throw new BadState(`Cannot load steps, if the process have no ID ${JSON.stringify(this.toJSON())}.`);
+    }
+    if (this.currentStep === void 0) {
+      throw new BadState(`Cannot load any steps, since process have no current step ${JSON.stringify(this.toJSON())}.`);
+    }
+    const data = await this.db("process_steps").where({ processId: this.id, number }).first();
+    if (!data) {
+      throw new BadState(`Cannot find step ${this.currentStep} for process ${JSON.stringify(this.toJSON())}.`);
+    }
+    this.steps[this.currentStep] = new ProcessStep(data);
+    this.steps[this.currentStep].id = data.id;
+    this.steps[this.currentStep].process = this;
+    return this.steps[this.currentStep];
+  }
+  canRun() {
+    return !this.complete && (this.status === "INCOMPLETE" || this.status === "WAITING");
+  }
+  async run() {
+    let step;
+    let MAX_RUNS = 100;
+    while (true) {
+      MAX_RUNS--;
+      if (MAX_RUNS < 0) {
+        this.system.logger.error(`Maximum number of executions reached for the process ${this}.`);
+        break;
+      }
+      step = await this.getCurrentStep();
+      if (!step.directions) {
+        this.system.logger.info(`No new directions for the process ${this}.`);
+        break;
+      }
+      if (!step.directions.isImmediate()) {
+        this.system.logger.info(`Waiting for more input for the process ${this}.`);
+        await this.updateStatus();
+        break;
+      }
+      const handler = this.system.getHandler(step.handler);
+      const state = (0, import_clone2.default)(step.state);
+      const action = (0, import_clone2.default)(step.directions.action);
+      try {
+        if (action) {
+          const nextState = await handler.action(this, action, state, this.files);
+          await this.proceedToState(action, nextState);
+        } else {
+          throw new BadState(`Process step ${step} has no action.`);
+        }
+      } catch (err) {
+        return await this.crashed(err);
+      }
+    }
+  }
+  async crashed(err) {
+    if ("element" in err) {
+      const directions = new Directions2({
+        type: "ui",
+        element: err["element"]
+      });
+      const step = await this.getCurrentStep();
+      step.directions = directions;
+      await step.save();
+      await this.updateStatus();
+      return;
+    }
+    this.system.logger.error(`Processing of ${this} failed:`, err);
+    if (this.currentStep !== void 0 && this.currentStep !== null) {
+      const step = await this.loadStep(this.currentStep);
+      step.finished = new Date();
+      await step.save();
+    }
+    this.error = err.stack ? err.stack : `${err.name}: ${err.message}`;
+    await this.save();
+    await this.updateStatus();
+  }
+  async updateStatus() {
+    let status = "INCOMPLETE";
+    if (this.error) {
+      status = "CRASHED";
+    } else {
+      if (this.currentStep === null || this.currentStep === void 0) {
+        throw new BadState(`Cannot check status when there is no current step loaded for ${this}`);
+      }
+      const step = this.steps[this.currentStep];
+      if (step.finished) {
+        if (this.successful === true)
+          status = "SUCCEEDED";
+        if (this.successful === false)
+          status = "FAILED";
+      }
+      if (step.directions) {
+        status = step.directions.isImmediate() ? "INCOMPLETE" : "WAITING";
+      }
+    }
+    if (this.status !== status) {
+      this.system.logger.info(`Process ${this} is now ${status}`);
+    }
+    this.status = status;
+    await this.db("processes").update({ status }).where({ id: this.id });
+    switch (status) {
+      case "SUCCEEDED":
+        await this.system.connector.success(this.state);
+        break;
+      case "CRASHED":
+        await this.system.connector.fail(this.error);
+        break;
+      case "FAILED":
+        await this.system.connector.fail(this.state);
+        break;
+      default:
+        const directions = this.currentStep ? this.steps[this.currentStep].directions : null;
+        const state = this.currentStep ? this.steps[this.currentStep].state : null;
+        await this.system.connector.waiting(state, directions);
+    }
+  }
+  get state() {
+    if (this.currentStep === null || this.currentStep === void 0) {
+      throw new BadState(`Cannot check state when there is no current step loaded for ${this}`);
+    }
+    const step = this.steps[this.currentStep];
+    return step.state;
+  }
+  async input(action) {
+    const step = await this.getCurrentStep();
+    const handler = this.system.getHandler(step.handler);
+    let nextState;
+    try {
+      nextState = await handler.action(this, action, (0, import_clone2.default)(step.state), this.files);
+    } catch (err) {
+      return this.crashed(err);
+    }
+    await this.proceedToState(action, nextState);
+  }
+  async rollback() {
+    if (this.currentStep === null || this.currentStep === void 0) {
+      throw new BadState(`Cannot roll back when there is no current step.`);
+    }
+    if (this.currentStep < 1) {
+      throw new BadState(`Cannot roll back when there is only initial step in the process.`);
+    }
+    const step = await this.getCurrentStep();
+    this.system.logger.info(`Attempt of rolling back '${step}' from '${this}'.`);
+    const handler = this.system.getHandler(step.handler);
+    const result = await handler.rollback(step);
+    if (result) {
+      if (this.error) {
+        this.error = void 0;
+      }
+      await this.db("process_steps").delete().where({ id: step.id });
+      this.currentStep--;
+      await this.save();
+      const newCurrentStep = await this.getCurrentStep();
+      newCurrentStep.finished = void 0;
+      await newCurrentStep.save();
+      await this.updateStatus();
+      this.system.logger.info(`Roll back of '${this}' to '${newCurrentStep}' successful.`);
+      return true;
+    }
+    this.system.logger.info(`Not able to roll back '${this}'.`);
+    return false;
+  }
+};
+
+// src/process/ProcessConnector.ts
+init_shim();
+var defaultConnector = {
+  async initialize() {
+    console.log(new Date(), "Connector initialized.");
+  },
+  async applyResult() {
+    console.log(new Date(), "Result received.");
+    return {};
+  },
+  async success() {
+    console.log(new Date(), "Process completed.");
+  },
+  async waiting() {
+  },
+  async fail() {
+    console.error(new Date(), "Process failed.");
+  },
+  async getTranslation(text) {
+    return text;
+  }
+};
+
+// src/process/ProcessingSystem.ts
+init_shim();
+var ProcessingSystem = class {
+  constructor(db, connector) {
+    this.handlers = {};
+    this.db = db;
+    this.logger = {
+      info: (...msg) => console.log(new Date(), ...msg),
+      error: (...msg) => console.error(new Date(), ...msg)
+    };
+    this.connector = connector;
+  }
+  async getTranslation(text, language) {
+    return this.connector.getTranslation(text, language);
+  }
+  register(handler) {
+    if (!handler) {
+      throw new InvalidArgument(`A handler was undefined.`);
+    }
+    if (!handler.name) {
+      throw new InvalidArgument(`A handler without name cannot be registered.`);
+    }
+    if (handler.name in this.handlers) {
+      throw new InvalidArgument(`The handler '${handler.name}' is already defined.`);
+    }
+    if (handler.name.length > 32) {
+      throw new InvalidArgument(`The handler name '${handler.name}' is too long.`);
+    }
+    handler.system = this;
+    this.handlers[handler.name] = handler;
+  }
+  async createProcess(name, files, config) {
+    const process2 = new Process(this, name, config);
+    await process2.save();
+    if (files.length < 1) {
+      await process2.crashed(new InvalidArgument(`No files given to create a process.`));
+      return process2;
+    }
+    const file = files[0];
+    const processFile = new ProcessFile(file);
+    process2.addFile(processFile);
+    await processFile.save(this.db);
+    let selectedHandler = null;
+    for (const handler of Object.values(this.handlers)) {
+      try {
+        if (handler.canHandle(processFile)) {
+          selectedHandler = handler;
+          break;
+        }
+      } catch (err) {
+        await process2.crashed(err);
+        return process2;
+      }
+    }
+    if (!selectedHandler) {
+      await process2.crashed(new InvalidArgument(`No handler found for the file ${file.name} of type ${file.type}.`));
+      return process2;
+    }
+    for (let i = 1; i < files.length; i++) {
+      const processFile2 = new ProcessFile(files[i]);
+      if (!selectedHandler.canAppend(processFile2)) {
+        await process2.crashed(new InvalidArgument(`The file ${files[i].name} of type ${files[i].type} cannot be appended to handler.`));
+        return process2;
+      }
+      process2.addFile(processFile2);
+      await processFile2.save(this.db);
+    }
+    let state;
+    try {
+      state = selectedHandler.startingState(process2.files);
+    } catch (err) {
+      await process2.crashed(err);
+      return process2;
+    }
+    const step = new ProcessStep({
+      number: 0,
+      handler: selectedHandler.name,
+      state
+    });
+    process2.addStep(step);
+    await step.save();
+    process2.currentStep = 0;
+    await process2.save();
+    this.logger.info(`Created process ${process2}.`);
+    await this.checkFinishAndFindDirections(selectedHandler, step);
+    return process2;
+  }
+  async checkFinishAndFindDirections(handler, step) {
+    let result;
+    try {
+      result = handler.checkCompletion(step.state);
+    } catch (err) {
+      return step.process.crashed(err);
+    }
+    if (result === void 0) {
+      let directions;
+      try {
+        directions = await handler.getDirections(step.state, step.process.config);
+      } catch (err) {
+        return step.process.crashed(err);
+      }
+      await step.setDirections(this.db, directions);
+    } else {
+      step.directions = void 0;
+      step.action = void 0;
+      step.finished = new Date();
+      await step.save();
+      step.process.complete = true;
+      step.process.successful = result;
+      await step.process.save();
+    }
+    await step.process.updateStatus();
+  }
+  getHandler(name) {
+    if (!(name in this.handlers)) {
+      throw new InvalidArgument(`There is no handler for '${name}'.`);
+    }
+    return this.handlers[name];
+  }
+  async loadProcess(id) {
+    const process2 = new Process(this, null);
+    await process2.load(id);
+    return process2;
+  }
+};
+
+// src/server/index.ts
+init_shim();
+
+// src/server/router.ts
+init_shim();
+var import_express = __toESM(require("express"));
+
+// src/server/api.ts
+init_shim();
+function api_default(db) {
+  return {
+    process: {
+      getAll: async () => {
+        return db("processes").select("*").orderBy("created", "desc");
+      },
+      get: async (id) => {
+        const data = await db("processes").select("*").where({ id }).first();
+        if (data) {
+          const steps = await db("process_steps").select("id", "action", "directions", "number", "started", "finished").where({ processId: id }).orderBy("number");
+          data.steps = steps ? steps : [];
+        }
+        return data;
+      },
+      getStep: async (id, number) => {
+        const data = await db("process_steps").select("*").where({ processId: id, number }).first();
+        return data;
+      }
+    }
+  };
+}
+
+// src/server/router.ts
+function router(db, configurator) {
+  const router2 = import_express.default.Router();
+  const api = api_default(db);
+  router2.get(
+    "/",
+    async (req, res) => {
+      return res.send(await api.process.getAll());
+    }
+  );
+  router2.get(
+    "/:id",
+    async (req, res) => {
+      return res.send(await api.process.get(parseInt(req.params.id)));
+    }
+  );
+  router2.post(
+    "/",
+    async (req, res) => {
+      const system = configurator(req);
+      const { files, config } = req.body;
+      const names = files.map((f) => f.name);
+      const process2 = await system.createProcess(
+        `Uploading files ${names.join(", ")}`,
+        files,
+        { ...res.locals.server.configDefaults, ...config }
+      );
+      if (process2.canRun()) {
+        await process2.run();
+      }
+      return res.send(await api.process.get(process2.id));
+    }
+  );
+  router2.post(
+    "/:id",
+    async (req, res) => {
+      const system = configurator(req);
+      const { id } = req.params;
+      const process2 = await system.loadProcess(parseInt(id));
+      await process2.input(req.body);
+      if (process2.canRun()) {
+        await process2.run();
+      }
+      res.sendStatus(204);
+    }
+  );
+  router2.get(
+    "/:id/step/:number",
+    async (req, res) => {
+      return res.send(await api.process.getStep(parseInt(req.params.id), parseInt(req.params.number)));
+    }
+  );
+  return router2;
+}
+
+// src/server/types.ts
+init_shim();
+
+// src/server/ISPDemoServer.ts
+init_shim();
+var import_path = __toESM(require("path"));
+var import_express2 = __toESM(require("express"));
+var import_fs = __toESM(require("fs"));
+var import_knex = __toESM(require("knex"));
+var import_cors = __toESM(require_lib());
+var ISPDemoServer = class {
+  constructor(port, databaseUrl, handlers, connector = null, configDefaults = {}) {
+    this.app = (0, import_express2.default)();
+    this.start = async (reset = false) => {
+      if (reset) {
+        await this.db.migrate.rollback();
+      }
+      await this.db.migrate.latest();
+      const systemCreator = () => {
+        const system = new ProcessingSystem(this.db, this.connector);
+        this.handlers.forEach((handler) => system.register(handler));
+        return system;
+      };
+      this.app.use((req, res, next) => {
+        res.locals.server = this;
+        next();
+      });
+      this.app.use((req, res, next) => {
+        console.log(new Date(), req.method, req.url);
+        next();
+      });
+      this.app.use((0, import_cors.default)());
+      this.app.use(import_express2.default.json({ limit: "1024MB" }));
+      this.app.use("/api/isp", router(this.db, systemCreator));
+      this.server = this.app.listen(this.port, () => {
+        console.log(new Date(), `Server started on port ${this.port}.`);
+        this.connector.initialize(this);
+      });
+      this.server.on("error", (msg) => {
+        console.error(new Date(), msg);
+      });
+    };
+    this.stop = async (err = void 0) => {
+      console.log(new Date(), "Stopping the server.");
+      await this.server.close(() => {
+        if (err) {
+          throw err;
+        } else {
+          import_process.default.exit();
+        }
+      });
+    };
+    this.port = port;
+    this.configDefaults = configDefaults;
+    let migrationsPath = import_path.default.normalize(`${__dirname}/migrations/01_init.js`);
+    if (!import_fs.default.existsSync(migrationsPath)) {
+      migrationsPath = import_path.default.normalize(`${__dirname}/../../dist/migrations/01_init.js`);
+    }
+    if (!import_fs.default.existsSync(migrationsPath)) {
+      migrationsPath = import_path.default.normalize(`${__dirname}/../../../dist/migrations/01_init.js`);
+    }
+    if (!import_fs.default.existsSync(migrationsPath)) {
+      console.log(__dirname);
+      throw new Error(`Cannot XXX find migrations file '${migrationsPath}'.`);
+    }
+    this.db = (0, import_knex.default)({
+      client: "pg",
+      connection: databaseUrl,
+      migrations: {
+        directory: import_path.default.dirname(migrationsPath)
+      }
+    });
+    this.handlers = handlers;
+    if (connector) {
+      this.connector = connector;
+    } else {
+      this.connector = defaultConnector;
+    }
+  }
+  async lastProcessID() {
+    const ids = await this.db("processes").max("id").first();
+    return ids ? ids.max : null;
+  }
+};
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  AskUI,
+  BadState,
+  DatabaseError,
+  Directions,
+  ISPDemoServer,
+  InvalidArgument,
+  InvalidFile,
+  NotFound,
+  NotImplemented,
+  Process,
+  ProcessFile,
+  ProcessHandler,
+  ProcessStep,
+  ProcessingError,
+  ProcessingSystem,
+  SystemError,
+  TextFileProcessHandler,
+  defaultConnector,
+  router
+});
 /*
 object-assign
 (c) Sindre Sorhus
