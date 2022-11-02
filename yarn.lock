@@ -2687,7 +2687,7 @@ inherits@2, inherits@2.0.4, inherits@^2.0.1, inherits@^2.0.3, inherits@^2.0.4, i
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
-interactive-elements@1.0.96:
+interactive-elements@^1.0.96:
   version "1.0.96"
   resolved "https://registry.yarnpkg.com/interactive-elements/-/interactive-elements-1.0.96.tgz#c71ef2f987e4871a22d0e28d515962365e9da93f"
   integrity sha512-D4qTPjhzU0U2AMqQ8uZ/IdmRO/cil6w+F5JXw62JLqtGoA4beCtqTKKqfbQyjaOAUm5MNPDCkH7Qx/YoqnqU6g==
